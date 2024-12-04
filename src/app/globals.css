@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #F7F7F7;
+}
+
+.prose {
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+
+.prose p {
+  margin-bottom: 1.5em;
+}
+
+/* Rich Text Editor Styles */
+.ProseMirror {
+  min-height: 200px;
+  outline: none;
+  white-space: pre-wrap;
+}
+
+.ProseMirror p {
+  margin-bottom: 1.5em;
+  line-height: 1.75;
+}
+
+.ProseMirror p:last-child {
+  margin-bottom: 0;
+}
+
+.ProseMirror:focus {
+  outline: none;
+}
+
+/* Add visual feedback for editable state */
+.ProseMirror.is-editable {
+  cursor: text;
+}
+
+/* Style for placeholder when content is empty */
+.ProseMirror p.is-empty::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
