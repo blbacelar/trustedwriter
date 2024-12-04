@@ -5,6 +5,7 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ClerkProvider } from "@clerk/nextjs";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 
 const inter = Inter({ subsets: ["latin"] });
 const spaceGrotesk = Space_Grotesk({
@@ -29,16 +30,18 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body className={inter.className}>
-          <div className="flex flex-col min-h-screen">
-            <Navbar />
-            <main className="flex-grow">{children}</main>
-            <Footer />
-            <Toaster />
-          </div>
-        </body>
-      </html>
+      <LanguageProvider>
+        <html lang="en">
+          <body className={inter.className}>
+            <div className="flex flex-col min-h-screen">
+              <Navbar />
+              <main className="flex-grow">{children}</main>
+              <Footer />
+              <Toaster />
+            </div>
+          </body>
+        </html>
+      </LanguageProvider>
     </ClerkProvider>
   );
 }

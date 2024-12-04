@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { UserButton, useAuth } from "@clerk/nextjs";
+import { Pen } from "lucide-react";
 
 const Navbar = () => {
   const { isSignedIn } = useAuth();
@@ -10,7 +11,8 @@ const Navbar = () => {
     <nav className="bg-white border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <Link href="/" className="text-xl font-bold text-[#00B5B4]">
+          <Link href="/" className="flex items-center gap-2 text-xl font-bold text-[#00B5B4]">
+            <Pen className="h-6 w-6" />
             TrustedWriter
           </Link>
 

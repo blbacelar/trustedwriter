@@ -6,9 +6,11 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import Image from "next/image";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const DashboardPage = () => {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [applicationData, setApplicationData] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -24,8 +26,8 @@ const DashboardPage = () => {
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
     toast({
-      title: "Copied!",
-      description: "Application copied to clipboard",
+      title: t("dashboard.copied.title"),
+      description: t("dashboard.copied.description"),
       duration: 3000,
     });
   };
@@ -52,11 +54,10 @@ const DashboardPage = () => {
           <div className="max-w-7xl mx-auto">
             <div className="max-w-3xl">
               <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-                Generate Your Perfect House Sitting Application
+                {t("dashboard.title")}
               </h1>
               <p className="text-xl text-gray-200 mb-12">
-                Simply paste the TrustedHousesitters listing URL and let AI
-                create a personalized application based on your profile.
+                {t("dashboard.subtitle")}
               </p>
               <Searchbar onApplicationData={handleApplicationData} />
             </div>
@@ -69,7 +70,7 @@ const DashboardPage = () => {
           <div className="max-w-3xl mx-auto">
             <div className="bg-white rounded-lg shadow-lg p-8">
               <h2 className="text-2xl font-semibold mb-6 text-[#1B1B1B]">
-                Your Generated Application
+                {t("dashboard.generatedTitle")}
               </h2>
               <RichTextEditor
                 initialContent={applicationData}

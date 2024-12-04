@@ -3,6 +3,7 @@
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { useState, useEffect } from 'react'
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface RichTextEditorProps {
   initialContent: string
@@ -10,6 +11,7 @@ interface RichTextEditorProps {
 }
 
 const RichTextEditor = ({ initialContent, onCopy }: RichTextEditorProps) => {
+  const { t } = useLanguage();
   const [isEditing, setIsEditing] = useState(false)
 
   // Convert plain text to HTML with paragraphs
@@ -58,13 +60,13 @@ const RichTextEditor = ({ initialContent, onCopy }: RichTextEditorProps) => {
           onClick={toggleEdit}
           className="px-4 py-2 text-sm rounded-full transition-colors border-2 border-[#00B5B4] text-[#00B5B4] hover:bg-[#00B5B4] hover:text-white"
         >
-          {isEditing ? 'Save' : 'Edit'}
+          {isEditing ? t("dashboard.editor.save") : t("dashboard.editor.edit")}
         </button>
         <button
           onClick={handleCopy}
           className="px-4 py-2 text-sm bg-[#00B5B4] hover:bg-[#00A3A2] text-white rounded-full transition-colors"
         >
-          Copy to Clipboard
+          {t("dashboard.editor.copy")}
         </button>
       </div>
       <div
@@ -78,7 +80,7 @@ const RichTextEditor = ({ initialContent, onCopy }: RichTextEditorProps) => {
       </div>
       {isEditing && (
         <p className="text-sm text-gray-500 italic">
-          Click outside or press Save when you're done editing
+          {t("dashboard.editor.editingHint")}
         </p>
       )}
     </div>

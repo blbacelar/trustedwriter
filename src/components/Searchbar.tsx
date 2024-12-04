@@ -2,6 +2,7 @@
 
 import { scrapeAndGetApplication } from '@/lib/actions/index'
 import { FormEvent, useState } from 'react'
+import { useLanguage } from "@/contexts/LanguageContext"
 
 interface SearchbarProps {
   onApplicationData: (data: string | null) => void
@@ -17,6 +18,7 @@ const isValidTrustedHouseSitterURL = (url: string) => {
 }
 
 const Searchbar: React.FC<SearchbarProps> = ({ onApplicationData }) => {
+  const { t } = useLanguage()
   const [searchPrompt, setSearchPrompt] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
@@ -26,7 +28,7 @@ const Searchbar: React.FC<SearchbarProps> = ({ onApplicationData }) => {
     const isValidLink = isValidTrustedHouseSitterURL(searchPrompt)
 
     if (!isValidLink) {
-      return alert('Please provide a valid TrustedHousesitters listing URL')
+      return alert(t("dashboard.searchbar.error"))
     }
 
     try {
@@ -35,7 +37,7 @@ const Searchbar: React.FC<SearchbarProps> = ({ onApplicationData }) => {
       await onApplicationData(application ?? null)
     } catch (error) {
       console.error(error)
-      alert('Failed to generate application. Please try again.')
+      alert(t("dashboard.searchbar.failed"))
     } finally {
       setIsLoading(false)
     }
@@ -48,7 +50,7 @@ const Searchbar: React.FC<SearchbarProps> = ({ onApplicationData }) => {
           type="text"
           value={searchPrompt}
           onChange={e => setSearchPrompt(e.target.value)}
-          placeholder="Paste TrustedHousesitters listing URL here..."
+          placeholder={t("dashboard.searchbar.placeholder")}
           className="flex-1 px-6 py-4 rounded-full border-2 border-white/20 bg-white/10 backdrop-blur-sm text-white placeholder-white/70 focus:outline-none focus:border-white/40"
           disabled={isLoading}
         />
@@ -59,13 +61,13 @@ const Searchbar: React.FC<SearchbarProps> = ({ onApplicationData }) => {
         >
           {isLoading ? (
             <>
-              <span className="opacity-0">Generate Application</span>
+              <span className="opacity-0">{t("dashboard.searchbar.button")}</span>
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="animate-spin h-5 w-5 border-2 border-white border-l-transparent rounded-full" />
               </div>
             </>
           ) : (
-            'Generate Application'
+            t("dashboard.searchbar.button")
           )}
         </button>
       </div>
