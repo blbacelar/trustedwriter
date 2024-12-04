@@ -68,18 +68,19 @@ You can customize your profile and application rules in the Settings page:
 
 ## Project Structure
 
-    src/
-
-├── app/ # Next.js 13+ app directory
-│ ├── page.tsx # Home page
-│ ├── settings/ # Settings page
-│ └── api/ # API routes
-├── components/ # React components
-├── lib/ # Shared utilities
-└── utils/ # Backend utilities
-├── gpt.ts # OpenAI integration
-├── rules.ts # Profile and rules
-└── scrap.ts # Web scraping logic
+```
+src/
+├── app/                  # Next.js 13+ app directory
+│   ├── page.tsx         # Home page
+│   ├── settings/        # Settings page
+│   └── api/            # API routes
+├── components/          # React components
+├── lib/                 # Shared utilities
+└── utils/              # Backend utilities
+     ├── gpt.ts          # OpenAI integration
+     ├── rules.ts        # Profile and rules
+     └── scrap.ts        # Web scraping logic
+```
 
 ## Environment Variables
 
