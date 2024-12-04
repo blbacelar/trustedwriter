@@ -1,23 +1,50 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
+import { Check, Sparkles, Clock, Trophy } from "lucide-react";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+import Image from "next/image";
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const { userId } = await auth();
+
+  if (userId) {
+    redirect("/dashboard");
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-[#00B5B4] to-[#008F8E] text-white py-24">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-5xl font-bold mb-6">
+      <section className="relative min-h-[600px] flex items-center">
+        {/* Background Image with Gradient Overlay */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/landing-hero.jpg"
+            alt="Landing Hero"
+            fill
+            priority
+            className="object-cover"
+            quality={100}
+          />
+          <div className="absolute inset-0 bg-white/10" />
+        </div>
+
+        {/* Content */}
+        <div className="relative z-20 w-full px-6 md:px-20 py-32">
+          <div className="max-w-3xl mx-auto text-center mt-32">
+            <h1 className="text-5xl font-bold mb-6 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]">
               Get Your Dream House Sitting Gig
             </h1>
-            <p className="text-xl mb-8">
+            <p className="text-xl mb-8 text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">
               AI-powered applications that help you stand out and get accepted
               faster
             </p>
             <Link href="/sign-up">
-              <Button size="lg" variant="secondary">
+              <Button
+                size="lg"
+                variant="secondary"
+                className="bg-[#00B5B4] hover:bg-[#00A3A2] text-white font-medium shadow-xl"
+              >
                 Start Writing for Free
               </Button>
             </Link>
@@ -30,18 +57,27 @@ export default function LandingPage() {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
+              <div className="flex justify-center mb-6">
+                <Sparkles className="h-12 w-12 text-[#00B5B4]" />
+              </div>
               <h3 className="text-xl font-semibold mb-4">AI-Powered Writing</h3>
               <p className="text-gray-600">
                 Personalized applications using advanced AI technology
               </p>
             </div>
             <div className="text-center">
+              <div className="flex justify-center mb-6">
+                <Clock className="h-12 w-12 text-[#00B5B4]" />
+              </div>
               <h3 className="text-xl font-semibold mb-4">Time Saving</h3>
               <p className="text-gray-600">
                 Generate applications in seconds, not hours
               </p>
             </div>
             <div className="text-center">
+              <div className="flex justify-center mb-6">
+                <Trophy className="h-12 w-12 text-[#00B5B4]" />
+              </div>
               <h3 className="text-xl font-semibold mb-4">
                 Higher Success Rate
               </h3>

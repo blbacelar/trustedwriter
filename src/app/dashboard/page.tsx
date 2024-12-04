@@ -37,13 +37,14 @@ const DashboardPage = () => {
         {/* Background Image with Gradient Overlay */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/hero-image.jpg"
-            alt="Background"
+            src="/dashboard-hero.jpg"
+            alt="Dashboard Hero"
             fill
             priority
             className="object-cover"
+            quality={100}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/50" />
+          <div className="absolute inset-0 bg-black/40" />
         </div>
 
         {/* Content */}
