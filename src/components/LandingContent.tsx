@@ -7,7 +7,9 @@ import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function LandingContent() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+
+  console.log("Current language in LandingContent:", language);
 
   return (
     <div className="flex flex-col min-h-screen">

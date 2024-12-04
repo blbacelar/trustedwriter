@@ -93,6 +93,28 @@ export const translations = {
         error: "Please provide a valid TrustedHousesitters listing URL",
         failed: "Failed to generate application. Please try again."
       }
+    },
+    settings: {
+      title: "Settings",
+      profile: {
+        title: "Your Profile",
+        placeholder: "Enter your profile description..."
+      },
+      rules: {
+        title: "Application Rules",
+        addPlaceholder: "Add a new rule...",
+        addButton: "Add Rule",
+        deleteButton: "Delete"
+      },
+      save: {
+        button: "Save Settings",
+        saving: "Saving...",
+        success: "Settings saved successfully!",
+        error: "Failed to save settings"
+      }
+    },
+    navbar: {
+      settings: "Settings"
     }
   },
   pt: {
@@ -189,6 +211,28 @@ export const translations = {
         error: "Por favor, forneça uma URL válida do TrustedHousesitters",
         failed: "Falha ao gerar aplicação. Por favor, tente novamente."
       }
+    },
+    settings: {
+      title: "Configurações",
+      profile: {
+        title: "Seu Perfil",
+        placeholder: "Digite a descrição do seu perfil..."
+      },
+      rules: {
+        title: "Regras de Aplicação",
+        addPlaceholder: "Adicionar uma nova regra...",
+        addButton: "Adicionar Regra",
+        deleteButton: "Excluir"
+      },
+      save: {
+        button: "Salvar Configurações",
+        saving: "Salvando...",
+        success: "Configurações salvas com sucesso!",
+        error: "Falha ao salvar configurações"
+      }
+    },
+    navbar: {
+      settings: "Configurações"
     }
   },
   es: {
@@ -285,6 +329,28 @@ export const translations = {
         error: "Por favor, proporciona una URL válida de TrustedHousesitters",
         failed: "Error al generar la aplicación. Por favor, inténtalo de nuevo."
       }
+    },
+    settings: {
+      title: "Configuración",
+      profile: {
+        title: "Tu Perfil",
+        placeholder: "Ingresa la descripción de tu perfil..."
+      },
+      rules: {
+        title: "Reglas de Aplicación",
+        addPlaceholder: "Agregar una nueva regla...",
+        addButton: "Agregar Regla",
+        deleteButton: "Eliminar"
+      },
+      save: {
+        button: "Guardar Configuración",
+        saving: "Guardando...",
+        success: "¡Configuración guardada exitosamente!",
+        error: "Error al guardar la configuración"
+      }
+    },
+    navbar: {
+      settings: "Configuración"
     }
   }
 };

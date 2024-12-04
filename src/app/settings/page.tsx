@@ -1,17 +1,51 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { profile as defaultProfile, rules as defaultRules } from '@/utils/rules'
 import { useToast } from "@/components/ui/use-toast"
+import { useLanguage } from "@/contexts/LanguageContext"
+import { Trash2 } from "lucide-react"
 
 const SettingsPage = () => {
+  const { toast } = useToast()
+  const { t } = useLanguage()
   const [profile, setProfile] = useState(defaultProfile)
   const [rules, setRules] = useState<string[]>(defaultRules)
   const [newRule, setNewRule] = useState('')
   const [isSaving, setIsSaving] = useState(false)
-  const { toast } = useToast()
+  const [isLoading, setIsLoading] = useState(true)
 
-  const handleSaveProfile = async () => {
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch('/api/settings')
+        if (response.ok) {
+          const data = await response.json()
+          setProfile(data.profile || defaultProfile)
+          setRules(data.rules || defaultRules)
+        }
+      } catch (error) {
+        console.error('Failed to fetch settings:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchSettings()
+  }, [])
+
+  const handleAddRule = () => {
+    if (newRule.trim()) {
+      setRules([...rules, newRule.trim()])
+      setNewRule('')
+    }
+  }
+
+  const handleDeleteRule = (index: number) => {
+    setRules(rules.filter((_, i) => i !== index))
+  }
+
+  const handleSave = async () => {
     setIsSaving(true)
     try {
       const response = await fetch('/api/settings', {
@@ -22,59 +56,72 @@ const SettingsPage = () => {
         body: JSON.stringify({ profile, rules }),
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to save settings')
+      if (response.ok) {
+        toast({
+          title: t('settings.save.success'),
+        })
+      } else {
+        throw new Error()
       }
-
-      toast({
-        title: "Settings saved",
-        description: "Your changes have been saved successfully.",
-        duration: 3000,
-      })
     } catch (error) {
-      console.error('Failed to save settings:', error)
       toast({
-        title: "Error",
-        description: "Failed to save settings. Please try again.",
-        variant: "destructive",
-        duration: 3000,
+        title: t('settings.save.error'),
+        variant: 'destructive',
       })
     } finally {
       setIsSaving(false)
     }
   }
 
-  const handleAddRule = () => {
-    if (newRule.trim()) {
-      setRules([...rules, newRule.trim()])
-      setNewRule('')
-    }
-  }
-
-  const handleRemoveRule = (index: number) => {
-    setRules(rules.filter((_, i) => i !== index))
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#F7F7F7] py-12 flex items-center justify-center">
+        <div className="animate-spin h-8 w-8 border-2 border-[#00B5B4] border-t-transparent rounded-full" />
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen bg-[#F7F7F7] py-12">
       <div className="max-w-4xl mx-auto px-4">
-        <h1 className="text-3xl font-bold text-[#1B1B1B] mb-8">Settings</h1>
+        <h1 className="text-3xl font-bold text-[#1B1B1B] mb-8">
+          {t('settings.title')}
+        </h1>
         
         {/* Profile Section */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-          <h2 className="text-xl font-semibold mb-4">Your Profile</h2>
+          <h2 className="text-xl font-semibold mb-4">{t('settings.profile.title')}</h2>
           <textarea
             value={profile}
             onChange={(e) => setProfile(e.target.value)}
             className="w-full h-64 p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-[#00B5B4]"
-            placeholder="Enter your profile description..."
+            placeholder={t('settings.profile.placeholder')}
           />
         </div>
 
         {/* Rules Section */}
         <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Application Rules</h2>
-          
+          <h2 className="text-xl font-semibold mb-4">{t('settings.rules.title')}</h2>
+          <ul className="space-y-1 mb-6">
+            {rules.map((rule, index) => (
+              <li 
+                key={index} 
+                className={`flex items-center justify-between group p-3 rounded-lg
+                  ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}
+                  hover:bg-gray-100 transition-colors`}
+              >
+                <span className="text-gray-700">{rule}</span>
+                <button
+                  onClick={() => handleDeleteRule(index)}
+                  className="text-gray-400 hover:text-red-500 transition-colors p-1 rounded-full hover:bg-red-50"
+                  title={t('settings.rules.deleteButton')}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </li>
+            ))}
+          </ul>
+
           {/* Add New Rule */}
           <div className="flex gap-2 mb-6">
             <input
@@ -82,42 +129,30 @@ const SettingsPage = () => {
               value={newRule}
               onChange={(e) => setNewRule(e.target.value)}
               className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#00B5B4]"
-              placeholder="Add a new rule..."
+              placeholder={t('settings.rules.addPlaceholder')}
             />
             <button
               onClick={handleAddRule}
               className="px-6 py-2 bg-[#00B5B4] hover:bg-[#00A3A2] text-white rounded-lg transition-colors"
             >
-              Add Rule
+              {t('settings.rules.addButton')}
             </button>
           </div>
 
-          {/* Rules List */}
-          <div className="space-y-3">
-            {rules.map((rule, index) => (
-              <div key={index} className="flex items-center gap-2 group">
-                <span className="flex-1 p-3 bg-gray-50 rounded-lg">{rule}</span>
-                <button
-                  onClick={() => handleRemoveRule(index)}
-                  className="p-2 text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Save Button */}
-        <div className="mt-8 flex justify-end">
+          {/* Save Button */}
           <button
-            onClick={handleSaveProfile}
+            onClick={handleSave}
             disabled={isSaving}
-            className="px-8 py-3 bg-[#00B5B4] hover:bg-[#00A3A2] text-white rounded-full font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-3 bg-[#00B5B4] hover:bg-[#00A3A2] text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isSaving ? 'Saving...' : 'Save Settings'}
+            {isSaving ? (
+              <div className="flex items-center justify-center gap-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                {t('settings.save.saving')}
+              </div>
+            ) : (
+              t('settings.save.button')
+            )}
           </button>
         </div>
       </div>

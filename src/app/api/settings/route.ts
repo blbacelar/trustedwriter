@@ -1,26 +1,54 @@
-import { NextResponse } from 'next/server'
-import fs from 'fs/promises'
-import path from 'path'
-
-const RULES_PATH = path.join(process.cwd(), 'src/utils/rules.ts')
+import { prisma } from "@/lib/prisma";
+import { auth } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { profile, rules } = await req.json()
+    const { userId } = await auth();
+    const { profile, rules } = await req.json();
 
-    const fileContent = `
-export const rules = ${JSON.stringify(rules, null, 2)};
+    if (!userId) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
 
-export const profile = \`
-${profile}
-\`;
-`
+    const user = await prisma.user.upsert({
+      where: { id: userId },
+      update: {
+        profile,
+        rules,
+      },
+      create: {
+        id: userId,
+        profile,
+        rules,
+      },
+    });
 
-    await fs.writeFile(RULES_PATH, fileContent)
-
-    return NextResponse.json({ success: true })
+    return NextResponse.json(user);
   } catch (error) {
-    console.error('Failed to save settings:', error)
-    return NextResponse.json({ success: false, error: 'Failed to save settings' }, { status: 500 })
+    console.error("[SETTINGS_POST]", error);
+    return new NextResponse("Internal Error", { status: 500 });
   }
-} 
+}
+
+export async function GET(req: Request) {
+  try {
+    const { userId } = await auth();
+
+    if (!userId) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    return NextResponse.json({
+      profile: user?.profile || "",
+      rules: user?.rules || [],
+    });
+  } catch (error) {
+    console.error("[SETTINGS_GET]", error);
+    return new NextResponse("Internal Error", { status: 500 });
+  }
+}
