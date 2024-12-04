@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from "next/link";
 
 const Footer = () => {
   return (
@@ -10,7 +10,8 @@ const Footer = () => {
             Special Offer: Get 25% Off TrustedHousesitters
           </h3>
           <p className="text-gray-600 mb-4">
-            Join the global community of pet lovers and get 25% off your membership
+            Join the global community of pet lovers and get 25% off your
+            membership
           </p>
           <a
             href="https://www.trustedhousesitters.com/refer/RAF693812/?utm_source=copy-link&utm_medium=refer-a-friend&utm_campaign=refer-a-friend"
@@ -27,7 +28,8 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-xl font-bold text-[#00B5B4]">TrustedWriter</h3>
             <p className="text-gray-600 max-w-xs">
-              Streamline your house-sitting applications with AI-powered personalization.
+              Streamline your house-sitting applications with AI-powered
+              personalization.
             </p>
           </div>
 
@@ -36,16 +38,16 @@ const Footer = () => {
             <h4 className="font-semibold text-gray-900 mb-4">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <Link 
-                  href="/settings" 
+                <Link
+                  href="/settings"
                   className="text-gray-600 hover:text-[#00B5B4] transition-colors"
                 >
                   Settings
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="/" 
+                <Link
+                  href="/"
                   className="text-gray-600 hover:text-[#00B5B4] transition-colors"
                 >
                   Home
@@ -59,7 +61,7 @@ const Footer = () => {
             <h4 className="font-semibold text-gray-900 mb-4">Resources</h4>
             <ul className="space-y-2">
               <li>
-                <a 
+                <a
                   href="https://www.trustedhousesitters.com/refer/RAF693812/?utm_source=copy-link&utm_medium=refer-a-friend&utm_campaign=refer-a-friend"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -69,8 +71,8 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a 
-                  href="https://github.com/yourusername/trustedwriter" 
+                <a
+                  href="https://github.com/blbacelar/trustedwriter"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-600 hover:text-[#00B5B4] transition-colors"
@@ -85,11 +87,12 @@ const Footer = () => {
         {/* Copyright */}
         <div className="border-t mt-12 pt-8">
           <p className="text-center text-gray-500 text-sm">
-            © {new Date().getFullYear()} TrustedWriter. Not affiliated with TrustedHousesitters.
+            © {new Date().getFullYear()} TrustedWriter. Not affiliated with
+            TrustedHousesitters.
             <br />
             <span className="text-xs">
-              Get 25% off your TrustedHousesitters membership using our{' '}
-              <a 
+              Get 25% off your TrustedHousesitters membership using our{" "}
+              <a
                 href="https://www.trustedhousesitters.com/refer/RAF693812/?utm_source=copy-link&utm_medium=refer-a-friend&utm_campaign=refer-a-friend"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -102,7 +105,7 @@ const Footer = () => {
         </div>
       </div>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer 
+export default Footer;

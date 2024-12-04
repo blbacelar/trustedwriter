@@ -1,13 +1,15 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { profile as defaultProfile, rules as defaultRules } from '@/utils/rules'
+import { useToast } from "@/components/ui/use-toast"
 
 const SettingsPage = () => {
   const [profile, setProfile] = useState(defaultProfile)
   const [rules, setRules] = useState<string[]>(defaultRules)
   const [newRule, setNewRule] = useState('')
   const [isSaving, setIsSaving] = useState(false)
+  const { toast } = useToast()
 
   const handleSaveProfile = async () => {
     setIsSaving(true)
@@ -24,10 +26,19 @@ const SettingsPage = () => {
         throw new Error('Failed to save settings')
       }
 
-      alert('Settings saved successfully!')
+      toast({
+        title: "Settings saved",
+        description: "Your changes have been saved successfully.",
+        duration: 3000,
+      })
     } catch (error) {
       console.error('Failed to save settings:', error)
-      alert('Failed to save settings. Please try again.')
+      toast({
+        title: "Error",
+        description: "Failed to save settings. Please try again.",
+        variant: "destructive",
+        duration: 3000,
+      })
     } finally {
       setIsSaving(false)
     }
