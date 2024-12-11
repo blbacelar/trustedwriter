@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import SubscribeButton from "@/components/SubscribeButton";
 
 export default function SubscriptionManagement() {
   const { t } = useLanguage();
@@ -71,7 +72,15 @@ export default function SubscriptionManagement() {
           <div>
             <p className="text-lg font-medium">
               {t("settings.subscription.status")}:{" "}
-              <span className={subscription.status === "active" ? "text-green-600" : "text-red-600"}>
+              <span 
+                className={
+                  subscription.status === "active" 
+                    ? "text-green-600" 
+                    : subscription.status === "free" 
+                    ? "text-blue-600"
+                    : "text-red-600"
+                }
+              >
                 {t(`settings.subscription.${subscription.status}`)}
               </span>
             </p>
@@ -82,7 +91,7 @@ export default function SubscriptionManagement() {
               </p>
             )}
           </div>
-          {subscription.status === "active" && (
+          {subscription.status === "active" ? (
             <>
               {subscription.cancelAt ? (
                 <button
@@ -101,6 +110,11 @@ export default function SubscriptionManagement() {
                 </button>
               )}
             </>
+          ) : subscription.status === "free" && (
+            <div className="flex items-center gap-2">
+              <p className="text-sm text-gray-500">{t("settings.subscription.upgradeCTA")}</p>
+              <SubscribeButton />
+            </div>
           )}
         </div>
       </div>

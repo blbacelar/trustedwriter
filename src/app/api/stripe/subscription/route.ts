@@ -19,7 +19,7 @@ export async function GET() {
     });
 
     if (!user?.subscriptionId) {
-      return NextResponse.json({ status: "inactive" });
+      return NextResponse.json({ status: "free" });
     }
 
     const subscription = await stripe.subscriptions.retrieve(user.subscriptionId);

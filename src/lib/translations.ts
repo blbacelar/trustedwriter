@@ -98,6 +98,9 @@ export const translations = {
         button: "Generate Application",
         error: "Please provide a valid TrustedHousesitters listing URL",
         failed: "Failed to generate application. Please try again.",
+        noProfile: "Please complete your profile settings first",
+        profileRequired: "You need to set up your profile before generating applications.",
+        setupProfile: "Set up profile",
       },
     },
     settings: {
@@ -140,6 +143,8 @@ export const translations = {
         reactivating: "Reactivating...",
         reactivateSuccess: "Subscription reactivated successfully",
         reactivateError: "Failed to reactivate subscription",
+        free: "Free Plan",
+        upgradeCTA: "Upgrade to Pro:",
       },
     },
     navbar: {
@@ -261,6 +266,9 @@ export const translations = {
         button: "Gerar Aplicação",
         error: "Por favor, forneça uma URL válida do TrustedHousesitters",
         failed: "Falha ao gerar aplicação. Por favor, tente novamente.",
+        noProfile: "Por favor, complete as configurações do seu perfil primeiro",
+        profileRequired: "Você precisa configurar seu perfil antes de gerar aplicações.",
+        setupProfile: "Configurar perfil",
       },
     },
     settings: {
@@ -303,6 +311,8 @@ export const translations = {
         reactivating: "Reativando...",
         reactivateSuccess: "Assinatura reativada com sucesso",
         reactivateError: "Falha ao reativar assinatura",
+        free: "Plano Grátis",
+        upgradeCTA: "Atualizar para Pro:",
       },
     },
     navbar: {
@@ -425,6 +435,9 @@ export const translations = {
         error: "Por favor, proporciona una URL válida de TrustedHousesitters",
         failed:
           "Error al generar la aplicación. Por favor, inténtalo de nuevo.",
+        noProfile: "Por favor, complete las configuraciones del perfil primero",
+        profileRequired: "Necesitas configurar tu perfil antes de generar aplicaciones.",
+        setupProfile: "Configurar perfil",
       },
     },
     settings: {
@@ -467,6 +480,8 @@ export const translations = {
         reactivating: "Reactivando...",
         reactivateSuccess: "Suscripción reactivada con éxito",
         reactivateError: "Error al reactivar la suscripción",
+        free: "Plano Grátis",
+        upgradeCTA: "Actualizar a Pro:",
       },
     },
     navbar: {
