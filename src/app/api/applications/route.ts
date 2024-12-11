@@ -5,17 +5,29 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     const { userId } = await auth();
-    const { content, listingUrl } = await req.json();
-
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const application = await prisma.applications.create({
+    // Check if user has completed their settings
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user?.profile || !user?.rules?.length) {
+      return NextResponse.json(
+        { error: "Please complete your profile and rules in settings first" },
+        { status: 403 }
+      );
+    }
+
+    const { content, listingUrl } = await req.json();
+
+    const application = await prisma.application.create({
       data: {
-        user_id: userId,
+        userId,
         content,
-        listing_url: listingUrl,
+        listingUrl,
       },
     });
 
@@ -34,9 +46,9 @@ export async function GET() {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const applications = await prisma.applications.findMany({
-      where: { user_id: userId },
-      orderBy: { created_time: "desc" },
+    const applications = await prisma.application.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
     });
 
     return NextResponse.json(applications);

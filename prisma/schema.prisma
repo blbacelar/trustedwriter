@@ -8,21 +8,25 @@ datasource db {
 }
 
 model User {
-  id         String        @id
-  profile    String?       @db.Text
-  rules      String[]
-  language   String        @default("en")
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
-  applications Application[]
+  id                 String        @id
+  profile            String?       @db.Text
+  rules              String[]
+  language           String        @default("en")
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  applications       Application[]
+  stripeCustomerId   String?       @unique
+  subscriptionId     String?       @unique
+  subscriptionStatus String? // 'active', 'canceled', 'past_due'
+  priceId            String? // Store the Stripe price ID
 }
 
 model Application {
-  id          String    @id @default(cuid())
-  userId      String
-  user        User      @relation(fields: [userId], references: [id])
-  content     String    @db.Text
-  listingUrl  String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-} 
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  content    String   @db.Text
+  listingUrl String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}

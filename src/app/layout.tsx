@@ -6,6 +6,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ClerkProvider } from "@clerk/nextjs";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { Toaster as SonnerToaster } from 'sonner';
 
 const inter = Inter({ subsets: ["latin"] });
 const spaceGrotesk = Space_Grotesk({
@@ -38,6 +39,7 @@ export default function RootLayout({
               <main className="flex-grow">{children}</main>
               <Footer />
               <Toaster />
+              <SonnerToaster position="top-center" />
             </div>
           </body>
         </html>
