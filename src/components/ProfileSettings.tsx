@@ -85,6 +85,9 @@ export default function ProfileSettings() {
         <h2 className="text-xl font-semibold mb-4">
           {t("settings.profile.title")}
         </h2>
+        <div className="mb-2 text-sm text-gray-600">
+          {t("settings.profile.helper")}
+        </div>
         <textarea
           value={profile}
           onChange={(e) => setProfile(e.target.value)}
@@ -98,6 +101,9 @@ export default function ProfileSettings() {
         <h2 className="text-xl font-semibold mb-4">
           {t("settings.rules.title")}
         </h2>
+        <div className="mb-2 text-sm text-gray-600">
+          {t("settings.rules.helper")}
+        </div>
         <ul className="space-y-1 mb-6">
           {rules.map((rule, index) => (
             <li
