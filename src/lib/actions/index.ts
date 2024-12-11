@@ -55,7 +55,10 @@ export async function scrapeAndGetApplication(houseSittingUrl: string) {
     `
 
     const content = await queryGPT(prompt)
-    
+    if (!content) {
+      throw new Error("Failed to generate application content");
+    }
+
     // Save the application
     const application = await prisma.application.create({
       data: {
