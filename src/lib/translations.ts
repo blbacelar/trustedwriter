@@ -102,6 +102,18 @@ export const translations = {
         profileRequired: "You need to set up your profile before generating applications.",
         setupProfile: "Set up profile",
       },
+      table: {
+        title: "Your Applications",
+        date: "Date",
+        content: "Content",
+        listing: "Listing",
+        actions: "Actions",
+        copy: "Copy content",
+        view: "View listing",
+        search: "Search applications...",
+        noResults: "No applications found",
+        noApplications: "No applications yet"
+      }
     },
     settings: {
       title: "Settings",
@@ -273,6 +285,18 @@ export const translations = {
         profileRequired: "Você precisa configurar seu perfil antes de gerar aplicações.",
         setupProfile: "Configurar perfil",
       },
+      table: {
+        title: "Your Applications",
+        date: "Date",
+        content: "Content",
+        listing: "Listing",
+        actions: "Actions",
+        copy: "Copy content",
+        view: "View listing",
+        search: "Search applications...",
+        noResults: "No applications found",
+        noApplications: "No applications yet"
+      }
     },
     settings: {
       title: "Configurações",
@@ -445,6 +469,18 @@ export const translations = {
         profileRequired: "Necesitas configurar tu perfil antes de generar aplicaciones.",
         setupProfile: "Configurar perfil",
       },
+      table: {
+        title: "Your Applications",
+        date: "Date",
+        content: "Content",
+        listing: "Listing",
+        actions: "Actions",
+        copy: "Copy content",
+        view: "View listing",
+        search: "Search applications...",
+        noResults: "No applications found",
+        noApplications: "No applications yet"
+      }
     },
     settings: {
       title: "Configuración",
