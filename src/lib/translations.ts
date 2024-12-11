@@ -163,6 +163,7 @@ export const translations = {
       settings: "Settings",
       login: "Login",
       signup: "Sign Up",
+      signOut: "Sign Out"
     },
     billing: {
       success: {
@@ -178,6 +179,12 @@ export const translations = {
     },
     credits: {
       remaining: "{{count}} applications left",
+    },
+    nav: {
+      settings: "Settings",
+      signOut: "Sign Out",
+      login: "Login",
+      signup: "Sign Up"
     },
   },
   pt: {
@@ -346,6 +353,7 @@ export const translations = {
       settings: "Configurações",
       login: "Login",
       signup: "Sign Up",
+      signOut: "Sign Out"
     },
     billing: {
       success: {
@@ -361,6 +369,12 @@ export const translations = {
     },
     credits: {
       remaining: "{{count}} aplicações restantes",
+    },
+    nav: {
+      settings: "Configurações",
+      signOut: "Sair",
+      login: "Entrar",
+      signup: "Cadastrar"
     },
   },
   es: {
@@ -530,6 +544,7 @@ export const translations = {
       settings: "Configuración",
       login: "Login",
       signup: "Sign Up",
+      signOut: "Sign Out"
     },
     billing: {
       success: {
@@ -545,6 +560,12 @@ export const translations = {
     },
     credits: {
       remaining: "{{count}} aplicaciones restantes",
+    },
+    nav: {
+      settings: "Configuración",
+      signOut: "Cerrar Sesión",
+      login: "Iniciar Sesión",
+      signup: "Registrarse"
     },
   },
 };

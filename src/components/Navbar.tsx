@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { UserButton, useAuth } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
 import { Pen, Menu, X } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import LanguageSelector from "./LanguageSelector";
 import { useState } from "react";
 import CreditsIndicator from "./CreditsIndicator";
+import CustomUserButton from "./CustomUserButton";
 
 const Navbar = () => {
   const { isSignedIn } = useAuth();
@@ -27,65 +28,79 @@ const Navbar = () => {
             {isSignedIn && <CreditsIndicator />}
             {isSignedIn ? (
               <>
-                <Link href="/settings" className="text-gray-600 hover:text-[#00B5B4] transition-colors">
-                  {t("navbar.settings")}
-                </Link>
                 <LanguageSelector />
-                <UserButton afterSignOutUrl="/" />
+                <CustomUserButton />
               </>
             ) : (
               <>
                 <LanguageSelector />
                 <Link href="/sign-in" className="border-2 border-[#00B5B4] text-[#00B5B4] px-4 py-2 rounded-full hover:bg-[#00B5B4] hover:text-white transition-colors">
-                  {t("navbar.login")}
+                  {t("nav.login")}
                 </Link>
                 <Link href="/sign-up" className="bg-[#00B5B4] text-white px-4 py-2 rounded-full hover:bg-[#00A3A2] transition-colors">
-                  {t("navbar.signup")}
+                  {t("nav.signup")}
                 </Link>
               </>
             )}
           </div>
 
-          {/* Mobile Menu */}
-          {isMenuOpen && (
-            <div className="md:hidden absolute top-16 left-0 right-0 bg-white border-b shadow-lg z-50">
-              <div className="px-4 py-4 space-y-4">
-                {isSignedIn && <CreditsIndicator />}
-                {isSignedIn ? (
-                  <>
-                    <Link href="/settings" className="block text-gray-600 hover:text-[#00B5B4] transition-colors">
-                      {t("navbar.settings")}
-                    </Link>
-                    <div className="py-2">
-                      <LanguageSelector />
-                    </div>
-                    <div className="py-2">
-                      <UserButton afterSignOutUrl="/" />
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="py-2">
-                      <LanguageSelector />
-                    </div>
-                    <Link href="/sign-in" className="block text-center border-2 border-[#00B5B4] text-[#00B5B4] px-4 py-2 rounded-full hover:bg-[#00B5B4] hover:text-white transition-colors">
-                      {t("navbar.login")}
-                    </Link>
-                    <Link href="/sign-up" className="block text-center bg-[#00B5B4] text-white px-4 py-2 rounded-full hover:bg-[#00A3A2] transition-colors">
-                      {t("navbar.signup")}
-                    </Link>
-                  </>
-                )}
-              </div>
-            </div>
-          )}
-
           {/* Mobile Menu Button */}
-          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2">
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          >
             {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="md:hidden border-t">
+          <div className="px-4 py-2 space-y-2">
+            {isSignedIn ? (
+              <>
+                <div className="py-2">
+                  <CreditsIndicator />
+                </div>
+                <Link
+                  href="/settings"
+                  className="block py-2 text-gray-600 hover:text-[#00B5B4] transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {t("navbar.settings")}
+                </Link>
+                <div className="py-2">
+                  <LanguageSelector />
+                </div>
+                <div className="py-2">
+                  <CustomUserButton />
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="py-2">
+                  <LanguageSelector />
+                </div>
+                <Link
+                  href="/sign-in"
+                  className="block py-2 text-[#00B5B4] hover:text-[#00A3A2] transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {t("nav.login")}
+                </Link>
+                <Link
+                  href="/sign-up"
+                  className="block py-2 text-[#00B5B4] hover:text-[#00A3A2] transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {t("nav.signup")}
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
