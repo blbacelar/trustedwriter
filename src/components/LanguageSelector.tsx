@@ -1,8 +1,9 @@
 "use client";
 
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Language } from "@/lib/translations";
 
-const languages = [
+const languages: { code: Language; flag: string; label: string }[] = [
   { code: "en", flag: "🇺🇸", label: "English" },
   { code: "pt", flag: "🇧🇷", label: "Português" },
   { code: "es", flag: "🇪🇸", label: "Español" }
