@@ -11,11 +11,11 @@ export async function POST(req: Request) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const application = await prisma.applications.create({
+    const application = await prisma.application.create({
       data: {
-        user_id: userId,
+        userId,
         content,
-        listing_url: listingUrl,
+        listingUrl,
       },
     });
 
@@ -34,9 +34,9 @@ export async function GET() {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const applications = await prisma.applications.findMany({
-      where: { user_id: userId },
-      orderBy: { created_time: "desc" },
+    const applications = await prisma.application.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
     });
 
     return NextResponse.json(applications);

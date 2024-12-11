@@ -39,7 +39,8 @@ export const translations = {
           "Priority support"
         ],
         cta: "Get Pro",
-        popular: "Popular"
+        popular: "Popular",
+        loading: "Processing..."
       }
     },
     cta: {
@@ -117,7 +118,17 @@ export const translations = {
       settings: "Settings",
       login: "Login",
       signup: "Sign Up"
-    }
+    },
+    billing: {
+      success: {
+        title: "Thank you for subscribing!",
+        description: "Your subscription has been confirmed. You will be redirected to the settings page shortly.",
+      },
+      canceled: {
+        title: "Subscription Canceled",
+        description: "The subscription process was canceled. You will be redirected to the settings page shortly.",
+      },
+    },
   },
   pt: {
     hero: {
@@ -159,7 +170,8 @@ export const translations = {
           "Suporte prioritário"
         ],
         cta: "Obter Pro",
-        popular: "Popular"
+        popular: "Popular",
+        loading: "Processando..."
       }
     },
     cta: {
@@ -237,7 +249,17 @@ export const translations = {
       settings: "Configurações",
       login: "Login",
       signup: "Sign Up"
-    }
+    },
+    billing: {
+      success: {
+        title: "Thank you for subscribing!",
+        description: "Your subscription has been confirmed. You will be redirected to the settings page shortly.",
+      },
+      canceled: {
+        title: "Subscription Canceled",
+        description: "The subscription process was canceled. You will be redirected to the settings page shortly.",
+      },
+    },
   },
   es: {
     hero: {
@@ -279,7 +301,8 @@ export const translations = {
           "Soporte prioritario"
         ],
         cta: "Obtener Pro",
-        popular: "Popular"
+        popular: "Popular",
+        loading: "Procesando..."
       }
     },
     cta: {
@@ -357,7 +380,17 @@ export const translations = {
       settings: "Configuración",
       login: "Login",
       signup: "Sign Up"
-    }
+    },
+    billing: {
+      success: {
+        title: "Thank you for subscribing!",
+        description: "Your subscription has been confirmed. You will be redirected to the settings page shortly.",
+      },
+      canceled: {
+        title: "Subscription Canceled",
+        description: "The subscription process was canceled. You will be redirected to the settings page shortly.",
+      },
+    },
   }
 };
 

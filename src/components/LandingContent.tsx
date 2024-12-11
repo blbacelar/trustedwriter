@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Check, Sparkles, Clock, Trophy } from "lucide-react";
 import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
+import SubscribeButton from "@/components/SubscribeButton";
 
 export default function LandingContent() {
   const { t, language } = useLanguage();
@@ -122,11 +123,7 @@ export default function LandingContent() {
                   </li>
                 ))}
               </ul>
-              <Link href="/sign-up">
-                <Button className="w-full bg-[#00B5B4] hover:bg-[#00A3A2]">
-                  {t("pricing.pro.cta")}
-                </Button>
-              </Link>
+              <SubscribeButton />
             </div>
           </div>
         </div>
