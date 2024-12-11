@@ -5,6 +5,7 @@ import { FormEvent, useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useCredits } from "@/contexts/CreditsContext";
 
 interface SearchbarProps {
   onApplicationData: (data: string | null) => void;
@@ -42,25 +43,18 @@ const Searchbar: React.FC<SearchbarProps> = ({ onApplicationData }) => {
     checkProfile();
   }, []);
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (!hasProfile) {
-      toast.error(t("dashboard.searchbar.noProfile"));
-      router.push("/settings");
-      return;
-    }
-
-    const isValidLink = isValidTrustedHouseSitterURL(searchPrompt);
-    if (!isValidLink) {
-      toast.error(t("dashboard.searchbar.error"));
-      return;
-    }
-
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    
     try {
       setIsLoading(true);
-      const application = await scrapeAndGetApplication(searchPrompt);
-      await onApplicationData(application ?? null);
+      const response = await scrapeAndGetApplication(searchPrompt);
+      if (response) {
+        await onApplicationData(response.content);
+        // Refresh credits after generation
+        const { refreshCredits } = useCredits();
+        await refreshCredits();
+      }
     } catch (error) {
       console.error(error);
       toast.error(t("dashboard.searchbar.failed"));

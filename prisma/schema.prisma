@@ -19,6 +19,8 @@ model User {
   subscriptionId     String?       @unique
   subscriptionStatus String? // 'active', 'canceled', 'past_due'
   priceId            String? // Store the Stripe price ID
+  credits            Int           @default(3)
+  lastCreditReset    DateTime      @default(now())
 }
 
 model Application {

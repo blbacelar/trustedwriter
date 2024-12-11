@@ -5,36 +5,55 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     const { userId } = await auth();
+    console.log("POST /api/applications - userId:", userId);
+
     if (!userId) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Check if user has completed their settings
     const user = await prisma.user.findUnique({
       where: { id: userId },
+      select: { credits: true, subscriptionId: true }
     });
+    console.log("User found:", user);
 
-    if (!user?.profile || !user?.rules?.length) {
-      return NextResponse.json(
-        { error: "Please complete your profile and rules in settings first" },
-        { status: 403 }
-      );
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const { content, listingUrl } = await req.json();
+    // Check if user has subscription or enough credits
+    if (!user.subscriptionId && user.credits <= 0) {
+      return NextResponse.json({ 
+        error: "No credits remaining. Please upgrade to continue." 
+      }, { status: 403 });
+    }
 
+    const data = await req.json();
+    console.log("Received application data:", data);
+    
+    // Create the application
     const application = await prisma.application.create({
       data: {
         userId,
-        content,
-        listingUrl,
-      },
+        content: data.content,
+        listingUrl: data.listingUrl
+      }
     });
+    console.log("Application created:", application);
+
+    // Decrement credits for free users
+    if (!user.subscriptionId) {
+      await prisma.user.update({
+        where: { id: userId },
+        data: { credits: { decrement: 1 } }
+      });
+      console.log("Credits decremented for user:", userId);
+    }
 
     return NextResponse.json(application);
   } catch (error) {
     console.error("[APPLICATIONS_POST]", error);
-    return new NextResponse("Internal Error", { status: 500 });
+    return NextResponse.json({ error: "Internal Error" }, { status: 500 });
   }
 }
 
