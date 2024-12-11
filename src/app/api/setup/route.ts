@@ -35,7 +35,7 @@ export async function GET() {
     });
 
     // Get auth token from headers
-    const headersList = headers();
+    const headersList = await headers();
     const authHeader = headersList.get("authorization");
 
     // Create checkout session directly instead of using fetch
