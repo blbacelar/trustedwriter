@@ -5,11 +5,23 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     const { userId } = await auth();
-    const { content, listingUrl } = await req.json();
-
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
+
+    // Check if user has completed their settings
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user?.profile || !user?.rules?.length) {
+      return NextResponse.json(
+        { error: "Please complete your profile and rules in settings first" },
+        { status: 403 }
+      );
+    }
+
+    const { content, listingUrl } = await req.json();
 
     const application = await prisma.application.create({
       data: {

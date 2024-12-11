@@ -5,6 +5,8 @@ import { profile as defaultProfile, rules as defaultRules } from '@/utils/rules'
 import { useToast } from "@/components/ui/use-toast"
 import { useLanguage } from "@/contexts/LanguageContext"
 import { Trash2 } from "lucide-react"
+import { toast } from "sonner"
+import SubscriptionManagement from "@/components/SubscriptionManagement"
 
 const SettingsPage = () => {
   const { toast } = useToast()
@@ -100,7 +102,7 @@ const SettingsPage = () => {
         </div>
 
         {/* Rules Section */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
           <h2 className="text-xl font-semibold mb-4">{t('settings.rules.title')}</h2>
           <ul className="space-y-1 mb-6">
             {rules.map((rule, index) => (
@@ -154,6 +156,12 @@ const SettingsPage = () => {
               t('settings.save.button')
             )}
           </button>
+        </div>
+
+        {/* Subscription Management Section */}
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <h2 className="text-xl font-semibold mb-4">{t('settings.subscription.title')}</h2>
+          <SubscriptionManagement />
         </div>
       </div>
     </div>

@@ -3,6 +3,8 @@
 import { scrapeAndGetApplication } from '@/lib/actions/index'
 import { FormEvent, useState } from 'react'
 import { useLanguage } from "@/contexts/LanguageContext"
+import { toast } from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
 
 interface SearchbarProps {
   onApplicationData: (data: string | null) => void
@@ -21,27 +23,37 @@ const Searchbar: React.FC<SearchbarProps> = ({ onApplicationData }) => {
   const { t } = useLanguage()
   const [searchPrompt, setSearchPrompt] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-
-    const isValidLink = isValidTrustedHouseSitterURL(searchPrompt)
-
-    if (!isValidLink) {
-      return alert(t("dashboard.searchbar.error"))
-    }
-
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
     try {
-      setIsLoading(true)
-      const application = await scrapeAndGetApplication(searchPrompt)
-      await onApplicationData(application ?? null)
+      setIsLoading(true);
+      const response = await fetch("/api/applications", {
+        method: "POST",
+        // ... rest of fetch config
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        if (response.status === 403) {
+          toast.error(data.error);
+          router.push("/settings");
+          return;
+        }
+        throw new Error(data.error || "Failed to generate application");
+      }
+
+      // ... rest of success handling
     } catch (error) {
-      console.error(error)
-      alert(t("dashboard.searchbar.failed"))
+      console.error(error);
+      toast.error("Failed to generate application");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <form className="w-full max-w-2xl" onSubmit={handleSubmit}>
