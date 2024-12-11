@@ -1,2 +1,0 @@
-# Move all components
-mv src/frontend/components/* src/components/ 

@@ -114,7 +114,9 @@ export const translations = {
       }
     },
     navbar: {
-      settings: "Settings"
+      settings: "Settings",
+      login: "Login",
+      signup: "Sign Up"
     }
   },
   pt: {
@@ -232,7 +234,9 @@ export const translations = {
       }
     },
     navbar: {
-      settings: "Configurações"
+      settings: "Configurações",
+      login: "Login",
+      signup: "Sign Up"
     }
   },
   es: {
@@ -350,7 +354,9 @@ export const translations = {
       }
     },
     navbar: {
-      settings: "Configuración"
+      settings: "Configuración",
+      login: "Login",
+      signup: "Sign Up"
     }
   }
 };

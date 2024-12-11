@@ -12,15 +12,16 @@ export async function POST(req: Request) {
     }
 
     const user = await prisma.user.upsert({
-      where: { id: userId },
+      where: { user_id: userId },
       update: {
-        profile,
-        rules,
+        first_name: profile,
+        subscription: rules.join(","),
       },
       create: {
-        id: userId,
-        profile,
-        rules,
+        user_id: userId,
+        email: "",
+        first_name: profile,
+        subscription: rules.join(","),
       },
     });
 
@@ -40,12 +41,12 @@ export async function GET(req: Request) {
     }
 
     const user = await prisma.user.findUnique({
-      where: { id: userId },
+      where: { user_id: userId },
     });
 
     return NextResponse.json({
-      profile: user?.profile || "",
-      rules: user?.rules || [],
+      profile: user?.first_name || "",
+      rules: user?.subscription?.split(",") || [],
     });
   } catch (error) {
     console.error("[SETTINGS_GET]", error);
