@@ -99,7 +99,8 @@ export const translations = {
         error: "Please provide a valid TrustedHousesitters listing URL",
         failed: "Failed to generate application. Please try again.",
         noProfile: "Please complete your profile settings first",
-        profileRequired: "You need to set up your profile before generating applications.",
+        profileRequired:
+          "You need to set up your profile before generating applications.",
         setupProfile: "Set up profile",
       },
       table: {
@@ -112,20 +113,24 @@ export const translations = {
         view: "View listing",
         search: "Search applications...",
         noResults: "No applications found",
-        noApplications: "No applications yet"
-      }
+        noApplications: "No applications yet",
+      },
     },
     settings: {
       title: "Settings",
       profile: {
         title: "Your Profile",
-        placeholder: "Enter your profile description...",
+        placeholder: "Paste your trustedhousesitters profile here...",
+        helper:
+          "Describe yourself, your experience with pets, and why you love house sitting. This will be used to personalize your applications.",
       },
       rules: {
         title: "Application Rules",
         addPlaceholder: "Add a new rule...",
         addButton: "Add Rule",
         deleteButton: "Delete",
+        helper:
+          "Add rules that should be included in every application. For example: 'Always mention previous experience' or 'Include availability dates'.",
       },
       save: {
         button: "Save Settings",
@@ -163,7 +168,7 @@ export const translations = {
       settings: "Settings",
       login: "Login",
       signup: "Sign Up",
-      signOut: "Sign Out"
+      signOut: "Sign Out",
     },
     billing: {
       success: {
@@ -184,7 +189,28 @@ export const translations = {
       settings: "Settings",
       signOut: "Sign Out",
       login: "Login",
-      signup: "Sign Up"
+      signup: "Sign Up",
+    },
+    tutorial: {
+      welcome: {
+        title: "Welcome to PetSitterAI!",
+        description:
+          "Let's get you started with generating personalized pet sitting applications in just a few steps.",
+      },
+      settings: {
+        title: "Set Up Your Profile",
+        description:
+          "First, head to Settings to add your profile description and application rules. This helps create more personalized applications.",
+      },
+      ready: {
+        title: "You're Almost Ready!",
+        description:
+          "We'll take you to the Settings page now. Once you've set up your profile, you can start generating applications!",
+      },
+      button: {
+        next: "Next",
+        finish: "Let's Go!",
+      },
     },
   },
   pt: {
@@ -288,8 +314,10 @@ export const translations = {
         button: "Gerar Aplicação",
         error: "Por favor, forneça uma URL válida do TrustedHousesitters",
         failed: "Falha ao gerar aplicação. Por favor, tente novamente.",
-        noProfile: "Por favor, complete as configurações do seu perfil primeiro",
-        profileRequired: "Você precisa configurar seu perfil antes de gerar aplicações.",
+        noProfile:
+          "Por favor, complete as configurações do seu perfil primeiro",
+        profileRequired:
+          "Você precisa configurar seu perfil antes de gerar aplicações.",
         setupProfile: "Configurar perfil",
       },
       table: {
@@ -302,20 +330,25 @@ export const translations = {
         view: "View listing",
         search: "Search applications...",
         noResults: "No applications found",
-        noApplications: "No applications yet"
-      }
+        noApplications: "No applications yet",
+      },
     },
     settings: {
       title: "Configurações",
       profile: {
         title: "Seu Perfil",
-        placeholder: "Digite a descrição do seu perfil...",
+        placeholder:
+          "Cole a descrição do seu perfil de TrustedHousesitters aqui...",
+        helper:
+          "Descreva você, sua experiência com animais e por que você ama house sitting. Isso será usado para personalizar suas aplicações.",
       },
       rules: {
         title: "Regras de Aplicação",
         addPlaceholder: "Adicionar uma nova regra...",
         addButton: "Adicionar Regra",
         deleteButton: "Excluir",
+        helper:
+          "Adicione regras que devem ser incluídas em todas as aplicações. Por exemplo: 'Sempre mencionar experiência anterior' ou 'Incluir datas de disponibilidade'.",
       },
       save: {
         button: "Salvar Configurações",
@@ -353,7 +386,7 @@ export const translations = {
       settings: "Configurações",
       login: "Login",
       signup: "Sign Up",
-      signOut: "Sign Out"
+      signOut: "Sign Out",
     },
     billing: {
       success: {
@@ -374,7 +407,28 @@ export const translations = {
       settings: "Configurações",
       signOut: "Sair",
       login: "Entrar",
-      signup: "Cadastrar"
+      signup: "Cadastrar",
+    },
+    tutorial: {
+      welcome: {
+        title: "Welcome to PetSitterAI!",
+        description:
+          "Let's get you started with generating personalized pet sitting applications in just a few steps.",
+      },
+      settings: {
+        title: "Set Up Your Profile",
+        description:
+          "First, head to Settings to add your profile description and application rules. This helps create more personalized applications.",
+      },
+      ready: {
+        title: "You're Almost Ready!",
+        description:
+          "We'll take you to the Settings page now. Once you've set up your profile, you can start generating applications!",
+      },
+      button: {
+        next: "Next",
+        finish: "Let's Go!",
+      },
     },
   },
   es: {
@@ -480,7 +534,8 @@ export const translations = {
         failed:
           "Error al generar la aplicación. Por favor, inténtalo de nuevo.",
         noProfile: "Por favor, complete las configuraciones del perfil primero",
-        profileRequired: "Necesitas configurar tu perfil antes de generar aplicaciones.",
+        profileRequired:
+          "Necesitas configurar tu perfil antes de generar aplicaciones.",
         setupProfile: "Configurar perfil",
       },
       table: {
@@ -493,20 +548,25 @@ export const translations = {
         view: "View listing",
         search: "Search applications...",
         noResults: "No applications found",
-        noApplications: "No applications yet"
-      }
+        noApplications: "No applications yet",
+      },
     },
     settings: {
       title: "Configuración",
       profile: {
         title: "Tu Perfil",
-        placeholder: "Ingresa la descripción de tu perfil...",
+        placeholder:
+          "Cole la descripción de tu perfil de TrustedHousesitters aquí...",
+        helper:
+          "Describe quién eres, tu experiencia con mascotas y por qué te gusta el house sitting. Esto se usará para personalizar tus aplicaciones.",
       },
       rules: {
         title: "Reglas de Aplicación",
         addPlaceholder: "Agregar una nueva regla...",
         addButton: "Agregar Regla",
         deleteButton: "Eliminar",
+        helper:
+          "Agrega reglas que deben incluirse en cada aplicación. Por ejemplo: 'Siempre mencionar experiencia previa' o 'Incluir fechas de disponibilidad'.",
       },
       save: {
         button: "Guardar Configuración",
@@ -544,7 +604,7 @@ export const translations = {
       settings: "Configuración",
       login: "Login",
       signup: "Sign Up",
-      signOut: "Sign Out"
+      signOut: "Sign Out",
     },
     billing: {
       success: {
@@ -565,7 +625,28 @@ export const translations = {
       settings: "Configuración",
       signOut: "Cerrar Sesión",
       login: "Iniciar Sesión",
-      signup: "Registrarse"
+      signup: "Registrarse",
+    },
+    tutorial: {
+      welcome: {
+        title: "Welcome to PetSitterAI!",
+        description:
+          "Let's get you started with generating personalized pet sitting applications in just a few steps.",
+      },
+      settings: {
+        title: "Set Up Your Profile",
+        description:
+          "First, head to Settings to add your profile description and application rules. This helps create more personalized applications.",
+      },
+      ready: {
+        title: "You're Almost Ready!",
+        description:
+          "We'll take you to the Settings page now. Once you've set up your profile, you can start generating applications!",
+      },
+      button: {
+        next: "Next",
+        finish: "Let's Go!",
+      },
     },
   },
 };
