@@ -102,6 +102,18 @@ export const translations = {
         profileRequired: "You need to set up your profile before generating applications.",
         setupProfile: "Set up profile",
       },
+      table: {
+        title: "Your Applications",
+        date: "Date",
+        content: "Content",
+        listing: "Listing",
+        actions: "Actions",
+        copy: "Copy content",
+        view: "View listing",
+        search: "Search applications...",
+        noResults: "No applications found",
+        noApplications: "No applications yet"
+      }
     },
     settings: {
       title: "Settings",
@@ -151,6 +163,7 @@ export const translations = {
       settings: "Settings",
       login: "Login",
       signup: "Sign Up",
+      signOut: "Sign Out"
     },
     billing: {
       success: {
@@ -166,6 +179,12 @@ export const translations = {
     },
     credits: {
       remaining: "{{count}} applications left",
+    },
+    nav: {
+      settings: "Settings",
+      signOut: "Sign Out",
+      login: "Login",
+      signup: "Sign Up"
     },
   },
   pt: {
@@ -273,6 +292,18 @@ export const translations = {
         profileRequired: "Você precisa configurar seu perfil antes de gerar aplicações.",
         setupProfile: "Configurar perfil",
       },
+      table: {
+        title: "Your Applications",
+        date: "Date",
+        content: "Content",
+        listing: "Listing",
+        actions: "Actions",
+        copy: "Copy content",
+        view: "View listing",
+        search: "Search applications...",
+        noResults: "No applications found",
+        noApplications: "No applications yet"
+      }
     },
     settings: {
       title: "Configurações",
@@ -322,6 +353,7 @@ export const translations = {
       settings: "Configurações",
       login: "Login",
       signup: "Sign Up",
+      signOut: "Sign Out"
     },
     billing: {
       success: {
@@ -337,6 +369,12 @@ export const translations = {
     },
     credits: {
       remaining: "{{count}} aplicações restantes",
+    },
+    nav: {
+      settings: "Configurações",
+      signOut: "Sair",
+      login: "Entrar",
+      signup: "Cadastrar"
     },
   },
   es: {
@@ -445,6 +483,18 @@ export const translations = {
         profileRequired: "Necesitas configurar tu perfil antes de generar aplicaciones.",
         setupProfile: "Configurar perfil",
       },
+      table: {
+        title: "Your Applications",
+        date: "Date",
+        content: "Content",
+        listing: "Listing",
+        actions: "Actions",
+        copy: "Copy content",
+        view: "View listing",
+        search: "Search applications...",
+        noResults: "No applications found",
+        noApplications: "No applications yet"
+      }
     },
     settings: {
       title: "Configuración",
@@ -494,6 +544,7 @@ export const translations = {
       settings: "Configuración",
       login: "Login",
       signup: "Sign Up",
+      signOut: "Sign Out"
     },
     billing: {
       success: {
@@ -509,6 +560,12 @@ export const translations = {
     },
     credits: {
       remaining: "{{count}} aplicaciones restantes",
+    },
+    nav: {
+      settings: "Configuración",
+      signOut: "Cerrar Sesión",
+      login: "Iniciar Sesión",
+      signup: "Registrarse"
     },
   },
 };

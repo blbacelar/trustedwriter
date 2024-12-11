@@ -1,18 +1,46 @@
 "use client";
 
-import Searchbar from "@/components/Searchbar";
-import RichTextEditor from "@/components/RichTextEditor";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import Image from "next/image";
-import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import Searchbar from "@/components/Searchbar";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import RichTextEditor from "@/components/RichTextEditor";
+import ApplicationsTable from "@/components/ApplicationsTable";
 
-const DashboardPage = () => {
+interface Application {
+  id: string;
+  content: string;
+  listingUrl: string;
+  createdAt: string;
+}
+
+export default function DashboardPage() {
   const { toast } = useToast();
   const { t } = useLanguage();
   const [applicationData, setApplicationData] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchApplications = async () => {
+      try {
+        const response = await fetch("/api/applications");
+        if (response.ok) {
+          const data = await response.json();
+          setApplications(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch applications:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchApplications();
+  }, [applicationData]); // Refresh when new application is generated
 
   const handleApplicationData = async (data: string | null) => {
     setIsGenerating(true);
@@ -80,8 +108,21 @@ const DashboardPage = () => {
           </div>
         </section>
       )}
+
+      <section className="px-6 md:px-20 py-12">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-2xl font-semibold mb-6 text-[#1B1B1B]">
+            {t("dashboard.table.title")}
+          </h2>
+          {isLoading ? (
+            <div className="flex justify-center py-8">
+              <div className="animate-spin h-8 w-8 border-2 border-[#00B5B4] border-t-transparent rounded-full" />
+            </div>
+          ) : (
+            <ApplicationsTable applications={applications} />
+          )}
+        </div>
+      </section>
     </>
   );
-};
-
-export default DashboardPage;
+}
