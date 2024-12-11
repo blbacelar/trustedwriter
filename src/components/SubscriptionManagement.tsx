@@ -29,6 +29,23 @@ export default function SubscriptionManagement() {
     }
   };
 
+  const handleReactivateSubscription = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("/api/stripe/reactivate", {
+        method: "POST",
+      });
+
+      if (!response.ok) throw new Error();
+      toast.success(t("settings.subscription.reactivateSuccess"));
+      fetchSubscription();
+    } catch (error) {
+      toast.error(t("settings.subscription.reactivateError"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const fetchSubscription = async () => {
     try {
       const response = await fetch("/api/stripe/subscription");
@@ -54,13 +71,7 @@ export default function SubscriptionManagement() {
           <div>
             <p className="text-lg font-medium">
               {t("settings.subscription.status")}:{" "}
-              <span
-                className={
-                  subscription.status === "active"
-                    ? "text-green-600"
-                    : "text-red-600"
-                }
-              >
+              <span className={subscription.status === "active" ? "text-green-600" : "text-red-600"}>
                 {t(`settings.subscription.${subscription.status}`)}
               </span>
             </p>
@@ -72,12 +83,24 @@ export default function SubscriptionManagement() {
             )}
           </div>
           {subscription.status === "active" && (
-            <button
-              onClick={() => setShowCancelDialog(true)}
-              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 transition-colors"
-            >
-              {t("settings.subscription.cancelButton")}
-            </button>
+            <>
+              {subscription.cancelAt ? (
+                <button
+                  onClick={handleReactivateSubscription}
+                  disabled={loading}
+                  className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 transition-colors"
+                >
+                  {loading ? t("settings.subscription.reactivating") : t("settings.subscription.reactivate")}
+                </button>
+              ) : (
+                <button
+                  onClick={() => setShowCancelDialog(true)}
+                  className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 transition-colors"
+                >
+                  {t("settings.subscription.cancelButton")}
+                </button>
+              )}
+            </>
           )}
         </div>
       </div>
@@ -103,9 +126,7 @@ export default function SubscriptionManagement() {
               disabled={loading}
               className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 transition-colors"
             >
-              {loading
-                ? t("settings.subscription.canceling")
-                : t("settings.subscription.cancelDialog.confirm")}
+              {loading ? t("settings.subscription.canceling") : t("settings.subscription.cancelDialog.confirm")}
             </button>
           </DialogFooter>
         </DialogContent>

@@ -136,6 +136,10 @@ export const translations = {
           cancel: "Keep Subscription",
           confirm: "Yes, Cancel",
         },
+        reactivate: "Reactivate Subscription",
+        reactivating: "Reactivating...",
+        reactivateSuccess: "Subscription reactivated successfully",
+        reactivateError: "Failed to reactivate subscription",
       },
     },
     navbar: {
@@ -295,6 +299,10 @@ export const translations = {
           cancel: "Manter Assinatura",
           confirm: "Sim, Cancelar",
         },
+        reactivate: "Reativar Assinatura",
+        reactivating: "Reativando...",
+        reactivateSuccess: "Assinatura reativada com sucesso",
+        reactivateError: "Falha ao reativar assinatura",
       },
     },
     navbar: {
@@ -455,6 +463,10 @@ export const translations = {
           cancel: "Mantener Suscripción",
           confirm: "Sí, Cancelar",
         },
+        reactivate: "Reactivar Suscripción",
+        reactivating: "Reactivando...",
+        reactivateSuccess: "Suscripción reactivada con éxito",
+        reactivateError: "Error al reactivar la suscripción",
       },
     },
     navbar: {
