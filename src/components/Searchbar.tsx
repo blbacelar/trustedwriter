@@ -6,6 +6,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useCredits } from "@/contexts/CreditsContext";
+import { useUser } from "@clerk/nextjs";
 
 interface SearchbarProps {
   onApplicationData: (data: string | null) => void;
@@ -26,6 +27,7 @@ const Searchbar: React.FC<SearchbarProps> = ({ onApplicationData }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasProfile, setHasProfile] = useState(false);
   const router = useRouter();
+  const { user } = useUser();
 
   useEffect(() => {
     const checkProfile = async () => {
@@ -40,8 +42,10 @@ const Searchbar: React.FC<SearchbarProps> = ({ onApplicationData }) => {
       }
     };
 
-    checkProfile();
-  }, []);
+    if (user) {
+      checkProfile();
+    }
+  }, [user]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

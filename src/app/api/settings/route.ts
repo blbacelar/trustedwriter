@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache'
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
@@ -24,6 +25,10 @@ export async function POST(req: Request) {
       },
     });
 
+    // Revalidate the settings cache
+    revalidatePath('/settings');
+    revalidatePath('/dashboard');
+
     return NextResponse.json(user);
   } catch (error) {
     console.error("[SETTINGS_POST]", error);
@@ -31,10 +36,9 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     const { userId } = await auth();
-
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
