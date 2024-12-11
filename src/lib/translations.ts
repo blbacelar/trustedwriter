@@ -164,6 +164,9 @@ export const translations = {
           "The subscription process was canceled. You will be redirected to the settings page shortly.",
       },
     },
+    credits: {
+      remaining: "{{count}} applications left",
+    },
   },
   pt: {
     hero: {
@@ -331,6 +334,9 @@ export const translations = {
         description:
           "The subscription process was canceled. You will be redirected to the settings page shortly.",
       },
+    },
+    credits: {
+      remaining: "{{count}} aplicações restantes",
     },
   },
   es: {
@@ -500,6 +506,9 @@ export const translations = {
         description:
           "The subscription process was canceled. You will be redirected to the settings page shortly.",
       },
+    },
+    credits: {
+      remaining: "{{count}} aplicaciones restantes",
     },
   },
 };

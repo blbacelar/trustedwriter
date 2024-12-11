@@ -22,12 +22,14 @@ export async function GET() {
       },
     });
 
-    // Create or update user with Stripe customer ID
+    // Create or update user with Stripe customer ID and initialize as free plan
     await prisma.user.upsert({
       where: { id: userId },
       create: {
         id: userId,
         stripeCustomerId: customer.id,
+        credits: 3,
+        subscriptionStatus: 'free', // Initialize as free plan
       },
       update: {
         stripeCustomerId: customer.id,

@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ClerkProvider } from "@clerk/nextjs";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { Toaster as SonnerToaster } from 'sonner';
+import { CreditsProvider } from "@/contexts/CreditsContext";
 
 const inter = Inter({ subsets: ["latin"] });
 const spaceGrotesk = Space_Grotesk({
@@ -32,17 +33,19 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <LanguageProvider>
-        <html lang="en">
-          <body className={inter.className}>
-            <div className="flex flex-col min-h-screen">
-              <Navbar />
-              <main className="flex-grow">{children}</main>
-              <Footer />
-              <Toaster />
-              <SonnerToaster position="top-center" />
-            </div>
-          </body>
-        </html>
+        <CreditsProvider>
+          <html lang="en">
+            <body className={inter.className}>
+              <div className="flex flex-col min-h-screen">
+                <Navbar />
+                <main className="flex-grow">{children}</main>
+                <Footer />
+                <Toaster />
+                <SonnerToaster position="top-center" />
+              </div>
+            </body>
+          </html>
+        </CreditsProvider>
       </LanguageProvider>
     </ClerkProvider>
   );
