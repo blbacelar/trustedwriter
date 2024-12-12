@@ -25,6 +25,8 @@ export async function POST(req: Request) {
         id: userId,
         profile,
         rules,
+        email: userId,
+        name: userId,
       },
     });
 
