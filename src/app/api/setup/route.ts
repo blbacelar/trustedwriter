@@ -29,7 +29,9 @@ export async function GET() {
         id: userId,
         stripeCustomerId: customer.id,
         credits: 3,
-        subscriptionStatus: 'free', // Initialize as free plan
+        subscriptionStatus: "free", // Initialize as free plan
+        email: userId,
+        name: userId,
       },
       update: {
         stripeCustomerId: customer.id,
@@ -60,13 +62,17 @@ export async function GET() {
     if (session.url) {
       return NextResponse.redirect(session.url);
     }
-    
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/dashboard`);
+
+    return NextResponse.redirect(
+      `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`
+    );
   } catch (error) {
     console.error("[SETUP_GET]", error);
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/dashboard`);
+    return NextResponse.redirect(
+      `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`
+    );
   }
 }
 
 // Keep POST handler for direct subscription flow
-export { POST } from './post'; 
+export { POST } from "./post";

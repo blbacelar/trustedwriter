@@ -1,5 +1,5 @@
-import { cache } from 'react'
-import { prisma } from "@/lib/prisma"
+import { cache } from "react";
+import { prisma } from "@/lib/prisma";
 
 export const getSettings = cache(async (userId: string) => {
   const user = await prisma.user.findUnique({
@@ -10,8 +10,8 @@ export const getSettings = cache(async (userId: string) => {
       credits: true,
       subscriptionId: true,
       subscriptionStatus: true,
-    }
+    },
   });
 
   return user;
-}); 
+});
