@@ -8,6 +8,9 @@ import Searchbar from "@/components/Searchbar";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import RichTextEditor from "@/components/RichTextEditor";
 import ApplicationsTable from "@/components/ApplicationsTable";
+import { scrapeAndGetApplication } from "@/lib/actions";
+import ErrorState from "@/components/ErrorState";
+import { checkOpenAIStatus } from "@/utils/gpt";
 
 interface Application {
   id: string;
@@ -23,6 +26,10 @@ export default function DashboardPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [applications, setApplications] = useState<Application[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [serviceStatus, setServiceStatus] = useState<{
+    operational: boolean;
+    status: string;
+  } | null>(null);
 
   useEffect(() => {
     const fetchApplications = async () => {
@@ -42,10 +49,53 @@ export default function DashboardPage() {
     fetchApplications();
   }, [applicationData]); // Refresh when new application is generated
 
+  useEffect(() => {
+    const checkStatus = async () => {
+      const status = await checkOpenAIStatus();
+      setServiceStatus(status);
+    };
+    checkStatus();
+  }, []);
+
   const handleApplicationData = async (data: string | null) => {
+    if (!data) return;
+
+    // Check OpenAI status before proceeding
+    const currentStatus = await checkOpenAIStatus();
+    setServiceStatus(currentStatus);
+    
+    if (!currentStatus.operational) {
+      toast({
+        variant: "destructive",
+        title: "Service Unavailable",
+        description: currentStatus.status || "OpenAI service is currently down",
+        duration: 5000,
+      });
+      return;
+    }
+
     setIsGenerating(true);
     try {
-      setApplicationData(data);
+      const result = await scrapeAndGetApplication(data);
+      
+      if (result && "error" in result) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: result.message || "Failed to generate application",
+          duration: 5000,
+        });
+        return;
+      }
+
+      setApplicationData(result?.content || "");
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Something went wrong. Please try again later.",
+        duration: 5000,
+      });
     } finally {
       setIsGenerating(false);
     }
@@ -59,6 +109,16 @@ export default function DashboardPage() {
       duration: 3000,
     });
   };
+
+  if (!serviceStatus?.operational) {
+    return (
+      <ErrorState 
+        title="Our AI Pet is Taking a Nap!" 
+        message="OpenAI services are currently unavailable. Please try again later."
+        status={serviceStatus?.status}
+      />
+    );
+  }
 
   return (
     <>

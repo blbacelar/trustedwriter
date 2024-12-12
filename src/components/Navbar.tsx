@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 import { Pen, Menu, X } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import LanguageSelector from "./LanguageSelector";
 import { useState } from "react";
 import CreditsIndicator from "./CreditsIndicator";
 import CustomUserButton from "./CustomUserButton";
@@ -27,13 +26,9 @@ const Navbar = () => {
           <div className="hidden md:flex items-center gap-4">
             {isSignedIn && <CreditsIndicator />}
             {isSignedIn ? (
-              <>
-                <LanguageSelector />
-                <CustomUserButton />
-              </>
+              <CustomUserButton />
             ) : (
               <>
-                <LanguageSelector />
                 <Link href="/sign-in" className="border-2 border-[#00B5B4] text-[#00B5B4] px-4 py-2 rounded-full hover:bg-[#00B5B4] hover:text-white transition-colors">
                   {t("nav.login")}
                 </Link>
@@ -63,25 +58,12 @@ const Navbar = () => {
                 <div className="py-2">
                   <CreditsIndicator />
                 </div>
-                <Link
-                  href="/settings"
-                  className="block py-2 text-gray-600 hover:text-[#00B5B4] transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {t("navbar.settings")}
-                </Link>
-                <div className="py-2">
-                  <LanguageSelector />
-                </div>
                 <div className="py-2">
                   <CustomUserButton />
                 </div>
               </>
             ) : (
               <>
-                <div className="py-2">
-                  <LanguageSelector />
-                </div>
                 <Link
                   href="/sign-in"
                   className="block py-2 text-[#00B5B4] hover:text-[#00A3A2] transition-colors"

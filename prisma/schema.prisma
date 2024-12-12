@@ -9,6 +9,8 @@ datasource db {
 
 model User {
   id                 String        @id
+  email              String        @unique
+  name               String
   profile            String?       @db.Text
   rules              String[]
   language           String        @default("en")
@@ -31,4 +33,14 @@ model Application {
   listingUrl String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+}
+
+model ErrorLog {
+  id             String   @id @default(cuid())
+  userId         String?
+  message        String
+  stack          String?
+  context        String
+  additionalData String?  @db.Text
+  timestamp      DateTime @default(now())
 }

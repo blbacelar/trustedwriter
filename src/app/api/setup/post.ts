@@ -27,6 +27,8 @@ export async function POST() {
       create: {
         id: userId,
         stripeCustomerId: customer.id,
+        email: userId,
+        name: userId,
       },
       update: {
         stripeCustomerId: customer.id,
@@ -38,4 +40,4 @@ export async function POST() {
     console.error("[SETUP_POST]", error);
     return NextResponse.json({ error: "Internal Error" }, { status: 500 });
   }
-} 
+}

@@ -2,8 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Trash2 } from "lucide-react";
+import { Trash2, Info } from "lucide-react";
 import { toast } from "sonner";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function ProfileSettings() {
   const { t } = useLanguage();
@@ -98,11 +104,20 @@ export default function ProfileSettings() {
 
       {/* Rules Section */}
       <div className="bg-white rounded-lg shadow-lg p-6">
-        <h2 className="text-xl font-semibold mb-4">
-          {t("settings.rules.title")}
-        </h2>
-        <div className="mb-2 text-sm text-gray-600">
-          {t("settings.rules.helper")}
+        <div className="flex items-center gap-2 mb-4">
+          <h2 className="text-xl font-semibold">{t("settings.rules.title")}</h2>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button className="p-1 hover:bg-gray-100 rounded-full transition-colors">
+                  <Info className="h-4 w-4 text-gray-400" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-sm whitespace-pre-line">
+                {t("settings.rules.helper")}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
         <ul className="space-y-1 mb-6">
           {rules.map((rule, index) => (

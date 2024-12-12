@@ -49,12 +49,12 @@ const Searchbar: React.FC<SearchbarProps> = ({ onApplicationData }) => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    
+
     try {
       setIsLoading(true);
       const response = await scrapeAndGetApplication(searchPrompt);
       if (response) {
-        await onApplicationData(response.content);
+        await onApplicationData(response.content ?? null);
         // Refresh credits after generation
         const { refreshCredits } = useCredits();
         await refreshCredits();
@@ -99,7 +99,9 @@ const Searchbar: React.FC<SearchbarProps> = ({ onApplicationData }) => {
           >
             {isLoading ? (
               <>
-                <span className="opacity-0">{t("dashboard.searchbar.button")}</span>
+                <span className="opacity-0">
+                  {t("dashboard.searchbar.button")}
+                </span>
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="animate-spin h-5 w-5 border-2 border-white border-l-transparent rounded-full" />
                 </div>
