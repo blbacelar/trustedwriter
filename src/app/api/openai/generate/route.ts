@@ -3,7 +3,7 @@ import OpenAI from "openai";
 import { logError } from "@/lib/errorLogging";
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.API_KEY,
 });
 
 export async function POST(request: NextRequest) {
