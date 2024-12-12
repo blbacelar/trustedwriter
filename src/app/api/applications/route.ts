@@ -1,11 +1,13 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import { headers } from "next/headers";
 
 export async function POST(req: Request) {
   try {
-    const { userId } = await auth();
-    console.log("POST /api/applications - userId:", userId);
+    const headersList = await headers();
+    const session = await auth();
+    const { userId } = session || {};
 
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -59,10 +61,12 @@ export async function POST(req: Request) {
 
 export async function GET() {
   try {
-    const { userId } = await auth();
+    await headers();
+    const session = await auth();
+    const { userId } = session || {};
 
     if (!userId) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const applications = await prisma.application.findMany({

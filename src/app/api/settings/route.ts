@@ -1,11 +1,14 @@
-import { revalidatePath } from 'next/cache'
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import { headers } from "next/headers";
 
 export async function POST(req: Request) {
   try {
-    const { userId } = await auth();
+    const headersList = await headers();
+    const session = await auth();
+    const { userId } = session || {};
     const { profile, rules } = await req.json();
 
     if (!userId) {
@@ -26,8 +29,8 @@ export async function POST(req: Request) {
     });
 
     // Revalidate the settings cache
-    revalidatePath('/settings');
-    revalidatePath('/dashboard');
+    revalidatePath("/settings");
+    revalidatePath("/dashboard");
 
     return NextResponse.json(user);
   } catch (error) {
@@ -38,7 +41,10 @@ export async function POST(req: Request) {
 
 export async function GET() {
   try {
-    const { userId } = await auth();
+    const headersList = await headers();
+    const session = await auth();
+    const { userId } = session || {};
+
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
     }

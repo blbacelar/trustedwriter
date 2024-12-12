@@ -104,15 +104,15 @@ export const translations = {
         setupProfile: "Set up profile",
       },
       table: {
-        title: "Your Applications",
+        title: "Applications",
         date: "Date",
         content: "Content",
-        listing: "Listing",
+        listing: "Job Listing",
         actions: "Actions",
         copy: "Copy content",
         view: "View listing",
         search: "Search applications...",
-        noResults: "No applications found",
+        noResults: "No results found",
         noApplications: "No applications yet",
       },
     },
@@ -129,8 +129,15 @@ export const translations = {
         addPlaceholder: "Add a new rule...",
         addButton: "Add Rule",
         deleteButton: "Delete",
-        helper:
-          "Add rules that should be included in every application. For example: 'Always mention previous experience' or 'Include availability dates'.",
+        helper: `Add rules that should be included in every application. Examples:
+- Write as a family and keep it concise
+- List your travel experience (e.g., "Lived in Brazil, Portugal, visited UK, Ireland, Denmark")
+- Mention specific location experience for relevant applications
+- Include professional background (e.g., "Work in Software Development and Digital Media")
+- Share your cultural background and family details
+- Highlight pet sitting experience (types of pets, duration)
+- Keep tone natural and friendly, max 3 paragraphs
+- Specify preferred language for responses`
       },
       save: {
         button: "Save Settings",
@@ -169,6 +176,7 @@ export const translations = {
       login: "Login",
       signup: "Sign Up",
       signOut: "Sign Out",
+      language: "Language",
     },
     billing: {
       success: {
@@ -190,6 +198,7 @@ export const translations = {
       signOut: "Sign Out",
       login: "Login",
       signup: "Sign Up",
+      language: "Language",
     },
     tutorial: {
       welcome: {
@@ -310,7 +319,7 @@ export const translations = {
         },
       },
       searchbar: {
-        placeholder: "Cole a URL do anúncio do TrustedHousesitters aqui...",
+        placeholder: "Cole a URL do anúncio do TrustedHousesitters aquí...",
         button: "Gerar Aplicação",
         error: "Por favor, forneça uma URL válida do TrustedHousesitters",
         failed: "Falha ao gerar aplicação. Por favor, tente novamente.",
@@ -321,7 +330,7 @@ export const translations = {
         setupProfile: "Configurar perfil",
       },
       table: {
-        title: "Your Applications",
+        title: "Candidaturas",
         date: "Date",
         content: "Content",
         listing: "Listing",
@@ -338,7 +347,7 @@ export const translations = {
       profile: {
         title: "Seu Perfil",
         placeholder:
-          "Cole a descrição do seu perfil de TrustedHousesitters aqui...",
+          "Cole a descrição do seu perfil de TrustedHousesitters aquí...",
         helper:
           "Descreva você, sua experiência com animais e por que você ama house sitting. Isso será usado para personalizar suas aplicações.",
       },
@@ -347,8 +356,15 @@ export const translations = {
         addPlaceholder: "Adicionar uma nova regra...",
         addButton: "Adicionar Regra",
         deleteButton: "Excluir",
-        helper:
-          "Adicione regras que devem ser incluídas em todas as aplicações. Por exemplo: 'Sempre mencionar experiência anterior' ou 'Incluir datas de disponibilidade'.",
+        helper: `Adicione regras que devem ser incluídas em todas as aplicações. Exemplos:
+- Escrever como uma família e manter conciso
+- Listar experiência de viagem (ex: "Morou no Brasil, Portugal, visitou Reino Unido, Irlanda, Dinamarca")
+- Mencionar experiência em locais específicos para aplicaciones relevantes
+- Incluir background profissional (ex: "Trabalha com Desenvolvimento de Software e Mídia Digital")
+- Compartilhar background cultural e detalhes da família
+- Destacar experiência com pets (tipos de animais, duração)
+- Manter tom natural e amigável, máximo 3 parágrafos
+- Especificar idioma preferido para respostas`
       },
       save: {
         button: "Salvar Configurações",
@@ -387,6 +403,7 @@ export const translations = {
       login: "Login",
       signup: "Sign Up",
       signOut: "Sign Out",
+      language: "Language",
     },
     billing: {
       success: {
@@ -408,6 +425,7 @@ export const translations = {
       signOut: "Sair",
       login: "Entrar",
       signup: "Cadastrar",
+      language: "Language",
     },
     tutorial: {
       welcome: {
@@ -539,16 +557,16 @@ export const translations = {
         setupProfile: "Configurar perfil",
       },
       table: {
-        title: "Your Applications",
-        date: "Date",
-        content: "Content",
-        listing: "Listing",
-        actions: "Actions",
-        copy: "Copy content",
-        view: "View listing",
-        search: "Search applications...",
-        noResults: "No applications found",
-        noApplications: "No applications yet",
+        title: "Aplicaciones",
+        date: "Fecha",
+        content: "Contenido",
+        listing: "Anuncio",
+        actions: "Acciones",
+        copy: "Copiar contenido",
+        view: "Ver anuncio",
+        search: "Buscar aplicaciones...",
+        noResults: "No se encontraron resultados",
+        noApplications: "Aún no hay aplicaciones",
       },
     },
     settings: {
@@ -565,8 +583,15 @@ export const translations = {
         addPlaceholder: "Agregar una nueva regla...",
         addButton: "Agregar Regla",
         deleteButton: "Eliminar",
-        helper:
-          "Agrega reglas que deben incluirse en cada aplicación. Por ejemplo: 'Siempre mencionar experiencia previa' o 'Incluir fechas de disponibilidad'.",
+        helper: `Agrega reglas que deben incluirse en cada aplicación. Ejemplos:
+- Escribir como familia y mantener conciso
+- Listar experiencia de viaje (ej: "Vivió en Brasil, Portugal, visitó Reino Unido, Irlanda, Dinamarca")
+- Mencionar experiencia en lugares específicos para aplicaciones relevantes
+- Incluir antecedentes profesionales (ej: "Trabaja en Desarrollo de Software y Medios Digitales")
+- Compartir antecedentes culturales y detalles familiares
+- Destacar experiencia con mascotas (tipos de animales, duración)
+- Mantener tono natural y amigable, máximo 3 párrafos
+- Especificar idioma preferido para respuestas`
       },
       save: {
         button: "Guardar Configuración",
@@ -605,6 +630,7 @@ export const translations = {
       login: "Login",
       signup: "Sign Up",
       signOut: "Sign Out",
+      language: "Language",
     },
     billing: {
       success: {
@@ -626,6 +652,7 @@ export const translations = {
       signOut: "Cerrar Sesión",
       login: "Iniciar Sesión",
       signup: "Registrarse",
+      language: "Language",
     },
     tutorial: {
       welcome: {

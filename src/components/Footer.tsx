@@ -6,7 +6,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 const Footer = () => {
   const { t } = useLanguage();
   const year = new Date().getFullYear();
-  
+
   return (
     <footer className="bg-white border-t">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -30,20 +30,30 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="space-y-4">
             <h3 className="text-xl font-bold text-[#00B5B4]">TrustedWriter</h3>
-            <p className="text-gray-600 max-w-xs">{t("footer.brand.description")}</p>
+            <p className="text-gray-600 max-w-xs">
+              {t("footer.brand.description")}
+            </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-semibold text-gray-900 mb-4">{t("footer.quickLinks.title")}</h4>
+            <h4 className="font-semibold text-gray-900 mb-4">
+              {t("footer.quickLinks.title")}
+            </h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/settings" className="text-gray-600 hover:text-[#00B5B4] transition-colors">
+                <Link
+                  href="/settings"
+                  className="text-gray-600 hover:text-[#00B5B4] transition-colors"
+                >
                   {t("footer.quickLinks.settings")}
                 </Link>
               </li>
               <li>
-                <Link href="/" className="text-gray-600 hover:text-[#00B5B4] transition-colors">
+                <Link
+                  href="/"
+                  className="text-gray-600 hover:text-[#00B5B4] transition-colors"
+                >
                   {t("footer.quickLinks.home")}
                 </Link>
               </li>
@@ -52,7 +62,9 @@ const Footer = () => {
 
           {/* Resources */}
           <div>
-            <h4 className="font-semibold text-gray-900 mb-4">{t("footer.resources.title")}</h4>
+            <h4 className="font-semibold text-gray-900 mb-4">
+              {t("footer.resources.title")}
+            </h4>
             <ul className="space-y-2">
               <li>
                 <a
@@ -62,16 +74,6 @@ const Footer = () => {
                   className="text-gray-600 hover:text-[#00B5B4] transition-colors"
                 >
                   {t("footer.resources.join")}
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://github.com/blbacelar/trustedwriter"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-600 hover:text-[#00B5B4] transition-colors"
-                >
-                  {t("footer.resources.github")}
                 </a>
               </li>
             </ul>

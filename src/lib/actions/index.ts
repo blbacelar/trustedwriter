@@ -5,12 +5,17 @@ import { queryGPT } from '@/utils/gpt'
 import { scrapeWebsite } from '@/utils/scrap'
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { headers } from "next/headers"
+import { logError } from "@/lib/errorLogging"
 
 export async function scrapeAndGetApplication(houseSittingUrl: string) {
-  if (!houseSittingUrl) return
-
+  let session;
+  
   try {
-    const { userId } = await auth();
+    const headersList = await headers();
+    session = await auth();
+    const { userId } = session || {};
+    
     if (!userId) {
       throw new Error("Unauthorized");
     }
@@ -82,7 +87,20 @@ export async function scrapeAndGetApplication(houseSittingUrl: string) {
       credits: user.subscriptionId ? null : user.credits - 1
     };
   } catch (error: any) {
-    console.error("Failed to get application:", error);
-    throw error;
+    // Log the error
+    await logError({
+      error,
+      userId: session?.userId,
+      context: 'scrapeAndGetApplication'
+    });
+
+    // Return a structured error response
+    return {
+      error: true,
+      message: error instanceof Error 
+        ? error.message 
+        : "An unexpected error occurred",
+      code: error.code || 'UNKNOWN_ERROR'
+    };
   }
 }
