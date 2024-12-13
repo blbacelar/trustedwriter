@@ -6,7 +6,19 @@ import { toast } from "sonner";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
-export default function SubscribeButton() {
+interface SubscribeButtonProps {
+  period?: 'monthly' | 'annual';
+  priceId: string;
+  isCredit?: boolean;
+  credits?: number;
+}
+
+export default function SubscribeButton({ 
+  period = 'monthly', 
+  priceId, 
+  isCredit = false,
+  credits 
+}: SubscribeButtonProps) {
   const [loading, setLoading] = useState(false);
   const { t } = useLanguage();
   const { isSignedIn } = useAuth();
@@ -14,26 +26,20 @@ export default function SubscribeButton() {
 
   const handleSubscribe = async () => {
     if (!isSignedIn) {
-      router.push("/sign-up?subscribe=true");
+      router.push(`/sign-up?subscribe=true&priceId=${priceId}`);
       return;
     }
 
     try {
       setLoading(true);
       
-      // First create/setup the customer
-      const setupResponse = await fetch("/api/setup", {
-        method: "POST",
-      });
-      
-      if (!setupResponse.ok) {
-        toast.error("Failed to setup subscription");
-        return;
-      }
-
-      // Then create checkout session
       const response = await fetch("/api/stripe", {
         method: "POST",
+        body: JSON.stringify({ 
+          priceId,
+          isCredit,
+          period: isCredit ? undefined : period
+        })
       });
       
       const data = await response.json();
@@ -62,7 +68,12 @@ export default function SubscribeButton() {
       disabled={loading}
       className="w-full bg-[#00B5B4] hover:bg-[#00A3A2] text-white px-4 py-2 rounded-full transition-colors disabled:opacity-50"
     >
-      {loading ? t("pricing.pro.loading") : t("pricing.pro.cta")}
+      {loading 
+        ? t("pricing.loading") 
+        : isCredit 
+          ? t("pricing.credits.buy") 
+          : t("pricing.pro.cta")
+      }
     </button>
   );
 }
