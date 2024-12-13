@@ -3,7 +3,14 @@
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import SubscribeButton from "@/components/SubscribeButton";
 
 export default function SubscriptionManagement() {
@@ -72,11 +79,11 @@ export default function SubscriptionManagement() {
           <div>
             <p className="text-lg font-medium">
               {t("settings.subscription.status")}:{" "}
-              <span 
+              <span
                 className={
-                  subscription.status === "active" 
-                    ? "text-green-600" 
-                    : subscription.status === "free" 
+                  subscription.status === "active"
+                    ? "text-green-600"
+                    : subscription.status === "free"
                     ? "text-blue-600"
                     : "text-red-600"
                 }
@@ -99,7 +106,9 @@ export default function SubscriptionManagement() {
                   disabled={loading}
                   className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 transition-colors"
                 >
-                  {loading ? t("settings.subscription.reactivating") : t("settings.subscription.reactivate")}
+                  {loading
+                    ? t("settings.subscription.reactivating")
+                    : t("settings.subscription.reactivate")}
                 </button>
               ) : (
                 <button
@@ -110,11 +119,15 @@ export default function SubscriptionManagement() {
                 </button>
               )}
             </>
-          ) : subscription.status === "free" && (
-            <div className="flex items-center gap-2">
-              <p className="text-sm text-gray-500">{t("settings.subscription.upgradeCTA")}</p>
-              <SubscribeButton />
-            </div>
+          ) : (
+            subscription.status === "free" && (
+              <div className="flex items-center gap-2">
+                <p className="text-sm text-gray-500">
+                  {t("settings.subscription.upgradeCTA")}
+                </p>
+                <SubscribeButton priceId={subscription.priceId} />
+              </div>
+            )
           )}
         </div>
       </div>
@@ -122,7 +135,9 @@ export default function SubscriptionManagement() {
       <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t("settings.subscription.cancelDialog.title")}</DialogTitle>
+            <DialogTitle>
+              {t("settings.subscription.cancelDialog.title")}
+            </DialogTitle>
             <DialogDescription>
               {t("settings.subscription.cancelDialog.description")}
             </DialogDescription>
@@ -140,7 +155,9 @@ export default function SubscriptionManagement() {
               disabled={loading}
               className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 transition-colors"
             >
-              {loading ? t("settings.subscription.canceling") : t("settings.subscription.cancelDialog.confirm")}
+              {loading
+                ? t("settings.subscription.canceling")
+                : t("settings.subscription.cancelDialog.confirm")}
             </button>
           </DialogFooter>
         </DialogContent>
