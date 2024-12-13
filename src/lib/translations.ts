@@ -43,6 +43,22 @@ export const translations = {
         popular: "Popular",
         loading: "Processing...",
       },
+      periods: {
+        monthly: "Monthly",
+        annual: "Annual",
+        lifetime: "Lifetime"
+      },
+      saveUpTo: "Save up to",
+      perMonth: "/mo",
+      perYear: "/yr",
+      subscriptions: "Subscriptions",
+      credits: {
+        title: "Credit Packages",
+        unit: "Credits",
+        perCredit: "per credit",
+        buy: "Buy Credits"
+      },
+      loading: "Processing..."
     },
     cta: {
       title: "Ready to Start Your House Sitting Journey?",
@@ -267,6 +283,22 @@ export const translations = {
         popular: "Popular",
         loading: "Processando...",
       },
+      periods: {
+        monthly: "Mensal",
+        annual: "Anual",
+        lifetime: "Vida"
+      },
+      saveUpTo: "Economize até",
+      perMonth: "/mês",
+      perYear: "/ano",
+      subscriptions: "Assinaturas",
+      credits: {
+        title: "Pacotes de Créditos",
+        unit: "Créditos",
+        perCredit: "por crédito",
+        buy: "Comprar Créditos"
+      },
+      loading: "Processando..."
     },
     cta: {
       title: "Pronto para Começar sua Jornada como House Sitter?",
@@ -494,6 +526,22 @@ export const translations = {
         popular: "Popular",
         loading: "Procesando...",
       },
+      periods: {
+        monthly: "Mensual",
+        annual: "Anual",
+        lifetime: "Vida"
+      },
+      saveUpTo: "Economize hasta",
+      perMonth: "/mes",
+      perYear: "/año",
+      subscriptions: "Suscripciones",
+      credits: {
+        title: "Paquetes de Créditos",
+        unit: "Créditos",
+        perCredit: "por crédito",
+        buy: "Comprar Créditos"
+      },
+      loading: "Procesando..."
     },
     cta: {
       title: "¿Listo para Comenzar tu Viaje como House Sitter?",

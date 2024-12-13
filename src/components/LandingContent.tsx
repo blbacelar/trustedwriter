@@ -6,6 +6,7 @@ import { Check, Sparkles, Clock, Trophy } from "lucide-react";
 import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
 import SubscribeButton from "@/components/SubscribeButton";
+import PricingSection from "@/components/PricingSection";
 
 export default function LandingContent() {
   const { t, language } = useLanguage();
@@ -81,53 +82,7 @@ export default function LandingContent() {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">{t("pricing.title")}</h2>
-          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {/* Free Plan */}
-            <div className="bg-white rounded-lg shadow-lg p-8">
-              <h3 className="text-2xl font-bold mb-4">{t("pricing.free.title")}</h3>
-              <p className="text-4xl font-bold mb-6">
-                $0<span className="text-lg text-gray-600">/month</span>
-              </p>
-              <ul className="space-y-4 mb-8">
-                {(t("pricing.free.features") as unknown as string[]).map((feature: string, index: number) => (
-                  <li key={index} className="flex items-center">
-                    <Check className="h-5 w-5 text-[#00B5B4] mr-2" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              <Link href="/sign-up">
-                <Button className="w-full" variant="outline">
-                  {t("pricing.free.cta")}
-                </Button>
-              </Link>
-            </div>
-
-            {/* Pro Plan */}
-            <div className="bg-white rounded-lg shadow-lg p-8 border-2 border-[#00B5B4] relative">
-              <div className="absolute top-0 right-0 bg-[#00B5B4] text-white px-3 py-1 text-sm rounded-bl-lg">
-                {t("pricing.pro.popular")}
-              </div>
-              <h3 className="text-2xl font-bold mb-4">{t("pricing.pro.title")}</h3>
-              <p className="text-4xl font-bold mb-6">
-                $9<span className="text-lg text-gray-600">/month</span>
-              </p>
-              <ul className="space-y-4 mb-8">
-                {(t("pricing.pro.features") as unknown as string[]).map((feature: string, index: number) => (
-                  <li key={index} className="flex items-center">
-                    <Check className="h-5 w-5 text-[#00B5B4] mr-2" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              <SubscribeButton />
-            </div>
-          </div>
-        </div>
-      </section>
+      <PricingSection />
 
       {/* CTA Section */}
       <section className="py-20 bg-white">
