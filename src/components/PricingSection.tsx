@@ -89,7 +89,7 @@ export default function PricingSection() {
                 $0<span className="text-lg text-gray-600">{t("pricing.perMonth")}</span>
               </p>
               <ul className="space-y-4 mb-8">
-                {(t("pricing.free.features") as string[]).map((feature, index) => (
+                {(t("pricing.free.features") as unknown as string[]).map((feature, index) => (
                   <li key={index} className="flex items-center">
                     <Check className="h-5 w-5 text-[#00B5B4] mr-2" />
                     <span>{feature}</span>
@@ -122,7 +122,7 @@ export default function PricingSection() {
                 <span className="text-lg text-gray-600">{t("pricing.perYear")}</span>
               </p>
               <ul className="space-y-4 mb-8">
-                {(t("pricing.pro.features") as string[]).map((feature, index) => (
+                {(t("pricing.pro.features") as unknown as string[]).map((feature, index) => (
                   <li key={index} className="flex items-center">
                     <Check className="h-5 w-5 text-[#00B5B4] mr-2" />
                     <span>{feature}</span>
@@ -146,7 +146,7 @@ export default function PricingSection() {
                 <span className="text-lg text-gray-600">{t("pricing.perMonth")}</span>
               </p>
               <ul className="space-y-4 mb-8">
-                {(t("pricing.pro.features") as string[]).map((feature, index) => (
+                {(t("pricing.pro.features") as unknown as string[]).map((feature, index) => (
                   <li key={index} className="flex items-center">
                     <Check className="h-5 w-5 text-[#00B5B4] mr-2" />
                     <span>{feature}</span>
