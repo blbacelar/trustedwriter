@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
@@ -8,46 +8,59 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-11-20.acacia",
 });
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { searchParams } = new URL(req.url);
+    const priceId = searchParams.get('priceId');
+    const period = searchParams.get('period') || 'monthly';
+    
+    console.log('Setup route params:', { priceId, period, url: req.url });
+    
     const { userId } = await auth();
-    if (!userId) {
+    const user = await currentUser();
+    
+    if (!userId || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Create Stripe customer
     const customer = await stripe.customers.create({
+      email: user.emailAddresses[0]?.emailAddress,
       metadata: {
         userId,
       },
     });
 
-    // Create or update user with Stripe customer ID and initialize as free plan
+    // Create or update user with proper name and email
     await prisma.user.upsert({
       where: { id: userId },
       create: {
         id: userId,
         stripeCustomerId: customer.id,
         credits: 3,
-        subscriptionStatus: "free", // Initialize as free plan
-        email: userId,
-        name: userId,
+        subscriptionStatus: "free",
+        email: user.emailAddresses[0]?.emailAddress,
+        name: `${user.firstName} ${user.lastName}`.trim(),
       },
       update: {
         stripeCustomerId: customer.id,
+        email: user.emailAddresses[0]?.emailAddress,
+        name: `${user.firstName} ${user.lastName}`.trim(),
       },
     });
 
-    // Get auth token from headers
-    const headersList = await headers();
-    const authHeader = headersList.get("authorization");
+    // Create checkout session with the provided priceId
+    console.log('Creating checkout session with:', { 
+      priceId: priceId || process.env.STRIPE_PRICE_ID,
+      period,
+      userId 
+    });
 
-    // Create checkout session directly instead of using fetch
     const session = await stripe.checkout.sessions.create({
       customer: customer.id,
       line_items: [
         {
-          price: process.env.STRIPE_PRICE_ID,
+          price: priceId || process.env.STRIPE_PRICE_ID,
           quantity: 1,
         },
       ],
@@ -56,7 +69,13 @@ export async function GET() {
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings/billing/canceled`,
       metadata: {
         userId,
+        period,
       },
+    });
+
+    console.log('Created session:', { 
+      sessionId: session.id,
+      sessionUrl: session.url 
     });
 
     if (session.url) {
@@ -67,7 +86,7 @@ export async function GET() {
       `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`
     );
   } catch (error) {
-    console.error("[SETUP_GET]", error);
+    console.error("[SETUP_GET] Error:", error);
     return NextResponse.redirect(
       `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`
     );

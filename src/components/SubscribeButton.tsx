@@ -26,23 +26,26 @@ export default function SubscribeButton({
 
   const handleSubscribe = async () => {
     if (!isSignedIn) {
-      router.push(`/sign-up?subscribe=true&priceId=${priceId}`);
+      console.log('Redirecting to signup with params:', { priceId, period });
+      router.push(`/sign-up?subscribe=true&priceId=${priceId}&period=${period}`);
       return;
     }
 
     try {
       setLoading(true);
+      console.log('Sending subscription request:', { priceId, isCredit, period });
       
       const response = await fetch("/api/stripe", {
         method: "POST",
         body: JSON.stringify({ 
           priceId,
           isCredit,
-          period: isCredit ? undefined : period
+          period
         })
       });
       
       const data = await response.json();
+      console.log('Received response:', data);
       
       if (data.error) {
         toast.error(data.error);

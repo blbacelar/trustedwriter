@@ -21,57 +21,95 @@ export async function POST(req: Request) {
       process.env.STRIPE_WEBHOOK_SECRET!
     );
   } catch (error: any) {
+    console.error("Webhook signature verification failed:", error.message);
     return new NextResponse(`Webhook Error: ${error.message}`, { status: 400 });
   }
 
-  const session = event.data.object as Stripe.Checkout.Session;
+  console.log("Received webhook event:", {
+    type: event.type,
+    id: event.id,
+    object: event.data.object,
+  });
 
-  if (event.type === "checkout.session.completed") {
-    const subscription = await stripe.subscriptions.retrieve(
-      session.subscription as string
-    );
+  try {
+    if (event.type === "checkout.session.completed") {
+      const session = event.data.object as Stripe.Checkout.Session;
 
-    await prisma.user.update({
-      where: {
-        stripeCustomerId: session.customer as string,
-      },
-      data: {
+      // Get the subscription
+      const subscription = await stripe.subscriptions.retrieve(
+        session.subscription as string
+      );
+
+      console.log("Processing subscription:", {
         subscriptionId: subscription.id,
-        subscriptionStatus: subscription.status,
-        priceId: subscription.items.data[0].price.id,
-      },
-    });
+        customerId: session.customer,
+        status: subscription.status,
+      });
+
+      // Find user by stripeCustomerId
+      const user = await prisma.user.findFirst({
+        where: {
+          stripeCustomerId: session.customer as string,
+        },
+      });
+
+      if (!user) {
+        console.error("User not found for customer:", session.customer);
+        return new NextResponse("User not found", { status: 404 });
+      }
+
+      // Update user with subscription details
+      const updatedUser = await prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          subscriptionId: subscription.id,
+          subscriptionStatus: "active",
+          priceId: subscription.items.data[0].price.id,
+          credits: null, // Set credits to null for unlimited access
+        },
+      });
+
+      console.log("Updated user subscription:", {
+        userId: updatedUser.id,
+        subscriptionStatus: updatedUser.subscriptionStatus,
+        subscriptionId: updatedUser.subscriptionId,
+      });
+    }
+
+    if (event.type === "customer.subscription.updated") {
+      const subscription = event.data.object as Stripe.Subscription;
+
+      await prisma.user.update({
+        where: {
+          stripeCustomerId: subscription.customer as string,
+        },
+        data: {
+          subscriptionStatus: subscription.status,
+        },
+      });
+    }
+
+    if (event.type === "customer.subscription.deleted") {
+      const subscription = event.data.object as Stripe.Subscription;
+
+      await prisma.user.update({
+        where: {
+          stripeCustomerId: subscription.customer as string,
+        },
+        data: {
+          subscriptionStatus: "free",
+          subscriptionId: null,
+          priceId: null,
+          credits: 3,
+        },
+      });
+    }
+
+    return new NextResponse(null, { status: 200 });
+  } catch (error) {
+    console.error("Error processing webhook:", error);
+    return new NextResponse("Webhook processing failed", { status: 500 });
   }
-
-  if (event.type === "invoice.payment_succeeded") {
-    const subscription = await stripe.subscriptions.retrieve(
-      session.subscription as string
-    );
-
-    await prisma.user.update({
-      where: {
-        stripeCustomerId: session.customer as string,
-      },
-      data: {
-        subscriptionStatus: subscription.status,
-      },
-    });
-  }
-
-  if (event.type === "customer.subscription.deleted") {
-    const subscription = event.data.object as Stripe.Subscription;
-
-    await prisma.user.update({
-      where: {
-        subscriptionId: subscription.id,
-      },
-      data: {
-        subscriptionStatus: "canceled",
-        subscriptionId: null,
-        priceId: null,
-      },
-    });
-  }
-
-  return new NextResponse(null, { status: 200 });
 }

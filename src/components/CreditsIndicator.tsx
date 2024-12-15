@@ -5,11 +5,11 @@ import { useCredits } from "@/contexts/CreditsContext";
 import { useAuth } from "@clerk/nextjs";
 
 export default function CreditsIndicator() {
-  const { credits, isFreePlan } = useCredits();
+  const { credits, isFreePlan, hasUnlimitedCredits } = useCredits();
   const { t } = useLanguage();
   const { isSignedIn } = useAuth();
 
-  if (!isSignedIn || !isFreePlan || credits === null) {
+  if (!isSignedIn || !isFreePlan || hasUnlimitedCredits || credits === null) {
     return null;
   }
 

@@ -14,6 +14,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Parse the request body
+    const body = await req.json();
+    console.log('Stripe API received request:', body);
+
+    const { priceId, isCredit, period } = body;
+
+    if (!priceId) {
+      return NextResponse.json({ error: "Price ID is required" }, { status: 400 });
+    }
+
     // Get or create Stripe customer
     let user = await prisma.user.findUnique({
       where: { id: userId },
@@ -23,26 +33,41 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Customer not found" }, { status: 400 });
     }
 
+    console.log('Creating Stripe session with:', {
+      priceId,
+      isCredit,
+      period,
+      userId,
+      customerId: user?.stripeCustomerId
+    });
+
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       customer: user.stripeCustomerId as string,
       line_items: [
         {
-          price: process.env.STRIPE_PRICE_ID,
+          price: priceId,
           quantity: 1,
         },
       ],
-      mode: "subscription",
+      mode: isCredit ? "payment" : "subscription",
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings/billing/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings/billing/canceled`,
       metadata: {
         userId,
+        isCredit: isCredit ? 'true' : 'false',
+        period: period || 'monthly'
       },
+    });
+
+    console.log('Created Stripe session:', {
+      sessionId: session.id,
+      sessionUrl: session.url
     });
 
     return NextResponse.json({ url: session.url });
   } catch (error) {
-    console.error("[STRIPE_POST]", error);
+    console.error("[STRIPE_POST] Error:", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }

@@ -9,20 +9,17 @@ datasource db {
 
 model User {
   id                 String        @id
-  email              String        @unique
-  name               String
-  profile            String?       @db.Text
-  rules              String[]
-  language           String        @default("en")
-  createdAt          DateTime      @default(now())
-  updatedAt          DateTime      @updatedAt
-  applications       Application[]
+  name               String?
+  email              String?
   stripeCustomerId   String?       @unique
   subscriptionId     String?       @unique
-  subscriptionStatus String? // 'active', 'canceled', 'past_due'
-  priceId            String? // Store the Stripe price ID
-  credits            Int           @default(3)
-  lastCreditReset    DateTime      @default(now())
+  subscriptionStatus String? // Should be 'free', 'active', or 'canceled'
+  priceId            String?
+  credits            Int? // null for subscribed users, number for free users
+  lastCreditReset    DateTime?
+  applications       Application[]
+
+  @@index([stripeCustomerId])
 }
 
 model Application {
