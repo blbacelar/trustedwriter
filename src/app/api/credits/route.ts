@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { headers } from "next/headers";
+import { logError } from "@/lib/errorLogging";
 
 export async function GET() {
   try {
@@ -40,6 +41,14 @@ export async function GET() {
     console.log("API Response:", response);
     return NextResponse.json(response);
   } catch (error) {
+    await logError({
+      error: error as Error,
+      context: "GET_CREDITS",
+      additionalData: {
+        path: "/api/credits"
+      }
+    });
+    
     console.error(
       "[CREDITS_GET]",
       error instanceof Error ? error.message : "Unknown error"

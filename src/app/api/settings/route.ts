@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
+import { logError } from "@/lib/errorLogging";
 
 export async function POST(req: Request) {
   try {
@@ -68,16 +69,21 @@ export async function POST(req: Request) {
       }, { status: 500 });
     }
   } catch (error) {
-    const finalError = {
-      message: error instanceof Error ? error.message : 'Unknown error'
-    };
-    console.error('7. Unexpected error:', finalError);
+    await logError({
+      error: error as Error,
+      context: "POST_SETTINGS",
+      additionalData: {
+        path: "/api/settings"
+      }
+    });
     
-    return NextResponse.json({ 
-      success: false,
-      error: "Internal server error",
-      message: finalError.message
-    }, { status: 500 });
+    const safeError = {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      type: error instanceof Error ? error.constructor.name : typeof error
+    };
+    
+    console.error('POST settings - error:', safeError);
+    return NextResponse.json({ error: "Internal Error" }, { status: 500 });
   }
 }
 
@@ -115,13 +121,20 @@ export async function GET(req: Request) {
     console.log('GET settings - response:', response);
     return NextResponse.json(response);
   } catch (error) {
+    await logError({
+      error: error as Error,
+      context: "GET_SETTINGS",
+      additionalData: {
+        path: "/api/settings"
+      }
+    });
+    
     const safeError = {
       message: error instanceof Error ? error.message : 'Unknown error',
       type: error instanceof Error ? error.constructor.name : typeof error
     };
     
     console.error('GET settings - error:', safeError);
-    
     return NextResponse.json({ 
       success: false, 
       error: "Failed to fetch settings",

@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useCredits } from "@/contexts/CreditsContext";
 import { useUser } from "@clerk/nextjs";
+import { logError } from "@/lib/errorLogging";
 
 interface SearchbarProps {
   onApplicationData: (data: string | null) => void;
@@ -36,6 +37,14 @@ export default function Searchbar({ onApplicationData }: SearchbarProps) {
         onApplicationData(url);
       }
     } catch (error) {
+      await logError({
+        error: error as Error,
+        context: "SUBMIT_SEARCH_CLIENT",
+        additionalData: {
+          component: "Searchbar"
+        }
+      });
+      
       console.error("Error checking profile:", error);
       toast.error(t("dashboard.searchbar.failed"));
     }

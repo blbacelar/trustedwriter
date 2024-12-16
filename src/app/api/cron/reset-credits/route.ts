@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { logError } from "@/lib/errorLogging";
 
 export const runtime = 'edge';
 
@@ -27,6 +28,14 @@ export async function POST(req: Request) {
       usersUpdated: result.count,
     });
   } catch (error) {
+    await logError({
+      error: error as Error,
+      context: "RESET_CREDITS",
+      additionalData: {
+        path: "/api/cron/reset-credits"
+      }
+    });
+    
     console.error('[RESET_CREDITS]', error);
     return NextResponse.json({ error: 'Internal Error' }, { status: 500 });
   }

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
 import { headers } from "next/headers";
+import { logError } from "@/lib/errorLogging";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-11-20.acacia",
@@ -130,4 +131,19 @@ export async function GET(req: Request) {
 }
 
 // Keep POST handler for direct subscription flow
-export { POST } from "./post";
+export async function POST() {
+  try {
+    // ... existing code ...
+  } catch (error) {
+    await logError({
+      error: error as Error,
+      context: "POST_SETUP",
+      additionalData: {
+        path: "/api/setup"
+      }
+    });
+    
+    console.error("[SETUP_POST]", error);
+    return NextResponse.json({ error: "Internal Error" }, { status: 500 });
+  }
+}

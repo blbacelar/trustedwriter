@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
+import { logError } from "@/lib/errorLogging";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-11-20.acacia",
@@ -149,6 +150,14 @@ export async function POST(req: Request) {
 
     return new NextResponse(null, { status: 200 });
   } catch (error) {
+    await logError({
+      error: error as Error,
+      context: "STRIPE_WEBHOOK",
+      additionalData: {
+        path: "/api/webhooks/stripe"
+      }
+    });
+    
     console.error("Error processing webhook:", error);
     return new NextResponse("Webhook processing failed", { status: 500 });
   }
