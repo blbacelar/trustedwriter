@@ -3,9 +3,9 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function PATCH(
-  request: Request,
-  context: { params: { id: string } }
-): Promise<NextResponse> {
+  req: Request,
+  { params }: { params: Record<string, string> }
+): Promise<Response> {
   try {
     const session = await auth();
     const { userId } = session || {};
@@ -14,8 +14,8 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json();
-    console.log('Received update request:', { id: context.params.id, body });
+    const body = await req.json();
+    console.log('Received update request:', { id: params.id, body });
 
     const { content } = body;
     if (!content) {
@@ -24,7 +24,7 @@ export async function PATCH(
 
     // Verify the application belongs to the user
     const application = await prisma.application.findUnique({
-      where: { id: context.params.id },
+      where: { id: params.id },
       select: { userId: true }
     });
 
@@ -36,7 +36,7 @@ export async function PATCH(
 
     // Update the application
     const updatedApplication = await prisma.application.update({
-      where: { id: context.params.id },
+      where: { id: params.id },
       data: { content }
     });
 
