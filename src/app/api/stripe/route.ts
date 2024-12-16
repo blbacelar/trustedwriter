@@ -11,7 +11,15 @@ export async function POST(req: Request) {
   try {
     const { userId } = await auth();
     if (!userId) {
+      console.log("[STRIPE_POST] Unauthorized request");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await req.json();
+    const { priceId, isCredit, credits } = body;
+
+    if (!priceId) {
+      return NextResponse.json({ error: "Price ID is required" }, { status: 400 });
     }
 
     // Get or create Stripe customer
@@ -23,27 +31,30 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Customer not found" }, { status: 400 });
     }
 
-    // Create Stripe checkout session
-    const session = await stripe.checkout.sessions.create({
-      customer: user.stripeCustomerId as string,
+    const sessionData: Stripe.Checkout.SessionCreateParams = {
+      customer: user.stripeCustomerId,
       line_items: [
         {
-          price: process.env.STRIPE_PRICE_ID,
+          price: priceId,
           quantity: 1,
         },
       ],
-      mode: "subscription",
+      mode: isCredit ? 'payment' as const : 'subscription' as const,
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings/billing/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings/billing/canceled`,
       metadata: {
         userId,
+        isCredit: String(isCredit),
+        ...(isCredit && { credits: String(credits) })
       },
-    });
+    };
+
+    const session = await stripe.checkout.sessions.create(sessionData);
 
     return NextResponse.json({ url: session.url });
   } catch (error) {
     console.error("[STRIPE_POST]", error);
-    return new NextResponse("Internal Error", { status: 500 });
+    return NextResponse.json({ error: "Internal Error" }, { status: 500 });
   }
 }
 

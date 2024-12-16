@@ -59,7 +59,11 @@ export default function SubscriptionManagement() {
       const response = await fetch("/api/stripe/subscription");
       if (response.ok) {
         const data = await response.json();
-        setSubscription(data);
+        setSubscription({
+          ...data,
+          status: data.status === 'active' ? 'active' : 
+                 data.status === 'canceled' ? 'canceled' : 'free'
+        });
       }
     } catch (error) {
       console.error(error);

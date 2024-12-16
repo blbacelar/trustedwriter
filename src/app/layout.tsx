@@ -10,6 +10,7 @@ import { Toaster as SonnerToaster } from 'sonner';
 import { CreditsProvider } from "@/contexts/CreditsContext";
 import { TutorialProvider } from "@/contexts/TutorialContext";
 import Tutorial from "@/components/Tutorial";
+import { OpenAIStatusProvider } from "@/contexts/OpenAIStatusContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,24 +32,26 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ClerkProvider dynamic>
-          <LanguageProvider>
-            <TutorialProvider>
-              <CreditsProvider>
-                <div className="flex flex-col min-h-screen">
-                  <Navbar />
-                  <main className="flex-grow">
-                    <Tutorial />
-                    {children}
-                  </main>
-                  <Footer />
-                  <Toaster />
-                  <SonnerToaster position="top-center" />
-                </div>
-              </CreditsProvider>
-            </TutorialProvider>
-          </LanguageProvider>
-        </ClerkProvider>
+        <OpenAIStatusProvider>
+          <ClerkProvider dynamic>
+            <LanguageProvider>
+              <TutorialProvider>
+                <CreditsProvider>
+                  <div className="flex flex-col min-h-screen">
+                    <Navbar />
+                    <main className="flex-grow">
+                      <Tutorial />
+                      {children}
+                    </main>
+                    <Footer />
+                    <Toaster />
+                    <SonnerToaster position="top-center" />
+                  </div>
+                </CreditsProvider>
+              </TutorialProvider>
+            </LanguageProvider>
+          </ClerkProvider>
+        </OpenAIStatusProvider>
       </body>
     </html>
   );

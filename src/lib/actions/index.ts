@@ -17,24 +17,33 @@ export async function scrapeAndGetApplication(houseSittingUrl: string) {
     const { userId } = session || {};
 
     if (!userId) {
-      throw new Error("Unauthorized");
+      return {
+        error: true,
+        message: "Unauthorized",
+        code: "UNAUTHORIZED"
+      };
     }
 
-    // Check credits/subscription
+    // Check if user has profile set up
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
+        profile: true,
         credits: true,
-        subscriptionId: true,
-        lastCreditReset: true,
-      },
+        subscriptionId: true
+      }
     });
 
-    if (!user) {
-      throw new Error("User not found");
+    if (!user?.profile) {
+      return {
+        error: true,
+        message: "Please set up your profile first",
+        code: "PROFILE_REQUIRED"
+      };
     }
 
-    if (!user.subscriptionId && user.credits <= 0) {
+    // Check credits for free users
+    if (!user.subscriptionId && (user.credits || 0) <= 0) {
       // Calculate time until next reset
       const now = new Date();
       const nextReset = new Date(now.getFullYear(), now.getMonth() + 1, 1);
@@ -42,9 +51,15 @@ export async function scrapeAndGetApplication(houseSittingUrl: string) {
         (nextReset.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
       );
 
-      throw new Error(
-        `No credits remaining. Credits will reset in ${daysUntilReset} days.`
-      );
+      return {
+        error: true,
+        message: `No credits remaining. Credits will reset in ${daysUntilReset} days.`,
+        code: "NO_CREDITS",
+        meta: {
+          daysUntilReset,
+          nextReset
+        }
+      };
     }
 
     const houseSitting = await scrapeWebsite(houseSittingUrl);
@@ -92,7 +107,7 @@ export async function scrapeAndGetApplication(houseSittingUrl: string) {
     // Return both content and updated credits
     return {
       content,
-      credits: user.subscriptionId ? null : user.credits - 1,
+      credits: user.subscriptionId ? null : (user.credits ?? 0) - 1,
     };
   } catch (error: any) {
     // Log the error

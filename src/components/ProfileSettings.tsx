@@ -22,21 +22,30 @@ export default function ProfileSettings() {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
+        setIsLoading(true);
         const response = await fetch("/api/settings");
+        console.log('Fetching settings - response:', response);
+        
         if (response.ok) {
           const data = await response.json();
-          setProfile(data.profile);
-          setRules(data.rules);
+          console.log('Fetching settings - data:', data);
+          
+          setProfile(data.data?.profile || "");
+          setRules(data.data?.rules || []);
+        } else {
+          console.error('Failed to fetch settings:', response.statusText);
+          toast.error(t("settings.save.error"));
         }
       } catch (error) {
         console.error("Failed to fetch settings:", error);
+        toast.error(t("settings.save.error"));
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchSettings();
-  }, []);
+  }, [t]);
 
   const handleAddRule = () => {
     if (newRule.trim()) {
@@ -52,6 +61,8 @@ export default function ProfileSettings() {
   const handleSave = async () => {
     setIsSaving(true);
     try {
+      console.log('Sending settings data:', { profile, rules });
+      
       const response = await fetch("/api/settings", {
         method: "POST",
         headers: {
@@ -60,12 +71,16 @@ export default function ProfileSettings() {
         body: JSON.stringify({ profile, rules }),
       });
 
+      const data = await response.json();
+      console.log('Response from settings API:', data);
+
       if (response.ok) {
         toast.success(t("settings.save.success"));
       } else {
-        throw new Error();
+        throw new Error(data.error || 'Failed to save settings');
       }
     } catch (error) {
+      console.error("Settings save error:", error);
       toast.error(t("settings.save.error"));
     } finally {
       setIsSaving(false);
@@ -74,7 +89,7 @@ export default function ProfileSettings() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
+      <div className="flex justify-center py-8">
         <div className="animate-spin h-8 w-8 border-2 border-[#00B5B4] border-t-transparent rounded-full" />
       </div>
     );

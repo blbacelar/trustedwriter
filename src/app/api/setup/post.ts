@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
+import { currentUser } from "@clerk/nextjs/server";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-11-20.acacia",
@@ -10,25 +11,33 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 export async function POST() {
   try {
     const { userId } = await auth();
-    if (!userId) {
+    const user = await currentUser();
+    
+    if (!userId || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Create Stripe customer
     const customer = await stripe.customers.create({
+      email: user.emailAddresses[0]?.emailAddress,
       metadata: {
         userId,
       },
     });
 
-    // Create or update user with Stripe customer ID
+    // Create or update user with proper data
     await prisma.user.upsert({
       where: { id: userId },
       create: {
         id: userId,
         stripeCustomerId: customer.id,
-        email: userId,
-        name: userId,
+        email: user.emailAddresses[0]?.emailAddress,
+        name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || "Anonymous User",
+        profile: "",
+        rules: [],
+        credits: 3,
+        subscriptionStatus: "free",
+        lastCreditReset: new Date()
       },
       update: {
         stripeCustomerId: customer.id,

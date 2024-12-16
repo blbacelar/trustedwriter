@@ -26,36 +26,57 @@ export default function SubscribeButton({
 
   const handleSubscribe = async () => {
     if (!isSignedIn) {
-      router.push(`/sign-up?subscribe=true&priceId=${priceId}`);
+      console.log('[SubscribeButton] Not signed in, redirecting to signup:', { 
+        priceId, 
+        isCredit, 
+        credits 
+      });
+      const signupUrl = `/sign-up?subscribe=true&priceId=${priceId}${isCredit ? '' : `&period=${period}`}`;
+      
+      router.push(signupUrl);
       return;
     }
 
     try {
       setLoading(true);
+      console.log('[SubscribeButton] Starting checkout process:', { 
+        priceId, 
+        isCredit, 
+        period: isCredit ? undefined : period, 
+        credits 
+      });
       
       const response = await fetch("/api/stripe", {
         method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ 
           priceId,
           isCredit,
-          period: isCredit ? undefined : period
+          period: isCredit ? undefined : period,
+          credits
         })
       });
       
       const data = await response.json();
+      console.log('[SubscribeButton] Received response:', data);
       
       if (data.error) {
+        console.error('[SubscribeButton] Error:', data.error);
         toast.error(data.error);
         return;
       }
       
       if (data.url) {
+        console.log('[SubscribeButton] Redirecting to checkout:', data.url);
         window.location.href = data.url;
       } else {
+        console.error('[SubscribeButton] No URL in response');
         toast.error("Something went wrong");
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("[SubscribeButton] Error:", error);
       toast.error("Failed to start checkout process");
     } finally {
       setLoading(false);

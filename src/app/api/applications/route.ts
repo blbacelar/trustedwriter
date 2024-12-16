@@ -15,16 +15,40 @@ export async function POST(req: Request) {
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { credits: true, subscriptionId: true }
+      select: { 
+        credits: true, 
+        subscriptionId: true,
+        subscriptionStatus: true,
+        cancelAt: true 
+      }
     });
+
     console.log("User found:", user);
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    // Check if subscription has expired
+    if (user.cancelAt && new Date() > user.cancelAt) {
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          subscriptionStatus: "free",
+          subscriptionId: null,
+          priceId: null,
+          credits: 3,
+          cancelAt: null
+        }
+      });
+
+      return NextResponse.json({ 
+        error: "Your subscription has expired. Please renew to continue." 
+      }, { status: 403 });
+    }
+
     // Check if user has subscription or enough credits
-    if (!user.subscriptionId && user.credits <= 0) {
+    if (!user.subscriptionId && (user.credits ?? 0) <= 0) {
       return NextResponse.json({ 
         error: "No credits remaining. Please upgrade to continue." 
       }, { status: 403 });

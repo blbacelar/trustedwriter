@@ -19,7 +19,7 @@ import { Language } from "@/lib/translations";
 const languages: { code: Language; flag: string; label: string }[] = [
   { code: "en", flag: "🇺🇸", label: "English" },
   { code: "pt", flag: "🇧🇷", label: "Português" },
-  { code: "es", flag: "🇪🇸", label: "Español" }
+  { code: "es", flag: "🇪🇸", label: "Español" },
 ];
 
 export default function CustomUserButton() {
@@ -83,4 +83,4 @@ export default function CustomUserButton() {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-} 
+}

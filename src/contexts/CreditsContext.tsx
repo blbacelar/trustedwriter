@@ -7,6 +7,7 @@ interface CreditsContextType {
   credits: number | null;
   isFreePlan: boolean;
   refreshCredits: () => Promise<void>;
+  hasUnlimitedCredits: boolean;
 }
 
 const CreditsContext = createContext<CreditsContextType | undefined>(undefined);
@@ -14,6 +15,7 @@ const CreditsContext = createContext<CreditsContextType | undefined>(undefined);
 export function CreditsProvider({ children }: { children: ReactNode }) {
   const [credits, setCredits] = useState<number | null>(null);
   const [isFreePlan, setIsFreePlan] = useState(true);
+  const [hasUnlimitedCredits, setHasUnlimitedCredits] = useState(false);
   const { isSignedIn } = useAuth();
 
   const fetchCredits = async () => {
@@ -23,8 +25,9 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
       const response = await fetch("/api/credits");
       if (response.ok) {
         const data = await response.json();
-        setCredits(data.credits ?? 3);
-        setIsFreePlan(data.subscriptionStatus === 'free' || !data.subscriptionId);
+        setIsFreePlan(data.subscriptionStatus === 'free');
+        setHasUnlimitedCredits(data.subscriptionStatus === 'active');
+        setCredits(data.subscriptionStatus === 'active' ? Infinity : (data.credits ?? 3));
       }
     } catch (error) {
       console.error("Failed to fetch credits:", error);
@@ -36,7 +39,12 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
   }, [isSignedIn]);
 
   return (
-    <CreditsContext.Provider value={{ credits, isFreePlan, refreshCredits: fetchCredits }}>
+    <CreditsContext.Provider value={{ 
+      credits, 
+      isFreePlan, 
+      refreshCredits: fetchCredits,
+      hasUnlimitedCredits 
+    }}>
       {children}
     </CreditsContext.Provider>
   );

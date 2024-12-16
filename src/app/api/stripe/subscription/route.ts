@@ -16,16 +16,24 @@ export async function GET() {
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
+      select: {
+        subscriptionId: true,
+        subscriptionStatus: true
+      }
     });
 
     if (!user?.subscriptionId) {
-      return NextResponse.json({ status: "free" });
+      return NextResponse.json({ 
+        status: "free",
+        subscriptionStatus: "free" 
+      });
     }
 
     const subscription = await stripe.subscriptions.retrieve(user.subscriptionId);
 
     return NextResponse.json({
       status: subscription.status,
+      subscriptionStatus: subscription.status,
       cancelAt: subscription.cancel_at ? new Date(subscription.cancel_at * 1000) : null,
     });
   } catch (error) {
