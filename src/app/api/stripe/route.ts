@@ -15,14 +15,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Parse the request body
     const body = await req.json();
-    console.log('[STRIPE_POST] Received request body:', body);
-
     const { priceId, isCredit, credits } = body;
 
     if (!priceId) {
-      console.log("[STRIPE_POST] Missing priceId");
       return NextResponse.json({ error: "Price ID is required" }, { status: 400 });
     }
 
@@ -31,50 +27,34 @@ export async function POST(req: Request) {
       where: { id: userId },
     });
 
-    console.log('[STRIPE_POST] Found user:', {
-      userId,
-      stripeCustomerId: user?.stripeCustomerId,
-      hasStripeCustomer: !!user?.stripeCustomerId
-    });
-
     if (!user?.stripeCustomerId) {
-      console.log("[STRIPE_POST] No Stripe customer found");
       return NextResponse.json({ error: "Customer not found" }, { status: 400 });
     }
 
-    const sessionData = {
-      customer: user.stripeCustomerId as string,
+    const sessionData: Stripe.Checkout.SessionCreateParams = {
+      customer: user.stripeCustomerId,
       line_items: [
         {
           price: priceId,
           quantity: 1,
         },
       ],
-      mode: isCredit ? "payment" : "subscription",
+      mode: isCredit ? 'payment' as const : 'subscription' as const,
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings/billing/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings/billing/canceled`,
       metadata: {
         userId,
-        isCredit: isCredit ? 'true' : 'false',
-        credits: credits?.toString(),
+        isCredit: String(isCredit),
+        ...(isCredit && { credits: String(credits) })
       },
     };
 
-    console.log('[STRIPE_POST] Creating checkout session with:', sessionData);
-
-    // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create(sessionData);
-
-    console.log('[STRIPE_POST] Created session:', {
-      sessionId: session.id,
-      mode: session.mode,
-      metadata: session.metadata
-    });
 
     return NextResponse.json({ url: session.url });
   } catch (error) {
-    console.error("[STRIPE_POST] Error:", error);
-    return new NextResponse("Internal Error", { status: 500 });
+    console.error("[STRIPE_POST]", error);
+    return NextResponse.json({ error: "Internal Error" }, { status: 500 });
   }
 }
 
