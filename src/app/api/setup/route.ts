@@ -29,7 +29,7 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const priceId = searchParams.get('priceId');
     const period = searchParams.get('period');
-    const isCredit = priceId ? CREDIT_PRICE_IDS.includes(priceId) : false;
+    const isCredit = searchParams.get('isCredit') === 'true' || CREDIT_PRICE_IDS.includes(priceId || '');
     const creditAmount = priceId ? getCreditAmount(priceId) : 0;
     
     console.log('Setup route params:', { 
@@ -47,14 +47,14 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // First check if user exists
-    const existingUser = await prisma.user.findUnique({
+    // Get or create user in our database
+    let dbUser = await prisma.user.findUnique({
       where: { id: userId }
     });
 
-    if (!existingUser) {
+    if (!dbUser) {
       // Create user if doesn't exist
-      await prisma.user.create({
+      dbUser = await prisma.user.create({
         data: {
           id: userId,
           email: user.emailAddresses[0]?.emailAddress,
@@ -69,21 +69,24 @@ export async function GET(req: Request) {
       console.log("Created new user during setup");
     }
 
-    // Create Stripe customer
-    const customer = await stripe.customers.create({
-      email: user.emailAddresses[0]?.emailAddress,
-      metadata: {
-        userId,
-      },
-    });
+    // Create Stripe customer if it doesn't exist
+    if (!dbUser.stripeCustomerId) {
+      const customer = await stripe.customers.create({
+        email: user.emailAddresses[0]?.emailAddress,
+        metadata: {
+          userId,
+        },
+      });
 
-    // Update user with Stripe customer ID
-    await prisma.user.update({
-      where: { id: userId },
-      data: {
-        stripeCustomerId: customer.id,
-      },
-    });
+      // Update user with Stripe customer ID
+      dbUser = await prisma.user.update({
+        where: { id: userId },
+        data: {
+          stripeCustomerId: customer.id,
+        },
+      });
+      console.log("Created and linked Stripe customer");
+    }
 
     // Create checkout session with the provided priceId
     console.log('Creating checkout session with:', { 
@@ -95,7 +98,7 @@ export async function GET(req: Request) {
     });
 
     const sessionConfig: Stripe.Checkout.SessionCreateParams = {
-      customer: customer.id,
+      customer: dbUser.stripeCustomerId!,
       line_items: [
         {
           price: priceId || process.env.STRIPE_PRICE_ID,
@@ -133,7 +136,53 @@ export async function GET(req: Request) {
 // Keep POST handler for direct subscription flow
 export async function POST() {
   try {
-    // ... existing code ...
+    const { userId } = await auth();
+    const user = await currentUser();
+    
+    if (!userId || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Get or create user in our database
+    let dbUser = await prisma.user.findUnique({
+      where: { id: userId }
+    });
+
+    if (!dbUser) {
+      // Create user if doesn't exist
+      dbUser = await prisma.user.create({
+        data: {
+          id: userId,
+          email: user.emailAddresses[0]?.emailAddress,
+          name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || "Anonymous User",
+          profile: "",
+          rules: [],
+          credits: 3,
+          subscriptionStatus: "free",
+          lastCreditReset: new Date()
+        }
+      });
+    }
+
+    // Create Stripe customer if it doesn't exist
+    if (!dbUser.stripeCustomerId) {
+      const customer = await stripe.customers.create({
+        email: user.emailAddresses[0]?.emailAddress,
+        metadata: {
+          userId,
+        },
+      });
+
+      // Update user with Stripe customer ID
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          stripeCustomerId: customer.id,
+        },
+      });
+    }
+
+    return NextResponse.json({ success: true });
   } catch (error) {
     await logError({
       error: error as Error,
