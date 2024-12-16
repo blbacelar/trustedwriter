@@ -20,7 +20,7 @@ async function validateRequest(request: Request) {
   console.log("Webhook Headers:", {
     svix_id,
     svix_timestamp,
-    svix_signature: svix_signature ? "present" : "missing"
+    svix_signature: svix_signature ? "present" : "missing",
   });
 
   if (!svix_id || !svix_timestamp || !svix_signature) {
@@ -55,12 +55,14 @@ export async function POST(request: Request) {
   try {
     console.log("=== Webhook Start ===");
     console.log("Received webhook request at:", new Date().toISOString());
-    
+
     const headerPayload = await headers();
     console.log("Headers:", {
-      'svix-id': headerPayload.get("svix-id"),
-      'svix-timestamp': headerPayload.get("svix-timestamp"),
-      'svix-signature': headerPayload.get("svix-signature") ? "present" : "missing"
+      "svix-id": headerPayload.get("svix-id"),
+      "svix-timestamp": headerPayload.get("svix-timestamp"),
+      "svix-signature": headerPayload.get("svix-signature")
+        ? "present"
+        : "missing",
     });
 
     const payload = await validateRequest(request);
@@ -74,11 +76,20 @@ export async function POST(request: Request) {
     console.log("📦 Event data:", JSON.stringify(event.data, null, 2));
 
     if (event.type === "user.created") {
-      const { id, email_addresses, first_name, last_name, primary_email_address_id } = event.data;
-      console.log("👤 Creating user with ID:", id);
-      
-      const primaryEmail = email_addresses?.find(email => email.id === primary_email_address_id);
-      const name = `${first_name || ""} ${last_name || ""}`.trim() || "Anonymous User";
+      const {
+        id,
+        email_addresses,
+        first_name,
+        last_name,
+        primary_email_address_id,
+      } = event.data;
+      console.log("👤 Processing user with ID:", id);
+
+      const primaryEmail = email_addresses?.find(
+        (email) => email.id === primary_email_address_id
+      );
+      const name =
+        `${first_name || ""} ${last_name || ""}`.trim() || "Anonymous User";
 
       try {
         const userData = {
@@ -89,13 +100,16 @@ export async function POST(request: Request) {
           rules: [],
           credits: 3,
           subscriptionStatus: "free",
-          lastCreditReset: new Date()
+          lastCreditReset: new Date(),
         };
 
-        console.log("📝 User data to create:", userData);
+        console.log("📝 User data to upsert:", userData);
 
-        const createdUser = await prisma.user.create({ 
-          data: userData,
+        // Use upsert instead of create to handle potential duplicates
+        const upsertedUser = await prisma.user.upsert({
+          where: { id },
+          create: userData,
+          update: {}, // Don't update anything if the user exists
           select: {
             id: true,
             email: true,
@@ -103,12 +117,12 @@ export async function POST(request: Request) {
             profile: true,
             rules: true,
             credits: true,
-            subscriptionStatus: true
-          }
+            subscriptionStatus: true,
+          },
         });
 
-        console.log("✅ User created successfully:", createdUser);
-        return NextResponse.json({ success: true, user: createdUser });
+        console.log("✅ User upserted successfully:", upsertedUser);
+        return NextResponse.json({ success: true, user: upsertedUser });
       } catch (error) {
         console.error("❌ Database error:", error);
         throw error;
@@ -120,14 +134,14 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("❌ Webhook error:", {
       message: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined
+      stack: error instanceof Error ? error.stack : undefined,
     });
     return new NextResponse(
-      JSON.stringify({ 
+      JSON.stringify({
         error: "Internal server error",
-        details: error instanceof Error ? error.message : "Unknown error"
-      }), 
+        details: error instanceof Error ? error.message : "Unknown error",
+      }),
       { status: 500 }
     );
   }
-} 
+}

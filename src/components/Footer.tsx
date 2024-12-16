@@ -11,8 +11,8 @@ const Footer = () => {
     <footer className="bg-white border-t">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Promo Banner */}
-        <div className="mb-12 p-6 bg-[#00B5B4]/10 rounded-lg text-center">
-          <h3 className="text-lg font-semibold text-[#00B5B4] mb-2">
+        <div className="mb-12 p-6 bg-gray-100 rounded-lg text-center">
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">
             {t("promo.title")}
           </h3>
           <p className="text-gray-600 mb-4">{t("promo.description")}</p>
@@ -20,7 +20,7 @@ const Footer = () => {
             href="https://www.trustedhousesitters.com/refer/RAF693812/?utm_source=copy-link&utm_medium=refer-a-friend&utm_campaign=refer-a-friend"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block px-6 py-3 bg-[#00B5B4] text-white rounded-full hover:bg-[#00A3A2] transition-colors"
+            className="inline-block px-6 py-3 bg-gray-800 text-white rounded-full hover:bg-gray-900 transition-colors"
           >
             {t("promo.cta")}
           </a>
@@ -29,7 +29,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Brand Section */}
           <div className="space-y-4">
-            <h3 className="text-xl font-bold text-[#00B5B4]">TrustedWriter</h3>
+            <h3 className="text-xl font-bold text-gray-800">TrustedWriter</h3>
             <p className="text-gray-600 max-w-xs">
               {t("footer.brand.description")}
             </p>
@@ -44,7 +44,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/settings"
-                  className="text-gray-600 hover:text-[#00B5B4] transition-colors"
+                  className="text-gray-600 hover:text-gray-800 transition-colors"
                 >
                   {t("footer.quickLinks.settings")}
                 </Link>
@@ -52,7 +52,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/"
-                  className="text-gray-600 hover:text-[#00B5B4] transition-colors"
+                  className="text-gray-600 hover:text-gray-800 transition-colors"
                 >
                   {t("footer.quickLinks.home")}
                 </Link>
@@ -71,7 +71,7 @@ const Footer = () => {
                   href="https://www.trustedhousesitters.com/refer/RAF693812/?utm_source=copy-link&utm_medium=refer-a-friend&utm_campaign=refer-a-friend"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-600 hover:text-[#00B5B4] transition-colors"
+                  className="text-gray-600 hover:text-gray-800 transition-colors"
                 >
                   {t("footer.resources.join")}
                 </a>
@@ -91,7 +91,7 @@ const Footer = () => {
                 href="https://www.trustedhousesitters.com/refer/RAF693812/?utm_source=copy-link&utm_medium=refer-a-friend&utm_campaign=refer-a-friend"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#00B5B4] hover:underline"
+                className="text-gray-800 hover:underline"
               >
                 {t("footer.resources.join")}
               </a>

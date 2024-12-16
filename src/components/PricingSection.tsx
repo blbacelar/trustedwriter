@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
+import { useState } from "react";
 import { Check, Package, Infinity } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 import SubscribeButton from "@/components/SubscribeButton";
-import { useState } from "react";
 
 type ViewMode = 'subscriptions' | 'credits';
 
@@ -59,7 +59,7 @@ export default function PricingSection() {
             onClick={() => setViewMode('subscriptions')}
             className={`px-6 py-2 rounded-full transition-all ${
               viewMode === 'subscriptions' 
-                ? 'bg-[#00B5B4] text-white' 
+                ? 'bg-gray-800 text-white' 
                 : 'bg-white text-gray-600 hover:bg-gray-100'
             }`}
           >
@@ -69,7 +69,7 @@ export default function PricingSection() {
             onClick={() => setViewMode('credits')}
             className={`px-6 py-2 rounded-full transition-all ${
               viewMode === 'credits' 
-                ? 'bg-[#00B5B4] text-white' 
+                ? 'bg-gray-800 text-white' 
                 : 'bg-white text-gray-600 hover:bg-gray-100'
             }`}
           >
@@ -82,7 +82,7 @@ export default function PricingSection() {
             {/* Free Plan */}
             <div className="bg-white rounded-lg shadow-lg p-8">
               <div className="flex justify-center mb-4">
-                <Package className="h-12 w-12 text-[#00B5B4]" />
+                <Package className="h-12 w-12 text-gray-800" />
               </div>
               <h3 className="text-2xl font-bold text-center mb-4">{t("pricing.free.title")}</h3>
               <p className="text-4xl font-bold text-center mb-6">
@@ -91,7 +91,7 @@ export default function PricingSection() {
               <ul className="space-y-4 mb-8">
                 {(t("pricing.free.features") as unknown as string[]).map((feature, index) => (
                   <li key={index} className="flex items-center">
-                    <Check className="h-5 w-5 text-[#00B5B4] mr-2" />
+                    <Check className="h-5 w-5 text-gray-800 mr-2" />
                     <span>{feature}</span>
                   </li>
                 ))}
@@ -104,16 +104,16 @@ export default function PricingSection() {
             </div>
 
             {/* Annual Pro Plan */}
-            <div className="bg-white rounded-lg shadow-lg p-8 border-2 border-[#00B5B4] relative transform scale-105">
-              <div className="absolute top-0 right-0 bg-[#00B5B4] text-white px-3 py-1 text-sm rounded-bl-lg">
+            <div className="bg-white rounded-lg shadow-lg p-8 border-2 border-gray-800 relative transform scale-105">
+              <div className="absolute top-0 right-0 bg-gray-800 text-white px-3 py-1 text-sm rounded-bl-lg">
                 {t("pricing.pro.popular")}
               </div>
               <div className="flex justify-center mb-4">
-                <Infinity className="h-12 w-12 text-[#00B5B4]" />
+                <Infinity className="h-12 w-12 text-gray-800" />
               </div>
               <h3 className="text-2xl font-bold text-center mb-4">{t("pricing.pro.title")}</h3>
               <div className="text-center mb-2">
-                <span className="text-sm bg-green-500 text-white px-2 py-1 rounded-full">
+                <span className="text-sm bg-gray-800 text-white px-2 py-1 rounded-full">
                   {t("pricing.saveUpTo")} 17%
                 </span>
               </div>
@@ -124,7 +124,7 @@ export default function PricingSection() {
               <ul className="space-y-4 mb-8">
                 {(t("pricing.pro.features") as unknown as string[]).map((feature, index) => (
                   <li key={index} className="flex items-center">
-                    <Check className="h-5 w-5 text-[#00B5B4] mr-2" />
+                    <Check className="h-5 w-5 text-gray-800 mr-2" />
                     <span>{feature}</span>
                   </li>
                 ))}
@@ -138,7 +138,7 @@ export default function PricingSection() {
             {/* Monthly Pro Plan */}
             <div className="bg-white rounded-lg shadow-lg p-8">
               <div className="flex justify-center mb-4">
-                <Infinity className="h-12 w-12 text-[#00B5B4]" />
+                <Infinity className="h-12 w-12 text-gray-800" />
               </div>
               <h3 className="text-2xl font-bold text-center mb-4">{t("pricing.pro.title")}</h3>
               <p className="text-4xl font-bold text-center mb-6">
@@ -148,7 +148,7 @@ export default function PricingSection() {
               <ul className="space-y-4 mb-8">
                 {(t("pricing.pro.features") as unknown as string[]).map((feature, index) => (
                   <li key={index} className="flex items-center">
-                    <Check className="h-5 w-5 text-[#00B5B4] mr-2" />
+                    <Check className="h-5 w-5 text-gray-800 mr-2" />
                     <span>{feature}</span>
                   </li>
                 ))}
@@ -164,11 +164,10 @@ export default function PricingSection() {
         {viewMode === 'credits' && (
           <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             {creditPackages.map((pkg) => {
-              console.log('Rendering credit package:', pkg);
               return (
                 <div key={pkg.credits} className="bg-white rounded-lg shadow-lg p-8">
                   <div className="flex justify-center mb-4">
-                    <Package className="h-12 w-12 text-[#00B5B4]" />
+                    <Package className="h-12 w-12 text-gray-800" />
                   </div>
                   <h3 className="text-2xl font-bold text-center mb-4">
                     {pkg.credits} {t("pricing.credits.unit")}
