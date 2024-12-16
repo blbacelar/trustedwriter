@@ -2,15 +2,9 @@ import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-type Props = {
-  params: {
-    id: string;
-  };
-};
-
 export async function PATCH(
   request: NextRequest,
-  props: Props
+  { params }: { params: { id: string } }
 ) {
   try {
     const session = await auth();
@@ -21,7 +15,7 @@ export async function PATCH(
     }
 
     const body = await request.json();
-    console.log('Received update request:', { id: props.params.id, body });  // Debug log
+    console.log('Received update request:', { id: params.id, body });  // Debug log
 
     const { content } = body;
     if (!content) {
@@ -30,7 +24,7 @@ export async function PATCH(
 
     // Verify the application belongs to the user
     const application = await prisma.application.findUnique({
-      where: { id: props.params.id },
+      where: { id: params.id },
       select: { userId: true }
     });
 
@@ -42,7 +36,7 @@ export async function PATCH(
 
     // Update the application
     const updatedApplication = await prisma.application.update({
-      where: { id: props.params.id },
+      where: { id: params.id },
       data: { content }
     });
 
