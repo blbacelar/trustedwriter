@@ -1,10 +1,16 @@
 import { auth } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+type Props = {
+  params: {
+    id: string;
+  };
+};
+
 export async function PATCH(
-  req: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  props: Props
 ) {
   try {
     const session = await auth();
@@ -14,8 +20,8 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await req.json();
-    console.log('Received update request:', { id: params.id, body });  // Debug log
+    const body = await request.json();
+    console.log('Received update request:', { id: props.params.id, body });  // Debug log
 
     const { content } = body;
     if (!content) {
@@ -24,7 +30,7 @@ export async function PATCH(
 
     // Verify the application belongs to the user
     const application = await prisma.application.findUnique({
-      where: { id: params.id },
+      where: { id: props.params.id },
       select: { userId: true }
     });
 
@@ -36,7 +42,7 @@ export async function PATCH(
 
     // Update the application
     const updatedApplication = await prisma.application.update({
-      where: { id: params.id },
+      where: { id: props.params.id },
       data: { content }
     });
 
