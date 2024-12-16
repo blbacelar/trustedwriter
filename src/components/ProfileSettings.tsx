@@ -10,6 +10,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { logError } from "@/lib/errorLogging";
 
 export default function ProfileSettings() {
   const { t } = useLanguage();
@@ -37,6 +38,14 @@ export default function ProfileSettings() {
           toast.error(t("settings.save.error"));
         }
       } catch (error) {
+        await logError({
+          error: error as Error,
+          context: "FETCH_SETTINGS_CLIENT",
+          additionalData: {
+            component: "ProfileSettings"
+          }
+        });
+        
         console.error("Failed to fetch settings:", error);
         toast.error(t("settings.save.error"));
       } finally {
@@ -80,7 +89,15 @@ export default function ProfileSettings() {
         throw new Error(data.error || 'Failed to save settings');
       }
     } catch (error) {
-      console.error("Settings save error:", error);
+      await logError({
+        error: error as Error,
+        context: "SAVE_SETTINGS_CLIENT",
+        additionalData: {
+          component: "ProfileSettings"
+        }
+      });
+      
+      console.error("Failed to save settings:", error);
       toast.error(t("settings.save.error"));
     } finally {
       setIsSaving(false);

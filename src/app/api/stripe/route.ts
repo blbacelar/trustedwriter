@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
+import { logError } from "@/lib/errorLogging";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-11-20.acacia",
@@ -53,6 +54,14 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ url: session.url });
   } catch (error) {
+    await logError({
+      error: error as Error,
+      context: "POST_STRIPE",
+      additionalData: {
+        path: "/api/stripe"
+      }
+    });
+    
     console.error("[STRIPE_POST]", error);
     return NextResponse.json({ error: "Internal Error" }, { status: 500 });
   }
