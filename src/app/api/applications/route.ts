@@ -48,7 +48,7 @@ export async function POST(req: Request) {
     }
 
     // Check if user has subscription or enough credits
-    if (!user.subscriptionId && user.credits <= 0) {
+    if (!user.subscriptionId && (user.credits ?? 0) <= 0) {
       return NextResponse.json({ 
         error: "No credits remaining. Please upgrade to continue." 
       }, { status: 403 });
