@@ -21,7 +21,7 @@ export const translations = {
       },
     },
     pricing: {
-      title: "Simple Pricing",
+      title: "Single Payment, Lifetime Access",
       free: {
         title: "Free",
         features: ["3 applications per month"],
@@ -249,7 +249,7 @@ export const translations = {
       },
     },
     pricing: {
-      title: "Preços Simples",
+      title: "Pagamento Único, Acesso Vitalício",
       free: {
         title: "Grátis",
         features: ["3 aplicações por mês"],
@@ -480,7 +480,7 @@ export const translations = {
       },
     },
     pricing: {
-      title: "Precios Simples",
+      title: "Pago Único, Acceso de por Vida",
       free: {
         title: "Gratis",
         features: ["3 aplicaciones por mes"],
