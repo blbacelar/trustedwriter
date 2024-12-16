@@ -1,11 +1,11 @@
 import { auth } from "@clerk/nextjs/server";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+  request: Request,
+  context: { params: { id: string } }
+): Promise<NextResponse> {
   try {
     const session = await auth();
     const { userId } = session || {};
@@ -15,7 +15,7 @@ export async function PATCH(
     }
 
     const body = await request.json();
-    console.log('Received update request:', { id: params.id, body });  // Debug log
+    console.log('Received update request:', { id: context.params.id, body });
 
     const { content } = body;
     if (!content) {
@@ -24,11 +24,11 @@ export async function PATCH(
 
     // Verify the application belongs to the user
     const application = await prisma.application.findUnique({
-      where: { id: params.id },
+      where: { id: context.params.id },
       select: { userId: true }
     });
 
-    console.log('Found application:', application);  // Debug log
+    console.log('Found application:', application);
 
     if (!application || application.userId !== userId) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -36,11 +36,11 @@ export async function PATCH(
 
     // Update the application
     const updatedApplication = await prisma.application.update({
-      where: { id: params.id },
+      where: { id: context.params.id },
       data: { content }
     });
 
-    console.log('Updated application:', updatedApplication);  // Debug log
+    console.log('Updated application:', updatedApplication);
 
     return NextResponse.json(updatedApplication);
   } catch (error) {
