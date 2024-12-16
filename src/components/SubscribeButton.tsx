@@ -87,7 +87,7 @@ export default function SubscribeButton({
     <button
       onClick={handleSubscribe}
       disabled={loading}
-      className="w-full bg-[#00B5B4] hover:bg-[#00A3A2] text-white px-4 py-2 rounded-full transition-colors disabled:opacity-50"
+      className="w-full bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-full transition-colors disabled:opacity-50"
     >
       {loading 
         ? t("pricing.loading") 

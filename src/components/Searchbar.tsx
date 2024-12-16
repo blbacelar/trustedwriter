@@ -34,7 +34,8 @@ export default function Searchbar({ onApplicationData }: SearchbarProps) {
       }
 
       if (url) {
-        onApplicationData(url);
+        await onApplicationData(url);
+        setUrl("");
       }
     } catch (error) {
       await logError({
@@ -58,11 +59,11 @@ export default function Searchbar({ onApplicationData }: SearchbarProps) {
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           placeholder={t("dashboard.searchbar.placeholder")}
-          className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#00B5B4] focus:border-transparent"
+          className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent"
         />
         <button
           type="submit"
-          className="px-6 py-3 bg-[#00B5B4] text-white rounded-lg hover:bg-[#00A3A2] transition-colors"
+          className="px-6 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors"
         >
           {t("dashboard.searchbar.button")}
         </button>

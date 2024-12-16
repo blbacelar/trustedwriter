@@ -17,7 +17,7 @@ export default function CanceledPage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-[#F7F7F7] py-12">
+    <div className="min-h-screen bg-[#F7F7F7] flex items-center justify-center">
       <div className="max-w-4xl mx-auto px-4 text-center">
         <h1 className="text-3xl font-bold text-red-500 mb-4">
           {t("billing.canceled.title")}

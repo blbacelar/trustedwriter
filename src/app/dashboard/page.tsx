@@ -106,12 +106,32 @@ export default function DashboardPage() {
   };
 
   const handleCopy = (text: string) => {
-    navigator.clipboard.writeText(text);
+    // Strip HTML tags but preserve line breaks
+    const stripHtml = (html: string) => {
+      // Replace paragraph breaks with double newlines
+      const withLineBreaks = html.replace(/<\/p><p>/g, '\n\n');
+      // Create DOM parser
+      const doc = new DOMParser().parseFromString(withLineBreaks, 'text/html');
+      // Get text content
+      const textContent = doc.body.textContent || '';
+      // Clean up extra whitespace but preserve intentional line breaks
+      return textContent.replace(/\n{3,}/g, '\n\n').trim();
+    };
+
+    const cleanText = stripHtml(text);
+    navigator.clipboard.writeText(cleanText);
+    
     toast({
       title: t("dashboard.copied.title"),
       description: t("dashboard.copied.description"),
       duration: 3000,
     });
+  };
+
+  const handleUpdateApplication = (updatedApp: Application) => {
+    setApplications(apps => 
+      apps.map(app => app.id === updatedApp.id ? updatedApp : app)
+    );
   };
 
   if (openAIStatusLoading) {
@@ -173,6 +193,7 @@ export default function DashboardPage() {
               </h2>
               <RichTextEditor
                 initialContent={applicationData}
+                onSave={(content) => setApplicationData(content)}
                 onCopy={handleCopy}
               />
             </div>
@@ -190,7 +211,11 @@ export default function DashboardPage() {
               <div className="animate-spin h-8 w-8 border-2 border-[#00B5B4] border-t-transparent rounded-full" />
             </div>
           ) : (
-            <ApplicationsTable applications={applications} />
+            <ApplicationsTable 
+              applications={applications} 
+              onCopy={handleCopy}
+              onUpdate={handleUpdateApplication}
+            />
           )}
         </div>
       </section>
