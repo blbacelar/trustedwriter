@@ -23,8 +23,10 @@ export default function Searchbar({ onApplicationData }: SearchbarProps) {
     try {
       const response = await fetch("/api/settings");
       const data = await response.json();
-      
-      if (!data.profile) {
+
+      console.log(`Profile: ${JSON.stringify(data, null, 2)}`);
+
+      if (!data.data?.profile) {
         toast.error(t("dashboard.searchbar.noProfile"));
         router.push("/settings");
         return;
