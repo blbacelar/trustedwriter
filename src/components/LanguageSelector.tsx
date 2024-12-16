@@ -20,7 +20,7 @@ export default function LanguageSelector() {
           onClick={() => setLanguage(code)}
           className={`flex items-center justify-center w-8 h-8 rounded-full transition-all ${
             language === code
-              ? "ring-2 ring-[#00B5B4] ring-offset-2 scale-110"
+              ? "ring-2 ring-gray-800 ring-offset-2 scale-110"
               : "hover:scale-105"
           }`}
           title={label}

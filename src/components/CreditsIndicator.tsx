@@ -16,7 +16,7 @@ export default function CreditsIndicator() {
   return (
     <div className="flex items-center gap-2 bg-gray-100 rounded-full py-1.5 px-3">
       <div className="flex items-center gap-1.5">
-        <span className="font-medium text-[#00B5B4]">{credits}</span>
+        <span className="font-medium text-gray-800">{credits}</span>
         <span className="text-sm text-gray-600">{t("credits.unit")}</span>
       </div>
     </div>

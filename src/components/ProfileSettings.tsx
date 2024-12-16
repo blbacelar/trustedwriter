@@ -11,6 +11,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { logError } from "@/lib/errorLogging";
+import { useRouter } from "next/navigation";
 
 export default function ProfileSettings() {
   const { t } = useLanguage();
@@ -19,6 +20,7 @@ export default function ProfileSettings() {
   const [newRule, setNewRule] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -85,6 +87,7 @@ export default function ProfileSettings() {
 
       if (response.ok) {
         toast.success(t("settings.save.success"));
+        router.push("/dashboard");
       } else {
         throw new Error(data.error || 'Failed to save settings');
       }
@@ -104,10 +107,17 @@ export default function ProfileSettings() {
     }
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddRule();
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center py-8">
-        <div className="animate-spin h-8 w-8 border-2 border-[#00B5B4] border-t-transparent rounded-full" />
+        <div className="animate-spin h-8 w-8 border-2 border-gray-800 border-t-transparent rounded-full" />
       </div>
     );
   }
@@ -136,21 +146,37 @@ export default function ProfileSettings() {
 
       {/* Rules Section */}
       <div className="bg-white rounded-lg shadow-lg p-6">
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold">{t("settings.rules.title")}</h2>
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger asChild>
-                <button className="p-1 hover:bg-gray-100 rounded-full transition-colors">
-                  <Info className="h-4 w-4 text-gray-400" />
-                </button>
+              <TooltipTrigger>
+                <Info className="h-5 w-5 text-gray-400" />
               </TooltipTrigger>
-              <TooltipContent className="max-w-sm whitespace-pre-line">
-                {t("settings.rules.helper")}
+              <TooltipContent>
+                <p>{t("settings.rules.tooltip")}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>
+
+        <div className="flex gap-2 mb-4">
+          <input
+            type="text"
+            value={newRule}
+            onChange={(e) => setNewRule(e.target.value)}
+            onKeyPress={handleKeyPress}
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#00B5B4]"
+            placeholder={t("settings.rules.placeholder")}
+          />
+          <button
+            onClick={handleAddRule}
+            className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors"
+          >
+            {t("settings.rules.add")}
+          </button>
+        </div>
+
         <ul className="space-y-1 mb-6">
           {rules.map((rule, index) => (
             <li
@@ -170,30 +196,13 @@ export default function ProfileSettings() {
             </li>
           ))}
         </ul>
-
-        {/* Add New Rule */}
-        <div className="flex gap-2 mb-6">
-          <input
-            type="text"
-            value={newRule}
-            onChange={(e) => setNewRule(e.target.value)}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#00B5B4]"
-            placeholder={t("settings.rules.addPlaceholder")}
-          />
-          <button
-            onClick={handleAddRule}
-            className="px-6 py-2 bg-[#00B5B4] hover:bg-[#00A3A2] text-white rounded-lg transition-colors"
-          >
-            {t("settings.rules.addButton")}
-          </button>
-        </div>
       </div>
 
       {/* Save Button */}
       <button
         onClick={handleSave}
         disabled={isSaving}
-        className="w-full py-3 bg-[#00B5B4] hover:bg-[#00A3A2] text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full py-3 bg-gray-800 hover:bg-gray-900 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isSaving ? (
           <div className="flex items-center justify-center gap-2">

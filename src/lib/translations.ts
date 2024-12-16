@@ -21,24 +21,15 @@ export const translations = {
       },
     },
     pricing: {
-      title: "Simple Pricing",
+      title: "Single Payment, Lifetime Access",
       free: {
         title: "Free",
-        features: [
-          "3 applications per month",
-          "Basic AI features",
-          "Standard templates",
-        ],
+        features: ["3 applications per month"],
         cta: "Get Started",
       },
       pro: {
         title: "Pro",
-        features: [
-          "Unlimited applications",
-          "Advanced AI customization",
-          "Premium templates",
-          "Priority support",
-        ],
+        features: ["Unlimited applications", "Priority support"],
         cta: "Get Pro",
         popular: "Popular",
         loading: "Processing...",
@@ -46,7 +37,7 @@ export const translations = {
       periods: {
         monthly: "Monthly",
         annual: "Annual",
-        lifetime: "Lifetime"
+        lifetime: "Lifetime",
       },
       saveUpTo: "Save up to",
       perMonth: "/mo",
@@ -56,9 +47,9 @@ export const translations = {
         title: "Credit Packages",
         unit: "credits",
         perCredit: "per credit",
-        buy: "Buy Credits"
+        buy: "Buy Credits",
       },
-      loading: "Processing..."
+      loading: "Processing...",
     },
     cta: {
       title: "Ready to Start Your House Sitting Journey?",
@@ -130,6 +121,10 @@ export const translations = {
         search: "Search applications...",
         noResults: "No results found",
         noApplications: "No applications yet",
+        edit: "Edit application",
+        editTitle: "Edit Application",
+        editSuccess: "Application updated successfully",
+        editError: "Failed to update application",
       },
     },
     settings: {
@@ -142,18 +137,10 @@ export const translations = {
       },
       rules: {
         title: "Application Rules",
-        addPlaceholder: "Add a new rule...",
-        addButton: "Add Rule",
-        deleteButton: "Delete",
-        helper: `Add rules that should be included in every application. Examples:
-- Write as a family and keep it concise
-- List your travel experience (e.g., "Lived in Brazil, Portugal, visited UK, Ireland, Denmark")
-- Mention specific location experience for relevant applications
-- Include professional background (e.g., "Work in Software Development and Digital Media")
-- Share your cultural background and family details
-- Highlight pet sitting experience (types of pets, duration)
-- Keep tone natural and friendly, max 3 paragraphs
-- Specify preferred language for responses`
+        tooltip: "Rules to follow when generating applications",
+        placeholder: "Add a new rule and press Enter",
+        add: "Add Rule",
+        deleteButton: "Delete rule",
       },
       save: {
         button: "Save Settings",
@@ -208,7 +195,7 @@ export const translations = {
     },
     credits: {
       remaining: "{{count}} applications left",
-      unit: "credits"
+      unit: "credits",
     },
     nav: {
       settings: "Settings",
@@ -262,24 +249,15 @@ export const translations = {
       },
     },
     pricing: {
-      title: "Preços Simples",
+      title: "Pagamento Único, Acesso Vitalício",
       free: {
         title: "Grátis",
-        features: [
-          "3 aplicações por mês",
-          "Recursos básicos de IA",
-          "Templates padrão",
-        ],
+        features: ["3 aplicações por mês"],
         cta: "Começar",
       },
       pro: {
         title: "Pro",
-        features: [
-          "Aplicações ilimitadas",
-          "Personalização avançada de IA",
-          "Templates premium",
-          "Suporte prioritário",
-        ],
+        features: ["Aplicações ilimitadas", "Suporte prioritário"],
         cta: "Obter Pro",
         popular: "Popular",
         loading: "Processando...",
@@ -287,7 +265,7 @@ export const translations = {
       periods: {
         monthly: "Mensal",
         annual: "Anual",
-        lifetime: "Vida"
+        lifetime: "Vida",
       },
       saveUpTo: "Economize até",
       perMonth: "/mês",
@@ -297,9 +275,9 @@ export const translations = {
         title: "Pacotes de Créditos",
         unit: "créditos",
         perCredit: "por crédito",
-        buy: "Comprar Créditos"
+        buy: "Comprar Créditos",
       },
-      loading: "Processando..."
+      loading: "Processando...",
     },
     cta: {
       title: "Pronto para Começar sua Jornada como House Sitter?",
@@ -373,6 +351,10 @@ export const translations = {
         search: "Search applications...",
         noResults: "No applications found",
         noApplications: "No applications yet",
+        edit: "Edit application",
+        editTitle: "Edit Application",
+        editSuccess: "Application updated successfully",
+        editError: "Failed to update application",
       },
     },
     settings: {
@@ -386,18 +368,10 @@ export const translations = {
       },
       rules: {
         title: "Regras de Aplicação",
-        addPlaceholder: "Adicionar uma nova regra...",
-        addButton: "Adicionar Regra",
-        deleteButton: "Excluir",
-        helper: `Adicione regras que devem ser incluídas em todas as aplicações. Exemplos:
-- Escrever como uma família e manter conciso
-- Listar experiência de viagem (ex: "Morou no Brasil, Portugal, visitou Reino Unido, Irlanda, Dinamarca")
-- Mencionar experiência em locais específicos para aplicaciones relevantes
-- Incluir background profissional (ex: "Trabalha com Desenvolvimento de Software e Mídia Digital")
-- Compartilhar background cultural e detalhes da família
-- Destacar experiência com pets (tipos de animais, duração)
-- Manter tom natural e amigável, máximo 3 parágrafos
-- Especificar idioma preferido para respostas`
+        tooltip: "Regras a seguir ao gerar aplicações",
+        placeholder: "Adicione uma nova regra e pressione Enter",
+        add: "Adicionar Regra",
+        deleteButton: "Excluir regra",
       },
       save: {
         button: "Salvar Configurações",
@@ -452,7 +426,7 @@ export const translations = {
     },
     credits: {
       remaining: "{{count}} aplicações restantes",
-      unit: "créditos"
+      unit: "créditos",
     },
     nav: {
       settings: "Configurações",
@@ -506,24 +480,15 @@ export const translations = {
       },
     },
     pricing: {
-      title: "Precios Simples",
+      title: "Pago Único, Acceso de por Vida",
       free: {
         title: "Gratis",
-        features: [
-          "3 aplicaciones por mes",
-          "Funciones básicas de IA",
-          "Plantillas estándar",
-        ],
+        features: ["3 aplicaciones por mes"],
         cta: "Comenzar",
       },
       pro: {
         title: "Pro",
-        features: [
-          "Aplicaciones ilimitadas",
-          "Personalización avanzada de IA",
-          "Plantillas premium",
-          "Soporte prioritario",
-        ],
+        features: ["Aplicaciones ilimitadas", "Soporte prioritario"],
         cta: "Obtener Pro",
         popular: "Popular",
         loading: "Procesando...",
@@ -531,7 +496,7 @@ export const translations = {
       periods: {
         monthly: "Mensual",
         annual: "Anual",
-        lifetime: "Vida"
+        lifetime: "Vida",
       },
       saveUpTo: "Economize hasta",
       perMonth: "/mes",
@@ -541,9 +506,9 @@ export const translations = {
         title: "Paquetes de Créditos",
         unit: "créditos",
         perCredit: "por crédito",
-        buy: "Comprar Créditos"
+        buy: "Comprar Créditos",
       },
-      loading: "Procesando..."
+      loading: "Procesando...",
     },
     cta: {
       title: "¿Listo para Comenzar tu Viaje como House Sitter?",
@@ -617,6 +582,10 @@ export const translations = {
         search: "Buscar aplicaciones...",
         noResults: "No se encontraron resultados",
         noApplications: "Aún no hay aplicaciones",
+        edit: "Edit application",
+        editTitle: "Edit Application",
+        editSuccess: "Application updated successfully",
+        editError: "Failed to update application",
       },
     },
     settings: {
@@ -630,18 +599,10 @@ export const translations = {
       },
       rules: {
         title: "Reglas de Aplicación",
-        addPlaceholder: "Agregar una nueva regla...",
-        addButton: "Agregar Regla",
-        deleteButton: "Eliminar",
-        helper: `Agrega reglas que deben incluirse en cada aplicación. Ejemplos:
-- Escribir como familia y mantener conciso
-- Listar experiencia de viaje (ej: "Vivió en Brasil, Portugal, visitó Reino Unido, Irlanda, Dinamarca")
-- Mencionar experiencia en lugares específicos para aplicaciones relevantes
-- Incluir antecedentes profesionales (ej: "Trabaja en Desarrollo de Software y Medios Digitales")
-- Compartir antecedentes culturales y detalles familiares
-- Destacar experiencia con mascotas (tipos de animales, duración)
-- Mantener tono natural y amigable, máximo 3 párrafos
-- Especificar idioma preferido para respuestas`
+        tooltip: "Reglas a seguir al generar aplicaciones",
+        placeholder: "Agregar una nueva regla...",
+        add: "Agregar Regla",
+        deleteButton: "Eliminar regla",
       },
       save: {
         button: "Guardar Configuración",
@@ -696,7 +657,7 @@ export const translations = {
     },
     credits: {
       remaining: "{{count}} aplicaciones restantes",
-      unit: "créditos"
+      unit: "créditos",
     },
     nav: {
       settings: "Configuración",

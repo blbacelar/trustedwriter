@@ -15,11 +15,22 @@ export default function Navbar() {
 
   if (isAuthPage) return null;
 
+  const handleSignUpClick = (e: React.MouseEvent) => {
+    // Only handle scroll if we're on the landing page
+    if (pathname === "/") {
+      e.preventDefault();
+      const pricingSection = document.getElementById("pricing");
+      if (pricingSection) {
+        pricingSection.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
+
   return (
     <nav className="border-b">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Left side - Logo */}
-        <Link href="/" className="text-xl font-bold text-[#00B5B4]">
+        <Link href="/" className="text-xl font-bold text-gray-800">
           TrustedWriter
         </Link>
 
@@ -32,15 +43,16 @@ export default function Navbar() {
             </>
           ) : (
             <div className="flex items-center gap-4">
-              <Link 
-                href="/sign-in" 
-                className="text-[#00B5B4] hover:text-[#00A3A2] transition-colors"
+              <Link
+                href="/sign-in"
+                className="text-gray-600 hover:text-gray-800 transition-colors"
               >
                 {t("nav.login")}
               </Link>
-              <Link 
+              <Link
                 href="/sign-up"
-                className="bg-[#00B5B4] hover:bg-[#00A3A2] text-white px-4 py-2 rounded-full transition-colors"
+                onClick={handleSignUpClick}
+                className="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-full transition-colors"
               >
                 {t("nav.signup")}
               </Link>
