@@ -163,27 +163,30 @@ export default function PricingSection() {
 
         {viewMode === 'credits' && (
           <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            {creditPackages.map((pkg) => (
-              <div key={pkg.credits} className="bg-white rounded-lg shadow-lg p-8">
-                <div className="flex justify-center mb-4">
-                  <Package className="h-12 w-12 text-[#00B5B4]" />
+            {creditPackages.map((pkg) => {
+              console.log('Rendering credit package:', pkg);
+              return (
+                <div key={pkg.credits} className="bg-white rounded-lg shadow-lg p-8">
+                  <div className="flex justify-center mb-4">
+                    <Package className="h-12 w-12 text-[#00B5B4]" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-center mb-4">
+                    {pkg.credits} {t("pricing.credits.unit")}
+                  </h3>
+                  <p className="text-4xl font-bold text-center mb-6">
+                    ${pkg.price}
+                  </p>
+                  <p className="text-gray-600 text-center mb-8">
+                    ${(pkg.price / pkg.credits).toFixed(2)} {t("pricing.credits.perCredit")}
+                  </p>
+                  <SubscribeButton 
+                    priceId={pkg.priceId}
+                    isCredit={true}
+                    credits={pkg.credits}
+                  />
                 </div>
-                <h3 className="text-2xl font-bold text-center mb-4">
-                  {pkg.credits} {t("pricing.credits.unit")}
-                </h3>
-                <p className="text-4xl font-bold text-center mb-6">
-                  ${pkg.price}
-                </p>
-                <p className="text-gray-600 text-center mb-8">
-                  ${(pkg.price / pkg.credits).toFixed(2)} {t("pricing.credits.perCredit")}
-                </p>
-                <SubscribeButton 
-                  priceId={pkg.priceId}
-                  isCredit
-                  credits={pkg.credits}
-                />
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

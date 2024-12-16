@@ -53,77 +53,80 @@ async function validateRequest(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    console.log("Received webhook request");
+    console.log("=== Webhook Start ===");
+    console.log("Received webhook request at:", new Date().toISOString());
     
+    const headerPayload = await headers();
+    console.log("Headers:", {
+      'svix-id': headerPayload.get("svix-id"),
+      'svix-timestamp': headerPayload.get("svix-timestamp"),
+      'svix-signature': headerPayload.get("svix-signature") ? "present" : "missing"
+    });
+
     const payload = await validateRequest(request);
     if (!payload) {
-      console.log("Invalid webhook signature");
+      console.log("❌ Invalid webhook signature");
       return new NextResponse("Invalid signature", { status: 400 });
     }
 
     const event = payload as WebhookEvent;
-    console.log("Webhook event type:", event.type);
-    console.log("Full event data:", JSON.stringify(event.data, null, 2));
+    console.log("✅ Webhook event type:", event.type);
+    console.log("📦 Event data:", JSON.stringify(event.data, null, 2));
 
     if (event.type === "user.created") {
       const { id, email_addresses, first_name, last_name, primary_email_address_id } = event.data;
-      console.log("Processing user creation:", {
-        id,
-        email_addresses,
-        first_name,
-        last_name,
-        primary_email_address_id
-      });
+      console.log("👤 Creating user with ID:", id);
       
       const primaryEmail = email_addresses?.find(email => email.id === primary_email_address_id);
-
-      if (!primaryEmail?.email_address) {
-        console.log("No primary email found for user:", id);
-        throw new Error("No primary email found");
-      }
-
       const name = `${first_name || ""} ${last_name || ""}`.trim() || "Anonymous User";
-      const userData = {
-        id,
-        email: primaryEmail.email_address,
-        name,
-        rules: [],
-        credits: 3,
-        lastCreditReset: new Date(),
-      };
-      console.log("Creating user with data:", userData);
 
-      const createdUser = await prisma.user.create({ data: userData });
-      console.log("User created successfully:", createdUser);
+      try {
+        const userData = {
+          id,
+          email: primaryEmail?.email_address,
+          name,
+          profile: "",
+          rules: [],
+          credits: 3,
+          subscriptionStatus: "free",
+          lastCreditReset: new Date()
+        };
 
-      await logError({
-        error: new Error("User created successfully - Test log"),
-        userId: id,
-        context: "clerkWebhook",
-        additionalData: { 
-          event: "user.created",
-          userData,
-          createdUser
-        }
-      });
+        console.log("📝 User data to create:", userData);
 
-      return NextResponse.json({ success: true, user: createdUser });
+        const createdUser = await prisma.user.create({ 
+          data: userData,
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            profile: true,
+            rules: true,
+            credits: true,
+            subscriptionStatus: true
+          }
+        });
+
+        console.log("✅ User created successfully:", createdUser);
+        return NextResponse.json({ success: true, user: createdUser });
+      } catch (error) {
+        console.error("❌ Database error:", error);
+        throw error;
+      }
     }
 
-    return NextResponse.json({ success: true });
+    console.log("=== Webhook End ===");
+    return new NextResponse(null, { status: 200 });
   } catch (error) {
-    console.error("Webhook error:", error);
-    await logError({
-      error: error as Error,
-      context: "clerkWebhook",
-      additionalData: { 
-        event: "user.created",
-        error: error instanceof Error ? error.message : "Unknown error",
-        stack: error instanceof Error ? error.stack : undefined
-      }
+    console.error("❌ Webhook error:", {
+      message: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : undefined
     });
-    return NextResponse.json(
-      { success: false, error: "Internal Server Error" },
+    return new NextResponse(
+      JSON.stringify({ 
+        error: "Internal server error",
+        details: error instanceof Error ? error.message : "Unknown error"
+      }), 
       { status: 500 }
     );
   }

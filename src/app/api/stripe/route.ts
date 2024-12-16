@@ -11,16 +11,18 @@ export async function POST(req: Request) {
   try {
     const { userId } = await auth();
     if (!userId) {
+      console.log("[STRIPE_POST] Unauthorized request");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Parse the request body
     const body = await req.json();
-    console.log('Stripe API received request:', body);
+    console.log('[STRIPE_POST] Received request body:', body);
 
-    const { priceId, isCredit, period } = body;
+    const { priceId, isCredit, credits } = body;
 
     if (!priceId) {
+      console.log("[STRIPE_POST] Missing priceId");
       return NextResponse.json({ error: "Price ID is required" }, { status: 400 });
     }
 
@@ -29,20 +31,18 @@ export async function POST(req: Request) {
       where: { id: userId },
     });
 
+    console.log('[STRIPE_POST] Found user:', {
+      userId,
+      stripeCustomerId: user?.stripeCustomerId,
+      hasStripeCustomer: !!user?.stripeCustomerId
+    });
+
     if (!user?.stripeCustomerId) {
+      console.log("[STRIPE_POST] No Stripe customer found");
       return NextResponse.json({ error: "Customer not found" }, { status: 400 });
     }
 
-    console.log('Creating Stripe session with:', {
-      priceId,
-      isCredit,
-      period,
-      userId,
-      customerId: user?.stripeCustomerId
-    });
-
-    // Create Stripe checkout session
-    const session = await stripe.checkout.sessions.create({
+    const sessionData = {
       customer: user.stripeCustomerId as string,
       line_items: [
         {
@@ -56,13 +56,19 @@ export async function POST(req: Request) {
       metadata: {
         userId,
         isCredit: isCredit ? 'true' : 'false',
-        period: period || 'monthly'
+        credits: credits?.toString(),
       },
-    });
+    };
 
-    console.log('Created Stripe session:', {
+    console.log('[STRIPE_POST] Creating checkout session with:', sessionData);
+
+    // Create Stripe checkout session
+    const session = await stripe.checkout.sessions.create(sessionData);
+
+    console.log('[STRIPE_POST] Created session:', {
       sessionId: session.id,
-      sessionUrl: session.url
+      mode: session.mode,
+      metadata: session.metadata
     });
 
     return NextResponse.json({ url: session.url });

@@ -54,7 +54,7 @@ export const translations = {
       subscriptions: "Subscriptions",
       credits: {
         title: "Credit Packages",
-        unit: "Credits",
+        unit: "credits",
         perCredit: "per credit",
         buy: "Buy Credits"
       },
@@ -208,6 +208,7 @@ export const translations = {
     },
     credits: {
       remaining: "{{count}} applications left",
+      unit: "credits"
     },
     nav: {
       settings: "Settings",
@@ -294,7 +295,7 @@ export const translations = {
       subscriptions: "Assinaturas",
       credits: {
         title: "Pacotes de Créditos",
-        unit: "Créditos",
+        unit: "créditos",
         perCredit: "por crédito",
         buy: "Comprar Créditos"
       },
@@ -451,6 +452,7 @@ export const translations = {
     },
     credits: {
       remaining: "{{count}} aplicações restantes",
+      unit: "créditos"
     },
     nav: {
       settings: "Configurações",
@@ -537,7 +539,7 @@ export const translations = {
       subscriptions: "Suscripciones",
       credits: {
         title: "Paquetes de Créditos",
-        unit: "Créditos",
+        unit: "créditos",
         perCredit: "por crédito",
         buy: "Comprar Créditos"
       },
@@ -694,6 +696,7 @@ export const translations = {
     },
     credits: {
       remaining: "{{count}} aplicaciones restantes",
+      unit: "créditos"
     },
     nav: {
       settings: "Configuración",

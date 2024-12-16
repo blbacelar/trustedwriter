@@ -11,6 +11,8 @@ import ApplicationsTable from "@/components/ApplicationsTable";
 import { scrapeAndGetApplication } from "@/lib/actions";
 import ErrorState from "@/components/ErrorState";
 import { checkOpenAIStatus } from "@/utils/gpt";
+import { useOpenAIStatus } from "@/contexts/OpenAIStatusContext";
+import LoadingPage from "@/components/LoadingPage";
 
 interface Application {
   id: string;
@@ -26,10 +28,7 @@ export default function DashboardPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [applications, setApplications] = useState<Application[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [serviceStatus, setServiceStatus] = useState<{
-    operational: boolean;
-    status: string;
-  } | null>(null);
+  const { isOperational, status, isLoading: openAIStatusLoading } = useOpenAIStatus();
 
   useEffect(() => {
     const fetchApplications = async () => {
@@ -49,20 +48,11 @@ export default function DashboardPage() {
     fetchApplications();
   }, [applicationData]); // Refresh when new application is generated
 
-  useEffect(() => {
-    const checkStatus = async () => {
-      const status = await checkOpenAIStatus();
-      setServiceStatus(status);
-    };
-    checkStatus();
-  }, []);
-
   const handleApplicationData = async (data: string | null) => {
     if (!data) return;
 
     // Check OpenAI status before proceeding
     const currentStatus = await checkOpenAIStatus();
-    setServiceStatus(currentStatus);
     
     if (!currentStatus.operational) {
       toast({
@@ -110,13 +100,18 @@ export default function DashboardPage() {
     });
   };
 
-  if (!serviceStatus?.operational) {
+  if (openAIStatusLoading) {
+    return <LoadingPage />;
+  }
+
+  if (!isOperational) {
     return (
-      <ErrorState 
-        title="Our AI Pet is Taking a Nap!" 
-        message="OpenAI services are currently unavailable. Please try again later."
-        status={serviceStatus?.status}
-      />
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-red-500 mb-2">Service Unavailable</h1>
+          <p className="text-gray-600">{status}</p>
+        </div>
+      </div>
     );
   }
 
