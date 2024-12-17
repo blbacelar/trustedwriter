@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/tooltip";
 import { logError } from "@/lib/errorLogging";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 
 export default function ProfileSettings() {
   const { t } = useLanguage();
@@ -21,42 +22,44 @@ export default function ProfileSettings() {
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const { isSignedIn } = useAuth();
 
   useEffect(() => {
+    let mounted = true;
+
     const fetchSettings = async () => {
       try {
         setIsLoading(true);
         const response = await fetch("/api/settings");
-        console.log('Fetching settings - response:', response);
+        
+        if (!mounted) return;
         
         if (response.ok) {
           const data = await response.json();
-          console.log('Fetching settings - data:', data);
-          
-          setProfile(data.data?.profile || "");
-          setRules(data.data?.rules || []);
-        } else {
-          console.error('Failed to fetch settings:', response.statusText);
-          toast.error(t("settings.save.error"));
+          if (data.success && mounted) {
+            setProfile(data.data?.profile || "");
+            setRules(data.data?.rules || []);
+          }
         }
       } catch (error) {
-        await logError({
-          error: error as Error,
-          context: "FETCH_SETTINGS_CLIENT",
-          additionalData: {
-            component: "ProfileSettings"
-          }
-        });
-        
-        console.error("Failed to fetch settings:", error);
-        toast.error(t("settings.save.error"));
+        if (mounted) {
+          console.error("Failed to fetch settings:", error);
+        }
       } finally {
-        setIsLoading(false);
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     };
 
-    fetchSettings();
-  }, [t]);
+    if (isSignedIn) {
+      fetchSettings();
+    }
+
+    return () => {
+      mounted = false;
+    };
+  }, [isSignedIn]);
 
   const handleAddRule = () => {
     if (newRule.trim()) {
@@ -70,37 +73,28 @@ export default function ProfileSettings() {
   };
 
   const handleSave = async () => {
-    setIsSaving(true);
+    if (!isSignedIn) return;
+
     try {
-      console.log('Sending settings data:', { profile, rules });
-      
+      setIsSaving(true);
       const response = await fetch("/api/settings", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ profile, rules }),
+        body: JSON.stringify({
+          profile,
+          rules,
+        }),
       });
-
-      const data = await response.json();
-      console.log('Response from settings API:', data);
 
       if (response.ok) {
         toast.success(t("settings.save.success"));
         router.push("/dashboard");
       } else {
-        throw new Error(data.error || 'Failed to save settings');
+        throw new Error();
       }
     } catch (error) {
-      await logError({
-        error: error as Error,
-        context: "SAVE_SETTINGS_CLIENT",
-        additionalData: {
-          component: "ProfileSettings"
-        }
-      });
-      
-      console.error("Failed to save settings:", error);
       toast.error(t("settings.save.error"));
     } finally {
       setIsSaving(false);

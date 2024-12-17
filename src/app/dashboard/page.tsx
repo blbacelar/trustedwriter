@@ -2,7 +2,7 @@
 
 import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Searchbar from "@/components/Searchbar";
 import LoadingSpinner from "@/components/LoadingSpinner";
@@ -35,6 +35,7 @@ export default function DashboardPage() {
     status,
     isLoading: openAIStatusLoading,
   } = useOpenAIStatus();
+  const applicationRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchApplications = async () => {
@@ -88,12 +89,19 @@ export default function DashboardPage() {
         setApplicationData(result.content);
         // Only refresh credits after successful application generation
         await refreshCredits();
+
+        // Scroll to application section after a short delay
+        setTimeout(() => {
+          applicationRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }, 100);
       } else {
         throw new Error("Invalid response format");
       }
-
     } catch (error) {
-      console.error('Application generation error:', error);
+      console.error("Application generation error:", error);
       toast({
         variant: "destructive",
         title: "Error",
@@ -109,18 +117,18 @@ export default function DashboardPage() {
     // Strip HTML tags but preserve line breaks
     const stripHtml = (html: string) => {
       // Replace paragraph breaks with double newlines
-      const withLineBreaks = html.replace(/<\/p><p>/g, '\n\n');
+      const withLineBreaks = html.replace(/<\/p><p>/g, "\n\n");
       // Create DOM parser
-      const doc = new DOMParser().parseFromString(withLineBreaks, 'text/html');
+      const doc = new DOMParser().parseFromString(withLineBreaks, "text/html");
       // Get text content
-      const textContent = doc.body.textContent || '';
+      const textContent = doc.body.textContent || "";
       // Clean up extra whitespace but preserve intentional line breaks
-      return textContent.replace(/\n{3,}/g, '\n\n').trim();
+      return textContent.replace(/\n{3,}/g, "\n\n").trim();
     };
 
     const cleanText = stripHtml(text);
     navigator.clipboard.writeText(cleanText);
-    
+
     toast({
       title: t("dashboard.copied.title"),
       description: t("dashboard.copied.description"),
@@ -129,8 +137,8 @@ export default function DashboardPage() {
   };
 
   const handleUpdateApplication = (updatedApp: Application) => {
-    setApplications(apps => 
-      apps.map(app => app.id === updatedApp.id ? updatedApp : app)
+    setApplications((apps) =>
+      apps.map((app) => (app.id === updatedApp.id ? updatedApp : app))
     );
   };
 
@@ -185,7 +193,7 @@ export default function DashboardPage() {
       </section>
 
       {applicationData && (
-        <section className="px-6 md:px-20 py-12 bg-white">
+        <section ref={applicationRef} className="px-6 md:px-20 py-12 bg-white">
           <div className="max-w-3xl mx-auto">
             <div className="bg-white rounded-lg shadow-lg p-8">
               <h2 className="text-2xl font-semibold mb-6 text-[#1B1B1B]">
@@ -211,8 +219,8 @@ export default function DashboardPage() {
               <div className="animate-spin h-8 w-8 border-2 border-[#00B5B4] border-t-transparent rounded-full" />
             </div>
           ) : (
-            <ApplicationsTable 
-              applications={applications} 
+            <ApplicationsTable
+              applications={applications}
               onCopy={handleCopy}
               onUpdate={handleUpdateApplication}
             />

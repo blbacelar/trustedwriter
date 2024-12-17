@@ -171,7 +171,7 @@ export const translations = {
         reactivateSuccess: "Subscription reactivated successfully",
         reactivateError: "Failed to reactivate subscription",
         free: "Free Plan",
-        upgradeCTA: "Upgrade to Pro:",
+        upgradeCTA: "Upgrade to Pro",
       },
     },
     navbar: {
@@ -196,6 +196,8 @@ export const translations = {
     credits: {
       remaining: "{{count}} applications left",
       unit: "credits",
+      buyMore: "Buy more credits",
+      buyTitle: "Get More Credits",
     },
     nav: {
       settings: "Settings",
@@ -206,19 +208,19 @@ export const translations = {
     },
     tutorial: {
       welcome: {
-        title: "Welcome to PetSitterAI!",
+        title: "Welcome to TrustedWriter!",
         description:
-          "Let's get you started with generating personalized pet sitting applications in just a few steps.",
+          "Let's get you started with generating personalized house sitting applications in just a few steps.",
       },
       settings: {
-        title: "Set Up Your Profile",
+        title: "Customize Your Applications",
         description:
-          "First, head to Settings to add your profile description and application rules. This helps create more personalized applications.",
+          "In Settings, you'll set up two important things: your profile and application rules. Your profile tells us about your experience, while rules help fine-tune how AI writes your applications. For example, you can add rules like 'Always mention my experience with dogs' or 'Emphasize my flexibility with dates'. These rules ensure each application reflects exactly what you want to highlight.",
       },
       ready: {
         title: "You're Almost Ready!",
         description:
-          "We'll take you to the Settings page now. Once you've set up your profile, you can start generating applications!",
+          "We'll take you to the Settings page now. Remember: better rules mean better applications. Take a moment to think about what makes you unique as a house sitter!",
       },
       button: {
         next: "Next",
@@ -402,7 +404,7 @@ export const translations = {
         reactivateSuccess: "Assinatura reativada com sucesso",
         reactivateError: "Falha ao reativar assinatura",
         free: "Plano Grátis",
-        upgradeCTA: "Atualizar para Pro:",
+        upgradeCTA: "Atualizar para Pro",
       },
     },
     navbar: {
@@ -427,6 +429,8 @@ export const translations = {
     credits: {
       remaining: "{{count}} aplicações restantes",
       unit: "créditos",
+      buyMore: "Buy more credits",
+      buyTitle: "Get More Credits",
     },
     nav: {
       settings: "Configurações",
@@ -437,23 +441,23 @@ export const translations = {
     },
     tutorial: {
       welcome: {
-        title: "Welcome to PetSitterAI!",
+        title: "Bem-vindo ao TrustedWriter!",
         description:
-          "Let's get you started with generating personalized pet sitting applications in just a few steps.",
+          "Vamos começar a gerar aplicações personalizadas para house sitting em apenas alguns passos.",
       },
       settings: {
-        title: "Set Up Your Profile",
+        title: "Personalize Suas Aplicações",
         description:
-          "First, head to Settings to add your profile description and application rules. This helps create more personalized applications.",
+          "Nas Configurações, você definirá duas coisas importantes: seu perfil e regras de aplicação. Seu perfil nos conta sobre sua experiência, enquanto as regras ajudam a ajustar como a IA escreve suas aplicações. Por exemplo, você pode adicionar regras como 'Sempre mencionar minha experiência com cães' ou 'Enfatizar minha flexibilidade com datas'. Essas regras garantem que cada aplicação reflita exatamente o que você quer destacar.",
       },
       ready: {
-        title: "You're Almost Ready!",
+        title: "Você está Quase Pronto!",
         description:
-          "We'll take you to the Settings page now. Once you've set up your profile, you can start generating applications!",
+          "Vamos te levar para a página de Configurações agora. Lembre-se: melhores regras significam melhores aplicações. Dedique um momento para pensar no que torna você único como house sitter!",
       },
       button: {
-        next: "Next",
-        finish: "Let's Go!",
+        next: "Próximo",
+        finish: "Vamos lá!",
       },
     },
   },
@@ -633,7 +637,7 @@ export const translations = {
         reactivateSuccess: "Suscripción reactivada con éxito",
         reactivateError: "Error al reactivar la suscripción",
         free: "Plano Grátis",
-        upgradeCTA: "Actualizar a Pro:",
+        upgradeCTA: "Actualizar a Pro",
       },
     },
     navbar: {
@@ -658,6 +662,8 @@ export const translations = {
     credits: {
       remaining: "{{count}} aplicaciones restantes",
       unit: "créditos",
+      buyMore: "Buy more credits",
+      buyTitle: "Get More Credits",
     },
     nav: {
       settings: "Configuración",
@@ -668,23 +674,23 @@ export const translations = {
     },
     tutorial: {
       welcome: {
-        title: "Welcome to PetSitterAI!",
+        title: "¡Bienvenido a TrustedWriter!",
         description:
-          "Let's get you started with generating personalized pet sitting applications in just a few steps.",
+          "Comencemos a generar aplicaciones personalizadas para house sitting en solo unos pasos.",
       },
       settings: {
-        title: "Set Up Your Profile",
+        title: "Personaliza tus Aplicaciones",
         description:
-          "First, head to Settings to add your profile description and application rules. This helps create more personalized applications.",
+          "En Configuración, establecerás dos cosas importantes: tu perfil y reglas de aplicación. Tu perfil nos cuenta sobre tu experiencia, mientras que las reglas ayudan a ajustar cómo la IA escribe tus aplicaciones. Por ejemplo, puedes agregar reglas como 'Siempre mencionar mi experiencia con perros' o 'Enfatizar mi flexibilidad con fechas'. Estas reglas aseguran que cada aplicación refleje exactamente lo que quieres destacar.",
       },
       ready: {
-        title: "You're Almost Ready!",
+        title: "¡Estás Casi Listo!",
         description:
-          "We'll take you to the Settings page now. Once you've set up your profile, you can start generating applications!",
+          "Te llevaremos a la página de Configuración ahora. Recuerda: mejores reglas significan mejores aplicaciones. ¡Tómate un momento para pensar en lo que te hace único como house sitter!",
       },
       button: {
-        next: "Next",
-        finish: "Let's Go!",
+        next: "Siguiente",
+        finish: "¡Vamos!",
       },
     },
   },

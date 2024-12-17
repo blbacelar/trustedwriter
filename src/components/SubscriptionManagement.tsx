@@ -12,12 +12,14 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import SubscribeButton from "@/components/SubscribeButton";
+import PricingSection from "@/components/PricingSection";
 
 export default function SubscriptionManagement() {
   const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [subscription, setSubscription] = useState<any>(null);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [showPricingDialog, setShowPricingDialog] = useState(false);
 
   const handleCancelSubscription = async () => {
     try {
@@ -67,6 +69,26 @@ export default function SubscriptionManagement() {
       }
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const handleUpgradeClick = async () => {
+    try {
+      // Check/create Stripe customer before showing pricing
+      const response = await fetch("/api/stripe/customer", {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        toast.error(error.message || "Failed to prepare checkout");
+        return;
+      }
+
+      setShowPricingDialog(true);
+    } catch (error) {
+      toast.error("Something went wrong. Please try again.");
+      console.error("Error preparing checkout:", error);
     }
   };
 
@@ -126,10 +148,12 @@ export default function SubscriptionManagement() {
           ) : (
             subscription.status === "free" && (
               <div className="flex items-center gap-2">
-                <p className="text-sm text-gray-500">
+                <button
+                  onClick={handleUpgradeClick}
+                  className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors"
+                >
                   {t("settings.subscription.upgradeCTA")}
-                </p>
-                <SubscribeButton priceId={subscription.priceId} />
+                </button>
               </div>
             )
           )}
@@ -164,6 +188,17 @@ export default function SubscriptionManagement() {
                 : t("settings.subscription.cancelDialog.confirm")}
             </button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showPricingDialog} onOpenChange={setShowPricingDialog}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle className="text-3xl font-bold text-center">
+              {t("pricing.title")}
+            </DialogTitle>
+          </DialogHeader>
+          <PricingSection hideFreePlan={true} />
         </DialogContent>
       </Dialog>
     </>

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import SubscriptionManagement from "@/components/SubscriptionManagement";
 import ProfileSettings from "@/components/ProfileSettings";
+import LoadingPage from "@/components/LoadingPage";
 
 export default function SettingsPage() {
   const { isSignedIn, isLoaded } = useAuth();
@@ -12,12 +13,23 @@ export default function SettingsPage() {
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
-      router.push("/sign-in?redirect_url=/settings");
+      const isLoggingOut = window.location.href.includes('logout');
+      if (!isLoggingOut) {
+        router.push("/sign-in?redirect_url=/settings");
+      } else {
+        router.push("/");
+      }
     }
   }, [isLoaded, isSignedIn, router]);
 
-  if (!isLoaded || !isSignedIn) {
-    return null; // or a loading spinner
+  // Show loading state while checking auth
+  if (!isLoaded) {
+    return <LoadingPage />;
+  }
+
+  // Don't render anything if not signed in
+  if (!isSignedIn) {
+    return null;
   }
 
   return (
