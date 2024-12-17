@@ -15,9 +15,17 @@ interface CreditPackage {
   priceId: string;
 }
 
-export default function PricingSection() {
+interface PricingSectionProps {
+  hideFreePlan?: boolean;
+  defaultView?: ViewMode;
+}
+
+export default function PricingSection({
+  hideFreePlan = false,
+  defaultView = "subscriptions"
+}: PricingSectionProps) {
   const { t } = useLanguage();
-  const [viewMode, setViewMode] = useState<ViewMode>("subscriptions");
+  const [viewMode, setViewMode] = useState<ViewMode>(defaultView);
 
   const proPricing = {
     monthly: {
@@ -51,9 +59,9 @@ export default function PricingSection() {
   return (
     <section className="py-20 bg-gray-50">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-6">
+        {/* <h2 className="text-3xl font-bold text-center mb-6">
           {t("pricing.title")}
-        </h2>
+        </h2> */}
 
         {/* View Mode Toggle */}
         <div className="flex justify-center gap-4 mb-8">
@@ -80,37 +88,43 @@ export default function PricingSection() {
         </div>
 
         {viewMode === "subscriptions" && (
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div
+            className={`grid ${
+              hideFreePlan ? "md:grid-cols-2" : "md:grid-cols-3"
+            } gap-8 max-w-5xl mx-auto`}
+          >
             {/* Free Plan */}
-            <div className="bg-white rounded-lg shadow-lg p-8">
-              <div className="flex justify-center mb-4">
-                <Package className="h-12 w-12 text-gray-800" />
+            {!hideFreePlan && (
+              <div className="bg-white rounded-lg shadow-lg p-8">
+                <div className="flex justify-center mb-4">
+                  <Package className="h-12 w-12 text-gray-800" />
+                </div>
+                <h3 className="text-2xl font-bold text-center mb-4">
+                  {t("pricing.free.title")}
+                </h3>
+                <p className="text-4xl font-bold text-center mb-6">
+                  $0
+                  <span className="text-lg text-gray-600">
+                    {t("pricing.perMonth")}
+                  </span>
+                </p>
+                <ul className="space-y-4 mb-8">
+                  {(t("pricing.free.features") as unknown as string[]).map(
+                    (feature, index) => (
+                      <li key={index} className="flex items-center">
+                        <Check className="h-5 w-5 text-gray-800 mr-2" />
+                        <span>{feature}</span>
+                      </li>
+                    )
+                  )}
+                </ul>
+                <Link href="/sign-up">
+                  <Button className="w-full" variant="outline">
+                    {t("pricing.free.cta")}
+                  </Button>
+                </Link>
               </div>
-              <h3 className="text-2xl font-bold text-center mb-4">
-                {t("pricing.free.title")}
-              </h3>
-              <p className="text-4xl font-bold text-center mb-6">
-                $0
-                <span className="text-lg text-gray-600">
-                  {t("pricing.perMonth")}
-                </span>
-              </p>
-              <ul className="space-y-4 mb-8">
-                {(t("pricing.free.features") as unknown as string[]).map(
-                  (feature, index) => (
-                    <li key={index} className="flex items-center">
-                      <Check className="h-5 w-5 text-gray-800 mr-2" />
-                      <span>{feature}</span>
-                    </li>
-                  )
-                )}
-              </ul>
-              <Link href="/sign-up">
-                <Button className="w-full" variant="outline">
-                  {t("pricing.free.cta")}
-                </Button>
-              </Link>
-            </div>
+            )}
 
             {/* Annual Pro Plan */}
             <div className="bg-white rounded-lg shadow-lg p-8 border-2 border-gray-800 relative transform scale-105">

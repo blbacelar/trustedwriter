@@ -56,8 +56,8 @@ const Tutorial = () => {
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
         <div className="text-center">
-          <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-[#00B5B4]/10 flex items-center justify-center">
-            <CurrentIcon className="h-6 w-6 text-[#00B5B4]" />
+          <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-gray-800/10 flex items-center justify-center">
+            <CurrentIcon className="h-6 w-6 text-gray-800" />
           </div>
           <h2 className="text-xl font-semibold mb-2">{steps[step].title}</h2>
           <p className="text-gray-600 mb-6">{steps[step].description}</p>
@@ -65,7 +65,7 @@ const Tutorial = () => {
         <div className="flex justify-center">
           <button
             onClick={handleNext}
-            className="px-6 py-2 bg-[#00B5B4] hover:bg-[#00A3A2] text-white rounded-lg transition-colors"
+            className="px-6 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-lg transition-colors"
           >
             {step === steps.length - 1
               ? t("tutorial.button.finish")
