@@ -7,29 +7,21 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-11-20.acacia",
 });
 
-export async function POST() {
+export async function GET(request: Request) {
   try {
     const { userId } = await auth();
+
+    // If user is not authenticated, redirect to home page
     if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.redirect(new URL("/", request.url));
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-    });
+    // If user is authenticated, redirect to dashboard
+    return NextResponse.redirect(new URL("/dashboard", request.url));
 
-    if (!user?.subscriptionId) {
-      return NextResponse.json({ error: "No subscription found" }, { status: 400 });
-    }
-
-    // Cancel at period end
-    await stripe.subscriptions.update(user.subscriptionId, {
-      cancel_at_period_end: true,
-    });
-
-    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("[SUBSCRIPTION_CANCEL]", error);
-    return NextResponse.json({ error: "Internal Error" }, { status: 500 });
+    console.error("[STRIPE_CANCEL_GET]", error);
+    // Default to home page if there's an error
+    return NextResponse.redirect(new URL("/", request.url));
   }
 } 

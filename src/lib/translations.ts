@@ -188,9 +188,9 @@ export const translations = {
           "Your subscription has been confirmed. You will be redirected to the settings page shortly.",
       },
       canceled: {
-        title: "Subscription Canceled",
+        title: "Checkout process canceled",
         description:
-          "The subscription process was canceled. You will be redirected to the settings page shortly.",
+          "The checkout process was canceled. You will be redirected to the settings page shortly.",
       },
     },
     credits: {
@@ -427,14 +427,14 @@ export const translations = {
     },
     billing: {
       success: {
-        title: "Thank you for subscribing!",
+        title: "Obrigado por se inscrever!",
         description:
-          "Your subscription has been confirmed. You will be redirected to the settings page shortly.",
+          "Sua inscrição foi confirmada. Você será redirecionado para a página de configurações em breve.",
       },
       canceled: {
-        title: "Subscription Canceled",
+        title: "Processo de checkout cancelado",
         description:
-          "The subscription process was canceled. You will be redirected to the settings page shortly.",
+          "O processo de checkout foi cancelado. Você será redirecionado para a página de configurações em breve.",
       },
     },
     credits: {
@@ -671,14 +671,14 @@ export const translations = {
     },
     billing: {
       success: {
-        title: "Thank you for subscribing!",
+        title: "¡Gracias por suscribirte!",
         description:
-          "Your subscription has been confirmed. You will be redirected to the settings page shortly.",
+          "Tu suscripción ha sido confirmada. Serás redirigido a la página de configuración en breve.",
       },
       canceled: {
-        title: "Subscription Canceled",
+        title: "Proceso de pago cancelado",
         description:
-          "The subscription process was canceled. You will be redirected to the settings page shortly.",
+          "El proceso de pago ha sido cancelado. Serás redirigido a la página de configuración en breve.",
       },
     },
     credits: {

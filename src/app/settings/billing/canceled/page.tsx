@@ -26,4 +26,4 @@ export default function CanceledPage() {
       </div>
     </div>
   );
-} 
+}
