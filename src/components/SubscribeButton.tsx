@@ -46,18 +46,20 @@ export default function SubscribeButton({
         credits 
       });
       
-      const response = await fetch("/api/stripe", {
+      const response = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           priceId,
           isCredit,
-          period: isCredit ? undefined : period,
-          credits
-        })
+          credits,
+          cancelUrl: `${window.location.origin}/api/stripe/cancel`,
+        }),
       });
+      
+      if (!response.ok) throw new Error();
       
       const data = await response.json();
       console.log('[SubscribeButton] Received response:', data);
