@@ -41,9 +41,9 @@ export default function PricingSection({
   ];
 
   return (
-    <section className="py-8 px-4">
+    <section className="py-4 px-2 sm:py-8 sm:px-4">
       <div className="container mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-3xl mx-auto">
           {/* Free Plan */}
           {!hideFreePlan && (
             <div className="bg-white rounded-lg shadow-lg p-8">
@@ -81,18 +81,18 @@ export default function PricingSection({
           {creditPackages.map((pkg) => (
             <div
               key={pkg.credits}
-              className="bg-white rounded-lg shadow-lg p-8"
+              className="bg-white rounded-lg shadow-lg p-4 sm:p-6"
             >
-              <div className="flex justify-center mb-4">
-                <Package className="h-12 w-12 text-gray-800" />
+              <div className="flex justify-center mb-3">
+                <Package className="h-10 w-10 text-gray-800" />
               </div>
-              <h3 className="text-2xl font-bold text-center mb-4">
+              <h3 className="text-xl font-bold text-center mb-3">
                 {pkg.credits} {t("pricing.credits.unit")}
               </h3>
-              <p className="text-4xl font-bold text-center mb-6">
+              <p className="text-3xl font-bold text-center mb-4">
                 ${pkg.price}
               </p>
-              <p className="text-gray-600 text-center mb-8">
+              <p className="text-gray-600 text-center text-sm mb-6">
                 ${(pkg.price / pkg.credits).toFixed(2)}{" "}
                 {t("pricing.credits.perCredit")}
               </p>

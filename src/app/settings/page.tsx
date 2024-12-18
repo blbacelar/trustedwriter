@@ -13,7 +13,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
-      const isLoggingOut = window.location.href.includes('logout');
+      const isLoggingOut = window.location.href.includes("logout");
       if (!isLoggingOut) {
         router.push("/sign-in?redirect_url=/settings");
       } else {
@@ -35,7 +35,7 @@ export default function SettingsPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <ProfileSettings />
-      <SubscriptionManagement />
+      {/* <SubscriptionManagement /> */}
     </div>
   );
 }
