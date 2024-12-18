@@ -154,7 +154,7 @@ export default function ProfileSettings() {
           </TooltipProvider>
         </div>
 
-        <div className="flex gap-2 mb-4">
+        <div className="flex flex-col sm:flex-row gap-2 mb-4">
           <input
             type="text"
             value={newRule}
@@ -165,7 +165,7 @@ export default function ProfileSettings() {
           />
           <button
             onClick={handleAddRule}
-            className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors"
+            className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors whitespace-nowrap"
           >
             {t("settings.rules.add")}
           </button>

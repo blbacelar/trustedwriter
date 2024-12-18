@@ -133,7 +133,7 @@ export const translations = {
         title: "Your Profile",
         placeholder: "Paste your trustedhousesitters profile here...",
         helper:
-          "Describe yourself, your experience with pets, and why you love house sitting. This will be used to personalize your applications.",
+          "Describe yourself, your experience with pets, and why you love house sitting. This will be used to personalize your applications. You can copy your profile from TrustedHousesitters and paste it here.",
       },
       rules: {
         title: "Application Rules",
@@ -225,6 +225,17 @@ export const translations = {
       button: {
         next: "Next",
         finish: "Let's Go!",
+      },
+    },
+    errors: {
+      serviceUnavailable: {
+        title: "Service Unavailable",
+        defaultMessage:
+          "The service is currently unavailable. Please try again later.",
+        funMessage: {
+          line1: "Our pets are currently chasing the server hamsters...",
+          line2: "We'll have everything back up and running shortly! 🐹",
+        },
       },
     },
   },
@@ -366,7 +377,7 @@ export const translations = {
         placeholder:
           "Cole a descrição do seu perfil de TrustedHousesitters aquí...",
         helper:
-          "Descreva você, sua experiência com animais e por que você ama house sitting. Isso será usado para personalizar suas aplicações.",
+          "Descreva você, sua experiência com animais e por que você ama house sitting. Isso será usado para personalizar suas aplicações. Você pode copiar seu perfil do TrustedHousesitters e colar aqui.",
       },
       rules: {
         title: "Regras de Aplicação",
@@ -458,6 +469,17 @@ export const translations = {
       button: {
         next: "Próximo",
         finish: "Vamos lá!",
+      },
+    },
+    errors: {
+      serviceUnavailable: {
+        title: "Serviço Indisponível",
+        defaultMessage:
+          "O serviço está temporariamente indisponível. Por favor, tente novamente mais tarde.",
+        funMessage: {
+          line1: "Nossos pets estão perseguindo os hamsters do servidor...",
+          line2: "Em breve tudo estará funcionando novamente! 🐹",
+        },
       },
     },
   },
@@ -599,7 +621,7 @@ export const translations = {
         placeholder:
           "Cole la descripción de tu perfil de TrustedHousesitters aquí...",
         helper:
-          "Describe quién eres, tu experiencia con mascotas y por qué te gusta el house sitting. Esto se usará para personalizar tus aplicaciones.",
+          "Describe quién eres, tu experiencia con mascotas y por qué te gusta el house sitting. Esto se usará para personalizar tus aplicaciones. Puedes copiar tu perfil de TrustedHousesitters y pegarlo aquí.",
       },
       rules: {
         title: "Reglas de Aplicación",
@@ -691,6 +713,18 @@ export const translations = {
       button: {
         next: "Siguiente",
         finish: "¡Vamos!",
+      },
+    },
+    errors: {
+      serviceUnavailable: {
+        title: "Servicio No Disponible",
+        defaultMessage:
+          "El servicio no está disponible en este momento. Por favor, inténtelo de nuevo más tarde.",
+        funMessage: {
+          line1:
+            "Nuestras mascotas están persiguiendo a los hámsters del servidor...",
+          line2: "¡Pronto tendremos todo funcionando de nuevo! 🐹",
+        },
       },
     },
   },

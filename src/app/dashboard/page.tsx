@@ -14,6 +14,7 @@ import { checkOpenAIStatus } from "@/utils/gpt";
 import { useOpenAIStatus } from "@/contexts/OpenAIStatusContext";
 import LoadingPage from "@/components/LoadingPage";
 import { useCredits } from "@/contexts/CreditsContext";
+import ServiceUnavailable from "@/components/ServiceUnavailable";
 
 interface Application {
   id: string;
@@ -147,16 +148,7 @@ export default function DashboardPage() {
   }
 
   if (!isOperational) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-500 mb-2">
-            Service Unavailable
-          </h1>
-          <p className="text-gray-600">{status}</p>
-        </div>
-      </div>
-    );
+    return <ServiceUnavailable status={status} />;
   }
 
   return (
