@@ -60,7 +60,7 @@ export default function CreditsIndicator() {
                 {t("credits.buyTitle")}
               </DialogTitle>
             </DialogHeader>
-            <PricingSection hideFreePlan={true} defaultView="credits" />
+            <PricingSection hideFreePlan={true} />
           </DialogContent>
         </Dialog>
       </div>
