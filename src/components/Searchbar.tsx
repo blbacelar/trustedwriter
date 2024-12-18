@@ -53,17 +53,17 @@ export default function Searchbar({ onApplicationData }: SearchbarProps) {
 
   return (
     <form onSubmit={handleSubmit} className="w-full">
-      <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row gap-2">
         <input
           type="text"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           placeholder={t("dashboard.searchbar.placeholder")}
-          className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent"
+          className="flex-1 px-4 py-3 bg-white/90 backdrop-blur-sm rounded-lg border border-white/20 text-gray-800 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-white/40"
         />
         <button
           type="submit"
-          className="px-6 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors"
+          className="px-6 py-3 bg-gray-800 hover:bg-gray-900 text-white rounded-lg transition-colors disabled:opacity-50 mx-auto sm:mx-0"
         >
           {t("dashboard.searchbar.button")}
         </button>

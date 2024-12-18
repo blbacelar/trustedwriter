@@ -39,7 +39,7 @@ export default function CustomUserButton() {
             alt={user.fullName || "User"}
             className="w-8 h-8 rounded-full"
           />
-          <span className="text-sm font-medium text-gray-700">
+          <span className="text-sm font-medium text-gray-700 hidden md:inline">
             {user.fullName}
           </span>
         </div>

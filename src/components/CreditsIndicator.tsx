@@ -54,9 +54,9 @@ export default function CreditsIndicator() {
         </Tooltip>
 
         <Dialog open={showBuyCredits} onOpenChange={setShowBuyCredits}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogContent>
             <DialogHeader>
-              <DialogTitle className="text-3xl font-bold text-center">
+              <DialogTitle className="text-2xl sm:text-3xl font-bold text-center">
                 {t("credits.buyTitle")}
               </DialogTitle>
             </DialogHeader>

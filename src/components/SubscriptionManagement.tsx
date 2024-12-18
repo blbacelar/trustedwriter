@@ -63,8 +63,12 @@ export default function SubscriptionManagement() {
         const data = await response.json();
         setSubscription({
           ...data,
-          status: data.status === 'active' ? 'active' : 
-                 data.status === 'canceled' ? 'canceled' : 'free'
+          status:
+            data.status === "active"
+              ? "active"
+              : data.status === "canceled"
+              ? "canceled"
+              : "free",
         });
       }
     } catch (error) {
@@ -148,12 +152,12 @@ export default function SubscriptionManagement() {
           ) : (
             subscription.status === "free" && (
               <div className="flex items-center gap-2">
-                <button
+                {/* <button
                   onClick={handleUpgradeClick}
                   className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors"
                 >
                   {t("settings.subscription.upgradeCTA")}
-                </button>
+                </button> */}
               </div>
             )
           )}
