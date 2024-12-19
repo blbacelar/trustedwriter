@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, format } from "date-fns";
 import { Copy, ExternalLink, Search, Edit2, X } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -28,7 +28,11 @@ interface ApplicationsTableProps {
   onUpdate: (application: Application) => void;
 }
 
-export default function ApplicationsTable({ applications, onCopy, onUpdate }: ApplicationsTableProps) {
+export default function ApplicationsTable({
+  applications,
+  onCopy,
+  onUpdate,
+}: ApplicationsTableProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const { t } = useLanguage();
@@ -39,45 +43,78 @@ export default function ApplicationsTable({ applications, onCopy, onUpdate }: Ap
 
   const stripHtml = (html: string) => {
     // Replace paragraph breaks with double newlines
-    const withLineBreaks = html.replace(/<\/p><p>/g, '\n\n');
+    const withLineBreaks = html.replace(/<\/p><p>/g, "\n\n");
     // Create DOM parser
-    const doc = new DOMParser().parseFromString(withLineBreaks, 'text/html');
+    const doc = new DOMParser().parseFromString(withLineBreaks, "text/html");
     // Get text content
-    const textContent = doc.body.textContent || '';
+    const textContent = doc.body.textContent || "";
     // Clean up extra whitespace but preserve intentional line breaks
-    return textContent.replace(/\n{3,}/g, '\n\n').trim();
+    return textContent.replace(/\n{3,}/g, "\n\n").trim();
   };
 
   const handleSaveEdit = async (content: string) => {
+    if (!editingId) {
+      console.log("[DEBUG] No editingId found");
+      return;
+    }
+
     try {
+      console.log("[DEBUG] Starting save edit:", {
+        editingId,
+        contentPreview: content.substring(0, 100),
+      });
+
       const response = await fetch(`/api/applications/${editingId}`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ content }),
       });
 
+      console.log("[DEBUG] Response received:", {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok,
+      });
+
+      const data = await response.json();
+      console.log("[DEBUG] Response data:", data);
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update application');
+        throw new Error(
+          data.message || data.error || "Failed to update application"
+        );
       }
 
-      const updatedApplication = await response.json();
-      
-      onUpdate(updatedApplication);
-      
-      toast.success(t("dashboard.table.editSuccess"));
-      setEditingId(null);
+      if (data.success && data.data) {
+        console.log(
+          "[DEBUG] Update successful, calling onUpdate with:",
+          data.data
+        );
+
+        const updatedApplication = {
+          ...data.data,
+          createdAt: data.data.createdAt,
+        };
+
+        onUpdate(updatedApplication);
+        toast.success(t("dashboard.table.editSuccess"));
+        setEditingId(null);
+      } else {
+        console.log("[DEBUG] Invalid response format:", data);
+        throw new Error("Invalid response format");
+      }
     } catch (error) {
-      console.error('Failed to update application:', error);
+      console.error("[DEBUG] Save edit error:", error);
       toast.error(t("dashboard.table.editError"));
     }
   };
 
-  const filteredApplications = applications.filter(app => 
-    app.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    app.listingUrl.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredApplications = applications.filter(
+    (app) =>
+      app.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      app.listingUrl.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -86,7 +123,9 @@ export default function ApplicationsTable({ applications, onCopy, onUpdate }: Ap
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-semibold">{t("dashboard.table.editTitle")}</h2>
+              <h2 className="text-2xl font-semibold">
+                {t("dashboard.table.editTitle")}
+              </h2>
               <button
                 onClick={() => setEditingId(null)}
                 className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -96,7 +135,9 @@ export default function ApplicationsTable({ applications, onCopy, onUpdate }: Ap
               </button>
             </div>
             <RichTextEditor
-              initialContent={applications.find(app => app.id === editingId)?.content || ""}
+              initialContent={
+                applications.find((app) => app.id === editingId)?.content || ""
+              }
               onSave={handleSaveEdit}
               onCancel={() => setEditingId(null)}
               onCopy={onCopy}
@@ -122,14 +163,16 @@ export default function ApplicationsTable({ applications, onCopy, onUpdate }: Ap
               <TableHead>{t("dashboard.table.date")}</TableHead>
               <TableHead>{t("dashboard.table.content")}</TableHead>
               <TableHead>{t("dashboard.table.listing")}</TableHead>
-              <TableHead className="text-right">{t("dashboard.table.actions")}</TableHead>
+              <TableHead className="text-right">
+                {t("dashboard.table.actions")}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredApplications.map((application) => (
               <TableRow key={application.id}>
-                <TableCell className="font-medium">
-                  {formatDistanceToNow(new Date(application.createdAt), { addSuffix: true })}
+                <TableCell className="font-medium whitespace-nowrap">
+                  {format(new Date(application.createdAt), "MMM d, yyyy HH:mm")}
                 </TableCell>
                 <TableCell className="max-w-md truncate">
                   {stripHtml(application.content)}

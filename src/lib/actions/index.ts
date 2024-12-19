@@ -104,9 +104,10 @@ export async function scrapeAndGetApplication(houseSittingUrl: string) {
       });
     }
 
-    // Return both content and updated credits
+    // Return content, id, and updated credits
     return {
       content,
+      id: application.id,
       credits: user.subscriptionId ? null : (user.credits ?? 0) - 1,
     };
   } catch (error: any) {

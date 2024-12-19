@@ -94,8 +94,8 @@ export async function POST(request: Request) {
       try {
         const userData = {
           id,
-          email: primaryEmail?.email_address,
-          name,
+          email: primaryEmail?.email_address || "",
+          name: name || "Anonymous User",
           profile: "",
           rules: [],
           credits: 3,
@@ -105,11 +105,14 @@ export async function POST(request: Request) {
 
         console.log("📝 User data to upsert:", userData);
 
-        // Use upsert instead of create to handle potential duplicates
+        // Use upsert with proper update data
         const upsertedUser = await prisma.user.upsert({
           where: { id },
           create: userData,
-          update: {}, // Don't update anything if the user exists
+          update: {
+            email: primaryEmail?.email_address || "",
+            name: name || "Anonymous User",
+          },
           select: {
             id: true,
             email: true,
@@ -125,6 +128,15 @@ export async function POST(request: Request) {
         return NextResponse.json({ success: true, user: upsertedUser });
       } catch (error) {
         console.error("❌ Database error:", error);
+        // Add more detailed error logging
+        await logError({
+          error: error as Error,
+          context: "CLERK_WEBHOOK_USER_CREATED",
+          additionalData: {
+            userId: id,
+            email: primaryEmail?.email_address,
+          },
+        });
         throw error;
       }
     }

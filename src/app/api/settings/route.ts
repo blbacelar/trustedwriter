@@ -87,58 +87,38 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     const session = await auth();
-    console.log('GET settings - session:', { userId: session?.userId });
+    console.log("GET settings - session:", { userId: session?.userId });
 
     if (!session?.userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const user = await prisma.user.findUnique({
-      where: { id: session.userId }
+      where: { id: session.userId },
+      select: {
+        profile: true,
+        rules: true,
+      },
     });
 
-    console.log('GET settings - found user:', user);
+    console.log("GET settings - found user:", user);
 
     if (!user) {
       return NextResponse.json({ 
-        success: false,
-        error: "User not found",
-        message: "Please sign out and sign in again to complete setup"
-      }, { status: 404 });
+        success: true, 
+        data: { profile: "", rules: [] } 
+      });
     }
 
-    const response = {
-      success: true,
-      data: {
-        profile: user.profile ?? "",
-        rules: user.rules ?? []
-      }
-    };
-
-    console.log('GET settings - response:', response);
-    return NextResponse.json(response);
-  } catch (error) {
-    await logError({
-      error: error as Error,
-      context: "GET_SETTINGS",
-      additionalData: {
-        path: "/api/settings"
-      }
-    });
-    
-    const safeError = {
-      message: error instanceof Error ? error.message : 'Unknown error',
-      type: error instanceof Error ? error.constructor.name : typeof error
-    };
-    
-    console.error('GET settings - error:', safeError);
     return NextResponse.json({ 
-      success: false, 
-      error: "Failed to fetch settings",
-      details: safeError.message
-    }, { status: 500 });
+      success: true, 
+      data: user 
+    });
+  } catch (error) {
+    console.error("GET settings error:", error);
+    return NextResponse.json({ error: "Internal Error" }, { status: 500 });
   }
 }

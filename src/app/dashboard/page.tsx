@@ -37,6 +37,10 @@ export default function DashboardPage() {
     isLoading: openAIStatusLoading,
   } = useOpenAIStatus();
   const applicationRef = useRef<HTMLDivElement>(null);
+  const [currentListingUrl, setCurrentListingUrl] = useState<string>("");
+  const [currentApplicationId, setCurrentApplicationId] = useState<
+    string | null
+  >(null);
 
   useEffect(() => {
     const fetchApplications = async () => {
@@ -59,6 +63,8 @@ export default function DashboardPage() {
   const handleApplicationData = async (data: string | null) => {
     if (!data) return;
 
+    setCurrentListingUrl(data);
+
     // Check OpenAI status before proceeding
     const currentStatus = await checkOpenAIStatus();
 
@@ -75,6 +81,7 @@ export default function DashboardPage() {
     setIsGenerating(true);
     try {
       const result = await scrapeAndGetApplication(data);
+      console.log("[DEBUG] Scrape result:", result); // Add debug log
 
       if (result && "error" in result) {
         toast({
@@ -86,12 +93,16 @@ export default function DashboardPage() {
         return;
       }
 
-      if (result && "content" in result) {
-        setApplicationData(result.content);
-        // Only refresh credits after successful application generation
+      if (result && "content" in result && "id" in result) {
+        console.log("[DEBUG] Setting application data:", {
+          content: result.content,
+          id: result.id,
+        });
+
+        setApplicationData(result.content as string);
+        setCurrentApplicationId(result.id as string);
         await refreshCredits();
 
-        // Scroll to application section after a short delay
         setTimeout(() => {
           applicationRef.current?.scrollIntoView({
             behavior: "smooth",
@@ -99,6 +110,7 @@ export default function DashboardPage() {
           });
         }, 100);
       } else {
+        console.error("[DEBUG] Invalid result format:", result);
         throw new Error("Invalid response format");
       }
     } catch (error) {
@@ -137,10 +149,78 @@ export default function DashboardPage() {
     });
   };
 
-  const handleUpdateApplication = (updatedApp: Application) => {
-    setApplications((apps) =>
-      apps.map((app) => (app.id === updatedApp.id ? updatedApp : app))
+  const handleApplicationUpdate = (updatedApplication: Application) => {
+    console.log(
+      "[DEBUG] handleApplicationUpdate called with:",
+      updatedApplication
     );
+
+    setApplications((prevApplications) => {
+      console.log("[DEBUG] Previous applications:", prevApplications);
+
+      const newApplications = prevApplications.map((app) =>
+        app.id === updatedApplication.id ? updatedApplication : app
+      );
+
+      console.log("[DEBUG] Updated applications:", newApplications);
+      return newApplications;
+    });
+  };
+
+  const handleNewApplicationSave = async (content: string) => {
+    if (!currentApplicationId) {
+      console.error("[DEBUG] No application ID available");
+      toast({
+        variant: "destructive",
+        title: t("dashboard.table.editError"),
+        description: "Application ID not found",
+        duration: 3000,
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `/api/applications/${currentApplicationId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            content,
+            listingUrl: currentListingUrl,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update application");
+      }
+
+      const { data: updatedApplication } = await response.json();
+      handleApplicationUpdate(updatedApplication);
+
+      // Clear all related state to dismiss the editor
+      setApplicationData(null);
+      setCurrentApplicationId(null);
+      setCurrentListingUrl("");
+
+      // Scroll back to top smoothly
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      toast({
+        title: t("dashboard.table.editSuccess"),
+        duration: 3000,
+      });
+    } catch (error) {
+      console.error("[DEBUG] Save error:", error);
+      toast({
+        variant: "destructive",
+        title: t("dashboard.table.editError"),
+        duration: 3000,
+      });
+    }
   };
 
   if (openAIStatusLoading) {
@@ -193,7 +273,7 @@ export default function DashboardPage() {
               </h2>
               <RichTextEditor
                 initialContent={applicationData}
-                onSave={(content) => setApplicationData(content)}
+                onSave={handleNewApplicationSave}
                 onCopy={handleCopy}
               />
             </div>
@@ -214,7 +294,7 @@ export default function DashboardPage() {
             <ApplicationsTable
               applications={applications}
               onCopy={handleCopy}
-              onUpdate={handleUpdateApplication}
+              onUpdate={handleApplicationUpdate}
             />
           )}
         </div>
