@@ -43,7 +43,10 @@ export default function PricingSection({
   return (
     <section className="py-4 px-2 sm:py-8 sm:px-4">
       <div className="container mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
+        <div
+          data-testid="pricing-grid"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto"
+        >
           {/* Free Plan */}
           {!hideFreePlan && (
             <div className="bg-white rounded-lg shadow-lg p-8">
@@ -84,7 +87,10 @@ export default function PricingSection({
               className="bg-white rounded-lg shadow-lg p-4 sm:p-6"
             >
               <div className="flex justify-center mb-3">
-                <Package className="h-10 w-10 text-gray-800" />
+                <Package
+                  className="h-10 w-10 text-gray-800"
+                  data-testid="package-icon"
+                />
               </div>
               <h3 className="text-xl font-bold text-center mb-3">
                 {pkg.credits} {t("pricing.credits.unit")}
@@ -97,6 +103,7 @@ export default function PricingSection({
                 {t("pricing.credits.perCredit")}
               </p>
               <SubscribeButton
+                data-price-id={pkg.priceId}
                 priceId={pkg.priceId}
                 isCredit={true}
                 credits={pkg.credits}

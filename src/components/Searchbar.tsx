@@ -42,17 +42,17 @@ export default function Searchbar({ onApplicationData }: SearchbarProps) {
         error: error as Error,
         context: "SUBMIT_SEARCH_CLIENT",
         additionalData: {
-          component: "Searchbar"
-        }
+          component: "Searchbar",
+        },
       });
-      
+
       console.error("Error checking profile:", error);
       toast.error(t("dashboard.searchbar.failed"));
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full">
+    <form onSubmit={handleSubmit} className="w-full" role="form">
       <div className="flex flex-col sm:flex-row gap-2">
         <input
           type="text"

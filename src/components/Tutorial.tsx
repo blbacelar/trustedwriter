@@ -57,7 +57,7 @@ const Tutorial = () => {
       <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
         <div className="text-center">
           <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-gray-800/10 flex items-center justify-center">
-            <CurrentIcon className="h-6 w-6 text-gray-800" />
+            <CurrentIcon className="h-6 w-6 text-gray-800" data-testid={`${CurrentIcon.name}-icon`} />
           </div>
           <h2 className="text-xl font-semibold mb-2">{steps[step].title}</h2>
           <p className="text-gray-600 mb-6">{steps[step].description}</p>

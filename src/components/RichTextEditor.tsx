@@ -74,7 +74,7 @@ export default function RichTextEditor({ initialContent, onSave, onCancel, onCop
   };
 
   return (
-    <div>
+    <div data-testid="rich-text-editor">
       <EditorContent editor={editor} />
       <div className="flex justify-end gap-2 mt-4">
         {onCancel && (

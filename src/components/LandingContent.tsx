@@ -29,7 +29,7 @@ export default function LandingContent() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <section className="relative min-h-[600px] flex items-center">
+      <section className="relative min-h-[600px]" data-testid="hero-section">
         {/* Background Image with Gradient Overlay */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -40,7 +40,10 @@ export default function LandingContent() {
             className="object-cover"
             quality={100}
           />
-          <div className="absolute inset-0 bg-black/40" />
+          <div
+            className="absolute inset-0 bg-black/40"
+            data-testid="hero-overlay"
+          />
         </div>
 
         {/* Content */}
@@ -67,12 +70,15 @@ export default function LandingContent() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-white">
+      <section className="py-24 bg-white" data-testid="features-section">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-3 gap-8">
+          <div
+            className="grid md:grid-cols-3 gap-8"
+            data-testid="features-grid"
+          >
             <div className="text-center">
               <div className="flex justify-center mb-6">
-                <Sparkles className="h-12 w-12 text-gray-800" />
+                <Sparkles className="h-6 w-6" data-testid="sparkles-icon" />
               </div>
               <h3 className="text-xl font-semibold mb-4">
                 {t("features.ai.title")}
@@ -81,7 +87,7 @@ export default function LandingContent() {
             </div>
             <div className="text-center">
               <div className="flex justify-center mb-6">
-                <Clock className="h-12 w-12 text-gray-800" />
+                <Clock className="h-6 w-6" data-testid="clock-icon" />
               </div>
               <h3 className="text-xl font-semibold mb-4">
                 {t("features.time.title")}
@@ -90,7 +96,7 @@ export default function LandingContent() {
             </div>
             <div className="text-center">
               <div className="flex justify-center mb-6">
-                <Trophy className="h-12 w-12 text-gray-800" />
+                <Trophy className="h-6 w-6" data-testid="trophy-icon" />
               </div>
               <h3 className="text-xl font-semibold mb-4">
                 {t("features.success.title")}
@@ -104,12 +110,16 @@ export default function LandingContent() {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-24 bg-gray-50">
+      <section
+        id="pricing"
+        className="py-24 bg-gray-50"
+        data-testid="pricing-section"
+      >
         <PricingSection />
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white" data-testid="final-cta">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-8">{t("cta.title")}</h2>
           <Link href="/sign-up">

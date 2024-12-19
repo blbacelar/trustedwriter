@@ -21,7 +21,7 @@ export default function UserButton() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors">
-        <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium overflow-hidden">
+        <div className="h-8 w-8 rounded-full bg-gray-800" data-testid="user-avatar">
           {user.imageUrl ? (
             <img src={user.imageUrl} alt={user.fullName || ""} className="w-full h-full object-cover" />
           ) : (
