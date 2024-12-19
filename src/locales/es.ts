@@ -20,9 +20,9 @@ const translations = {
     },
   },
   promo: {
-    title: "Únete a TrustedHousesitters",
+    title: "Únete a Trusted House Sitters",
     description: "Encuentra oportunidades de cuidado de casas en todo el mundo",
-    cta: "Regístrate Ahora",
+    cta: "Regístrate Ahora y obtén un 25% de descuento",
   },
   footer: {
     brand: {
@@ -30,7 +30,6 @@ const translations = {
     },
     quickLinks: {
       title: "Enlaces Rápidos",
-      settings: "Configuración",
       home: "Inicio",
       faq: "Preguntas Frecuentes",
     },
@@ -76,9 +75,38 @@ const translations = {
         "¿No encuentras lo que buscas? Nuestro equipo de soporte está aquí para ayudarte.",
       button: "Contactar Soporte",
     },
+    questions: {
+      gettingStarted: {
+        question: "¿Cómo empiezo con TrustedWriter?",
+        answer:
+          "¡Empezar es fácil! Simplemente crea una cuenta, elige tus preferencias de idioma y comienza a usar nuestra asistencia de escritura con IA. Nuestra plataforma te guiará paso a paso en el proceso.",
+      },
+      payment: {
+        question: "¿Qué métodos de pago aceptan?",
+        answer:
+          "Aceptamos todas las tarjetas de crédito principales (Visa, MasterCard, American Express) y PayPal. Todos los pagos se procesan de forma segura a través de nuestros proveedores de pago.",
+      },
+      language: {
+        question: "¿Cómo puedo cambiar mis preferencias de idioma?",
+        answer:
+          "Puedes cambiar tus preferencias de idioma en cualquier momento a través de la página de Configuración. Haz clic en tu icono de perfil, selecciona 'Configuración' y elige tu idioma preferido del menú desplegable.",
+      },
+      security: {
+        question: "¿Mis datos están seguros?",
+        answer:
+          "Sí, nos tomamos muy en serio la seguridad de los datos. Todos tus datos están encriptados tanto en tránsito como en reposo. Nunca compartimos tu información personal con terceros sin tu consentimiento explícito.",
+      },
+      rules: {
+        question:
+          "¿Por qué necesito establecer reglas en la página de configuración?",
+        answer:
+          "Las reglas ayudan a nuestra IA a generar respuestas más precisas y personalizadas. Al proporcionar detalles específicos sobre tus preferencias y requisitos, la IA puede entender mejor tus necesidades y crear aplicaciones más asertivas y relevantes. Esto asegura que cada aplicación esté adaptada a tu situación única y aumenta tus posibilidades de éxito.",
+      },
+    },
   },
   credits: {
     unit: "créditos",
+    buyTitle: "Comprar Más Créditos",
   },
   dashboard: {
     title: "Genera tu Aplicación Perfecta de House Sitting",
@@ -118,7 +146,7 @@ const translations = {
       label: "Buscar",
       placeholder: "Ingresa la URL del anuncio...",
       button: "Buscar",
-      loading: "Buscando...",
+      loading: "Procesando...",
     },
     error: {
       invalid: "Por favor, ingresa una URL válida",
@@ -160,6 +188,83 @@ const translations = {
       saving: "Guardando...",
       success: "Cambios guardados correctamente",
       error: "Error al guardar los cambios",
+    },
+  },
+  pricing: {
+    perMonth: "/mes",
+    credits: {
+      title: "Paquetes de Créditos",
+      unit: "créditos",
+      perCredit: "por crédito",
+      buy: "Comprar Créditos",
+      packages: {
+        small: {
+          amount: "10",
+          price: "$10",
+          perUnit: "$1.00",
+        },
+        medium: {
+          amount: "30",
+          price: "$25",
+          perUnit: "$0.83",
+        },
+        large: {
+          amount: "75",
+          price: "$50",
+          perUnit: "$0.67",
+        },
+      },
+    },
+    free: {
+      title: "Gratis",
+      features: [
+        "3 aplicaciones por mes",
+        "Asistencia básica de IA",
+        "Soporte estándar",
+      ],
+      cta: "Comenzar",
+    },
+  },
+  hero: {
+    title: "Escribe Mejores Aplicaciones de House Sitting con IA",
+    subtitle:
+      "Aplicaciones potenciadas por IA que te ayudan a destacar y ser aceptado más rápido",
+    cta: "Empieza Gratis",
+  },
+  features: {
+    ai: {
+      title: "Escritura con IA",
+      description:
+        "Aplicaciones personalizadas usando tecnología avanzada de IA",
+    },
+    time: {
+      title: "Ahorro de Tiempo",
+      description: "Genera aplicaciones en segundos, no en horas",
+    },
+    success: {
+      title: "Mayor Tasa de Éxito",
+      description: "Destaca con aplicaciones profesionalmente adaptadas",
+    },
+  },
+  cta: {
+    title: "¿Listo para Comenzar tu Viaje de House Sitting?",
+    button: "Crea tu Cuenta",
+  },
+  tutorial: {
+    welcome: {
+      title: "¡Bienvenido a TrustedWriter!",
+      description:
+        "Comencemos a crear mejores aplicaciones de cuidado de casas.",
+    },
+    settings: {
+      title: "Configura tu Perfil",
+      description:
+        "Configura tu perfil y preferencias para obtener aplicaciones personalizadas.",
+    },
+    ready: {
+      title: "¡Todo Listo!",
+      description:
+        "Estás listo para comenzar a crear increíbles aplicaciones de cuidado de casas.",
     },
   },
 } as const;

@@ -43,7 +43,11 @@ export default function PricingSection({
   return (
     <section className="py-4 px-2 sm:py-8 sm:px-4">
       <div className="container mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
+        <div
+          className={`grid grid-cols-1 sm:grid-cols-2 ${
+            hideFreePlan ? "lg:grid-cols-3" : "lg:grid-cols-4"
+          } gap-4 max-w-6xl mx-auto`}
+        >
           {/* Free Plan */}
           {!hideFreePlan && (
             <div className="bg-white rounded-lg shadow-lg p-8">
@@ -60,14 +64,16 @@ export default function PricingSection({
                 </span>
               </p>
               <ul className="space-y-4 mb-8">
-                {(t("pricing.free.features") as unknown as string[]).map(
-                  (feature, index) => (
-                    <li key={index} className="flex items-center">
-                      <Check className="h-5 w-5 text-gray-800 mr-2" />
-                      <span>{feature}</span>
-                    </li>
-                  )
-                )}
+                {Array.isArray(t("pricing.free.features"))
+                  ? (t("pricing.free.features") as unknown as string[]).map(
+                      (feature, index) => (
+                        <li key={index} className="flex items-center">
+                          <Check className="h-5 w-5 text-gray-800 mr-2" />
+                          <span>{feature}</span>
+                        </li>
+                      )
+                    )
+                  : null}
               </ul>
               <Link href="/sign-up">
                 <Button className="w-full" variant="outline">
@@ -81,26 +87,24 @@ export default function PricingSection({
           {creditPackages.map((pkg) => (
             <div
               key={pkg.credits}
-              className="bg-white rounded-lg shadow-lg p-4 sm:p-6"
+              className="bg-white rounded-lg shadow-lg p-4 sm:p-6 h-full flex items-center justify-center"
             >
-              <div className="flex justify-center mb-3">
-                <Package className="h-10 w-10 text-gray-800" />
+              <div className="flex flex-col items-center">
+                <Package className="h-10 w-10 text-gray-800 mb-3" />
+                <h3 className="text-xl font-bold mb-3">
+                  {pkg.credits} {t("pricing.credits.unit")}
+                </h3>
+                <p className="text-3xl font-bold mb-4">${pkg.price}</p>
+                <p className="text-gray-600 text-sm mb-6">
+                  ${(pkg.price / pkg.credits).toFixed(2)}{" "}
+                  {t("pricing.credits.perCredit")}
+                </p>
+                <SubscribeButton
+                  priceId={pkg.priceId}
+                  isCredit={true}
+                  credits={pkg.credits}
+                />
               </div>
-              <h3 className="text-xl font-bold text-center mb-3">
-                {pkg.credits} {t("pricing.credits.unit")}
-              </h3>
-              <p className="text-3xl font-bold text-center mb-4">
-                ${pkg.price}
-              </p>
-              <p className="text-gray-600 text-center text-sm mb-6">
-                ${(pkg.price / pkg.credits).toFixed(2)}{" "}
-                {t("pricing.credits.perCredit")}
-              </p>
-              <SubscribeButton
-                priceId={pkg.priceId}
-                isCredit={true}
-                credits={pkg.credits}
-              />
             </div>
           ))}
         </div>

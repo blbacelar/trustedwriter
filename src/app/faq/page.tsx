@@ -30,30 +30,30 @@ const FAQPage = () => {
 
   const faqItems: FAQItem[] = [
     {
-      question: "How do I get started with TrustedWriter?",
-      answer: "Getting started is easy! Simply sign up for an account, choose your preferred language settings, and start using our AI-powered writing assistance. Our platform will guide you through the process step by step.",
+      question: t('faq.questions.gettingStarted.question'),
+      answer: t('faq.questions.gettingStarted.answer'),
       category: "getting-started"
     },
     {
-      question: "What payment methods do you accept?",
-      answer: "We accept all major credit cards (Visa, MasterCard, American Express) as well as PayPal. All payments are processed securely through our payment providers.",
+      question: t('faq.questions.payment.question'),
+      answer: t('faq.questions.payment.answer'),
       category: "billing"
     },
     {
-      question: "How can I change my language preferences?",
-      answer: "You can change your language preferences at any time through the Settings page. Click on your profile icon, select 'Settings', and choose your preferred language from the dropdown menu.",
+      question: t('faq.questions.language.question'),
+      answer: t('faq.questions.language.answer'),
       category: "settings"
     },
     {
-      question: "Is my data secure?",
-      answer: "Yes, we take data security very seriously. All your data is encrypted both in transit and at rest. We never share your personal information with third parties without your explicit consent.",
+      question: t('faq.questions.security.question'),
+      answer: t('faq.questions.security.answer'),
       category: "security"
     },
     {
-      question: "Why do I need to set rules in the settings page?",
-      answer: "The rules help our AI generate more accurate and personalized responses. By providing specific details about your preferences and requirements, the AI can better understand your needs and create more assertive and relevant applications. This ensures that each application is tailored to your unique situation and increases your chances of success.",
+      question: t('faq.questions.rules.question'),
+      answer: t('faq.questions.rules.answer'),
       category: "settings"
-    },
+    }
   ];
 
   const categories = [
