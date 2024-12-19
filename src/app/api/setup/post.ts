@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
 import { currentUser } from "@clerk/nextjs/server";
-import { logError } from "@/lib/logError";
+import { logError } from "@/lib/errorLogging";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-11-20.acacia",
@@ -23,7 +23,6 @@ export async function POST(request: Request) {
       where: { id: userId },
     });
 
-    // Only set initial values if user doesn't exist
     const upsertedUser = await prisma.user.upsert({
       where: { id: userId },
       create: {
@@ -36,7 +35,7 @@ export async function POST(request: Request) {
         subscriptionStatus: "free",
         lastCreditReset: new Date()
       },
-      update: existingUser ? {} : undefined, // Don't update anything if user exists
+      update: {},
     });
 
     return NextResponse.json({ success: true, user: upsertedUser });

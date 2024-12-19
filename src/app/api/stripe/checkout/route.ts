@@ -32,6 +32,25 @@ export async function POST(request: Request) {
       update: {}
     });
 
+    // Create Stripe customer if it doesn't exist
+    if (!user.stripeCustomerId) {
+      const currentUserData = await currentUser();
+      const customer = await stripe.customers.create({
+        email: currentUserData?.emailAddresses[0]?.emailAddress,
+        metadata: {
+          userId,
+        },
+      });
+
+      // Update user with new Stripe customer ID
+      await prisma.user.update({
+        where: { id: userId },
+        data: { stripeCustomerId: customer.id },
+      });
+
+      user.stripeCustomerId = customer.id;
+    }
+
     // Get credit amount based on priceId
     let credits = 0;
     switch (priceId) {
@@ -49,6 +68,13 @@ export async function POST(request: Request) {
           { error: "Invalid price ID" },
           { status: 400 }
         );
+    }
+
+    if (!user.stripeCustomerId) {
+      return NextResponse.json(
+        { error: "Failed to create customer" },
+        { status: 500 }
+      );
     }
 
     const session = await stripe.checkout.sessions.create({
