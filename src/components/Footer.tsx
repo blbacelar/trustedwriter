@@ -2,10 +2,17 @@
 
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { SupportWidget } from './SupportWidget';
 
 const Footer = () => {
   const { t } = useLanguage();
   const year = new Date().getFullYear();
+
+  console.log('Translation test:', {
+    faq: t("footer.quickLinks.faq"),
+    home: t("footer.quickLinks.home"),
+    settings: t("footer.quickLinks.settings")
+  });
 
   return (
     <footer className="bg-white border-t">
@@ -57,6 +64,14 @@ const Footer = () => {
                   {t("footer.quickLinks.home")}
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/faq"
+                  className="text-gray-600 hover:text-gray-800 transition-colors"
+                >
+                  {t("footer.quickLinks.faq")}
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -99,6 +114,7 @@ const Footer = () => {
           </p>
         </div>
       </div>
+      <SupportWidget />
     </footer>
   );
 };

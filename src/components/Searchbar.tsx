@@ -42,10 +42,10 @@ export default function Searchbar({ onApplicationData }: SearchbarProps) {
         error: error as Error,
         context: "SUBMIT_SEARCH_CLIENT",
         additionalData: {
-          component: "Searchbar"
-        }
+          component: "Searchbar",
+        },
       });
-      
+
       console.error("Error checking profile:", error);
       toast.error(t("dashboard.searchbar.failed"));
     }
