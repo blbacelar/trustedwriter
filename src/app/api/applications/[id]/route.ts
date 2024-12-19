@@ -4,10 +4,10 @@ import { prisma } from "@/lib/prisma";
 import { logError } from "@/lib/errorLogging";
 
 export async function PATCH(
-  req: NextRequest,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const { id } = await params;
+  const { id } = params;
   console.log("[DEBUG] PATCH request received for application:", id);
 
   let userId: string | null | undefined;
@@ -23,34 +23,13 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    let body;
-    try {
-      body = await req.json();
-      console.log("[DEBUG] Parsed request body:", body);
-    } catch (e) {
-      console.error("[DEBUG] Failed to parse request body:", e);
-      return NextResponse.json(
-        { error: "Invalid request body" },
-        { status: 400 }
-      );
-    }
-
+    const body = await request.json();
     const { content } = body;
-    if (!content) {
-      console.log("[DEBUG] Missing content in request");
-      return NextResponse.json(
-        { error: "Content is required" },
-        { status: 400 }
-      );
-    }
 
-    // Verify the application belongs to the user
+    // Get the application
     const application = await prisma.application.findUnique({
       where: { id },
-      select: { userId: true },
     });
-
-    console.log("[DEBUG] Found application:", application);
 
     if (!application || application.userId !== userId) {
       console.log("[DEBUG] Application not found or unauthorized:", {
