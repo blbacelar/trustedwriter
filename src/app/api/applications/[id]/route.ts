@@ -5,9 +5,9 @@ import { logError } from "@/lib/errorLogging";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params;
+  const { id } = await context.params;
   console.log("[DEBUG] PATCH request received for application:", id);
 
   let userId: string | null | undefined;
