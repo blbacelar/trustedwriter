@@ -3,12 +3,13 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
 import { currentUser } from "@clerk/nextjs/server";
+import { logError } from "@/lib/logError";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-11-20.acacia",
 });
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
     const { userId } = await auth();
     const user = await currentUser();
@@ -17,20 +18,16 @@ export async function POST() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Create Stripe customer
-    const customer = await stripe.customers.create({
-      email: user.emailAddresses[0]?.emailAddress,
-      metadata: {
-        userId,
-      },
+    // Get existing user first
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId },
     });
 
-    // Create or update user with proper data
-    await prisma.user.upsert({
+    // Only set initial values if user doesn't exist
+    const upsertedUser = await prisma.user.upsert({
       where: { id: userId },
       create: {
         id: userId,
-        stripeCustomerId: customer.id,
         email: user.emailAddresses[0]?.emailAddress,
         name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || "Anonymous User",
         profile: "",
@@ -39,14 +36,19 @@ export async function POST() {
         subscriptionStatus: "free",
         lastCreditReset: new Date()
       },
-      update: {
-        stripeCustomerId: customer.id,
-      },
+      update: existingUser ? {} : undefined, // Don't update anything if user exists
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, user: upsertedUser });
   } catch (error) {
     console.error("[SETUP_POST]", error);
+    await logError({
+      error: error as Error,
+      context: "SETUP_POST",
+      additionalData: {
+        path: "/api/setup/post"
+      }
+    });
     return NextResponse.json({ error: "Internal Error" }, { status: 500 });
   }
 }
