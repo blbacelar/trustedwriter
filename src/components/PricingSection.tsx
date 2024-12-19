@@ -43,7 +43,7 @@ export default function PricingSection({
   return (
     <section className="py-4 px-2 sm:py-8 sm:px-4">
       <div className="container mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-3xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
           {/* Free Plan */}
           {!hideFreePlan && (
             <div className="bg-white rounded-lg shadow-lg p-8">
