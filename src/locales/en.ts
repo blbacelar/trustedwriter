@@ -138,6 +138,9 @@ const translations = {
       content: "Content",
       listing: "Listing",
       actions: "Actions",
+      editTitle: "Edit Application",
+      editSuccess: "Application updated successfully",
+      editError: "Failed to update application",
     },
   },
   search: {

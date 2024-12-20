@@ -156,7 +156,47 @@ export default function ApplicationsTable({
         />
       </div>
 
-      <div className="rounded-lg border">
+      <div className="md:hidden space-y-4">
+        {filteredApplications.map((app) => (
+          <div key={app.id} className="bg-white rounded-lg shadow-md p-4">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm text-gray-500">
+                {formatDistanceToNow(new Date(app.createdAt), { addSuffix: true })}
+              </span>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleEdit(app.id)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <Edit2 className="h-4 w-4 text-gray-600" />
+                </button>
+                <button
+                  onClick={() => onCopy(app.content)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <Copy className="h-4 w-4 text-gray-600" />
+                </button>
+              </div>
+            </div>
+
+            <div className="text-sm text-gray-700 line-clamp-3 mb-3">
+              {stripHtml(app.content)}
+            </div>
+
+            <a
+              href={app.listingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-blue-600 hover:underline flex items-center gap-1"
+            >
+              <ExternalLink className="h-3 w-3" />
+              {new URL(app.listingUrl).hostname}
+            </a>
+          </div>
+        ))}
+      </div>
+
+      <div className="hidden md:block rounded-lg border">
         <Table>
           <TableHeader>
             <TableRow>
