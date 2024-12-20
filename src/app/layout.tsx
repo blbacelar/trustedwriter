@@ -12,7 +12,6 @@ import { TutorialProvider } from "@/contexts/TutorialContext";
 import Tutorial from "@/components/Tutorial";
 import { OpenAIStatusProvider } from "@/contexts/OpenAIStatusContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
-import { auth } from "@clerk/nextjs";
 import { AuthProvider } from "@/components/AuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });

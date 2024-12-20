@@ -29,9 +29,9 @@ const getCreditAmount = (priceId: string): number => {
 };
 
 const PRICE_IDS = {
-  small: 'price_live_...',  // Replace with your live price ID
-  medium: 'price_live_...', // Replace with your live price ID
-  large: 'price_live_...'   // Replace with your live price ID
+  small: "price_live_...", // Replace with your live price ID
+  medium: "price_live_...", // Replace with your live price ID
+  large: "price_live_...", // Replace with your live price ID
 };
 
 export async function GET(req: Request) {

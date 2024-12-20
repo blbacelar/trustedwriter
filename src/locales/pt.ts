@@ -70,6 +70,12 @@ const translations = {
       settings: "Configurações",
       security: "Segurança",
     },
+    support: {
+      title: "Contatar Suporte",
+      subtitle:
+        "Ainda tem dúvidas? Nossa equipe de suporte está aqui para ajudar.",
+      button: "Contatar Suporte",
+    },
     questions: {
       gettingStarted: {
         question: "Como começar com o TrustedWriter?",
