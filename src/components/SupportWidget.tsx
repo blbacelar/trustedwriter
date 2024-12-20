@@ -1,12 +1,20 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+"use client";
+
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const SupportWidget = () => {
+  const { t, language } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Add this console log to debug
+  console.log("Current language:", language);
+  console.log("Translation test:", t("support.title"));
 
   // Add event listener for custom open event
   useEffect(() => {
@@ -14,43 +22,45 @@ export const SupportWidget = () => {
       setIsOpen(true);
     };
 
-    window.addEventListener('openSupport', handleOpenSupport as EventListener);
+    window.addEventListener("openSupport", handleOpenSupport as EventListener);
 
     return () => {
-      window.removeEventListener('openSupport', handleOpenSupport as EventListener);
+      window.removeEventListener(
+        "openSupport",
+        handleOpenSupport as EventListener
+      );
     };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
-      const response = await fetch('/api/support', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/support", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, message }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to send message');
+        throw new Error(data.message || "Failed to send message");
       }
 
       setSuccess(true);
       // Clear form
-      setEmail('');
-      setMessage('');
+      setEmail("");
+      setMessage("");
       // Auto close after 3 seconds
       setTimeout(() => {
         setSuccess(false);
         setIsOpen(false);
       }, 3000);
-
     } catch (error) {
-      console.error('Failed to send support message:', error);
-      alert('Failed to send message. Please try again.');
+      console.error("Failed to send support message:", error);
+      alert("Failed to send message. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -65,10 +75,19 @@ export const SupportWidget = () => {
         onClick={() => setIsOpen(true)}
         className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-2 bg-black text-white rounded-full shadow-lg hover:shadow-xl transition-shadow"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fillRule="evenodd"
+            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
+            clipRule="evenodd"
+          />
         </svg>
-        Need Help?
+        {t("support.needHelp")}
       </motion.button>
 
       {/* Support Modal */}
@@ -92,13 +111,24 @@ export const SupportWidget = () => {
               className="fixed bottom-0 left-0 right-0 z-50 mx-auto max-w-lg bg-white rounded-t-2xl shadow-2xl p-6 pb-8"
             >
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold">Contact Support</h2>
-                <button 
+                <h2 className="text-2xl font-bold">{t("support.title")}</h2>
+                <button
                   onClick={() => setIsOpen(false)}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
@@ -110,18 +140,33 @@ export const SupportWidget = () => {
                   className="text-center py-8"
                 >
                   <div className="mx-auto w-12 h-12 bg-green-100 text-green-500 rounded-full flex items-center justify-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">Message Sent!</h3>
-                  <p className="text-gray-600">We'll get back to you soon.</p>
+                  <h3 className="text-xl font-semibold mb-2">
+                    {t("support.success.title")}
+                  </h3>
+                  <p className="text-gray-600">
+                    {t("support.success.description")}
+                  </p>
                 </motion.div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                      Email
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      {t("support.email.label")}
                     </label>
                     <input
                       type="email"
@@ -130,12 +175,12 @@ export const SupportWidget = () => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-shadow"
-                      placeholder="your@email.com"
+                      placeholder={t("support.email.placeholder")}
                     />
                   </div>
                   <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                      How can we help?
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      {t("support.message.label")}
                     </label>
                     <textarea
                       id="message"
@@ -144,7 +189,7 @@ export const SupportWidget = () => {
                       onChange={(e) => setMessage(e.target.value)}
                       rows={4}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-shadow resize-none"
-                      placeholder="Tell us what you need help with..."
+                      placeholder={t("support.message.placeholder")}
                     />
                   </div>
                   <button
@@ -154,7 +199,10 @@ export const SupportWidget = () => {
                   >
                     {isLoading ? (
                       <div className="flex items-center justify-center gap-2">
-                        <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                        <svg
+                          className="animate-spin h-5 w-5"
+                          viewBox="0 0 24 24"
+                        >
                           <circle
                             className="opacity-25"
                             cx="12"
@@ -170,10 +218,10 @@ export const SupportWidget = () => {
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                           />
                         </svg>
-                        Sending...
+                        {t("support.sending")}
                       </div>
                     ) : (
-                      'Send Message'
+                      t("support.send")
                     )}
                   </button>
                 </form>
@@ -184,4 +232,4 @@ export const SupportWidget = () => {
       </AnimatePresence>
     </>
   );
-}; 
+};

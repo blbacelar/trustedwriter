@@ -178,6 +178,13 @@ const translations = {
     signOut: "Cerrar Sesión",
     login: "Iniciar Sesión",
     signup: "Registrarse",
+    language: "Idioma",
+    languages: {
+      en: "Inglés",
+      es: "Español",
+      pt: "Portugués",
+    },
+    help: "Ayuda",
   },
   settings: {
     title: "Configuración",
@@ -298,6 +305,24 @@ const translations = {
         "Mencionar mi experiencia previa en cuidado de casas",
         "Incluir una conexión personal con su ubicación",
       ],
+    },
+  },
+  support: {
+    title: "Contactar Soporte",
+    needHelp: "¿Necesitas Ayuda?",
+    email: {
+      label: "Correo",
+      placeholder: "tu@email.com",
+    },
+    message: {
+      label: "¿Cómo podemos ayudarte?",
+      placeholder: "Cuéntanos qué necesitas...",
+    },
+    send: "Enviar Mensaje",
+    sending: "Enviando...",
+    success: {
+      title: "¡Mensaje Enviado!",
+      description: "Te responderemos pronto.",
     },
   },
 } as const;

@@ -70,12 +70,6 @@ const translations = {
       settings: "Configurações",
       security: "Segurança",
     },
-    support: {
-      title: "Ainda tem dúvidas?",
-      subtitle:
-        "Não encontrou o que procura? Nossa equipe de suporte está aqui para ajudar.",
-      button: "Contatar Suporte",
-    },
     questions: {
       gettingStarted: {
         question: "Como começar com o TrustedWriter?",
@@ -178,6 +172,13 @@ const translations = {
     signOut: "Sair",
     login: "Entrar",
     signup: "Cadastrar",
+    language: "Idioma",
+    languages: {
+      en: "Inglês",
+      es: "Espanhol",
+      pt: "Português",
+    },
+    help: "Ajuda",
   },
   settings: {
     title: "Configurações",
@@ -298,6 +299,24 @@ const translations = {
         "Mencionar minha experiência prévia em house sitting",
         "Incluir uma conexão pessoal com a localização deles",
       ],
+    },
+  },
+  support: {
+    title: "Contatar Suporte",
+    needHelp: "Precisa de Ajuda?",
+    email: {
+      label: "Email",
+      placeholder: "seu@email.com",
+    },
+    message: {
+      label: "Como podemos ajudar?",
+      placeholder: "Conte-nos o que você precisa...",
+    },
+    send: "Enviar Mensagem",
+    sending: "Enviando...",
+    success: {
+      title: "Mensagem Enviada!",
+      description: "Retornaremos em breve.",
     },
   },
 } as const;

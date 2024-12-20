@@ -18,11 +18,11 @@ type TranslationShape<T> = {
 
 type Translations = TranslationShape<typeof en>;
 
-interface LanguageContextType {
+type LanguageContextType = {
+  t: (key: string) => string;
   language: Languages;
   setLanguage: (lang: Languages) => void;
-  t: (key: string) => string;
-}
+};
 
 const translations: Record<Languages, Translations> = {
   en,

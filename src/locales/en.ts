@@ -177,6 +177,13 @@ const translations = {
     signOut: "Sign Out",
     login: "Log In",
     signup: "Sign Up",
+    language: "Language",
+    languages: {
+      en: "English",
+      es: "Spanish",
+      pt: "Portuguese",
+    },
+    help: "Help",
   },
   settings: {
     title: "Settings",
@@ -284,6 +291,24 @@ const translations = {
         "Mention my previous house sitting experience",
         "Include a personal connection to their location",
       ],
+    },
+  },
+  support: {
+    title: "Contact Support",
+    needHelp: "Need Help?",
+    email: {
+      label: "Email",
+      placeholder: "your@email.com",
+    },
+    message: {
+      label: "How can we help?",
+      placeholder: "Tell us what you need help with...",
+    },
+    send: "Send Message",
+    sending: "Sending...",
+    success: {
+      title: "Message Sent!",
+      description: "We'll get back to you soon.",
     },
   },
 } as const;

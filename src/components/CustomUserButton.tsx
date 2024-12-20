@@ -12,14 +12,15 @@ import {
   DropdownMenuGroup,
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
-import { Settings, LogOut, Globe } from "lucide-react";
+import { Settings, LogOut, Globe, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Language } from "@/lib/translations";
+import { useState } from "react";
 
-const languages: { code: Language; flag: string; label: string }[] = [
-  { code: "en", flag: "🇺🇸", label: "English" },
-  { code: "pt", flag: "🇧🇷", label: "Português" },
-  { code: "es", flag: "🇪🇸", label: "Español" },
+const languages: { code: Language; flag: string }[] = [
+  { code: "en", flag: "🇺🇸" },
+  { code: "pt", flag: "🇧🇷" },
+  { code: "es", flag: "🇪🇸" },
 ];
 
 export default function CustomUserButton() {
@@ -27,6 +28,7 @@ export default function CustomUserButton() {
   const { signOut } = useClerk();
   const router = useRouter();
   const { t, language, setLanguage } = useLanguage();
+  const [open, setOpen] = useState(false);
 
   if (!user) return null;
 
@@ -49,7 +51,7 @@ export default function CustomUserButton() {
           {t("nav.language")}
         </DropdownMenuLabel>
         <DropdownMenuGroup>
-          {languages.map(({ code, flag, label }) => (
+          {languages.map(({ code, flag }) => (
             <DropdownMenuItem
               key={code}
               onClick={() => setLanguage(code)}
@@ -60,7 +62,7 @@ export default function CustomUserButton() {
             >
               <Globe className="mr-2 h-4 w-4" />
               <span className="mr-2">{flag}</span>
-              <span>{label}</span>
+              <span>{t(`nav.languages.${code}`)}</span>
             </DropdownMenuItem>
           ))}
         </DropdownMenuGroup>
