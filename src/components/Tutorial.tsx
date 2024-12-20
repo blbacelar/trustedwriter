@@ -59,6 +59,8 @@ export default function Tutorial() {
 
   const CurrentIcon = steps[step].Icon;
 
+  const examples = t("tutorial.rules.examples") as unknown as string[];
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
@@ -91,11 +93,9 @@ export default function Tutorial() {
           <div className="mt-4 space-y-2 text-left">
             <p className="text-sm text-gray-600 mb-2">Examples:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm text-gray-600">
-              {(t("tutorial.rules.examples") as string[]).map(
-                (example, index) => (
-                  <li key={index}>{example}</li>
-                )
-              )}
+              {examples.map((example, index) => (
+                <li key={index}>{example}</li>
+              ))}
             </ul>
           </div>
         )}
