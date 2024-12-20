@@ -139,6 +139,9 @@ const translations = {
       content: "Conteúdo",
       listing: "Anúncio",
       actions: "Ações",
+      editTitle: "Editar Aplicação",
+      editSuccess: "Aplicação atualizada com sucesso",
+      editError: "Falha ao atualizar aplicação",
     },
   },
   search: {
