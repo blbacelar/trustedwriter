@@ -15,10 +15,7 @@ export async function POST(request: Request) {
     const { priceId, cancelUrl } = body;
 
     if (!userId) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get or create user
@@ -27,9 +24,9 @@ export async function POST(request: Request) {
       create: {
         id: userId,
         credits: 3,
-        subscriptionStatus: 'free'
+        subscriptionStatus: "free",
       },
-      update: {}
+      update: {},
     });
 
     // Create Stripe customer if it doesn't exist
@@ -54,13 +51,13 @@ export async function POST(request: Request) {
     // Get credit amount based on priceId
     let credits = 0;
     switch (priceId) {
-      case 'price_1QV5Mr04BafnFvRo949kW8y5':
+      case "price_1QYAEo04BafnFvRo9f1l5Xuw":
         credits = 10;
         break;
-      case 'price_1QV5Pl04BafnFvRoKHf3V4mu':
+      case "price_1QYAEj04BafnFvRoQuxw3lHk":
         credits = 30;
         break;
-      case 'price_1QV5Qb04BafnFvRoiLl17ZP3':
+      case "price_1QYAEe04BafnFvRoY1Na59aK":
         credits = 75;
         break;
       default:
@@ -103,12 +100,12 @@ export async function POST(request: Request) {
       error: error as Error,
       context: "STRIPE_CHECKOUT_POST",
       additionalData: {
-        path: "/api/stripe/checkout"
-      }
+        path: "/api/stripe/checkout",
+      },
     });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
     );
   }
-} 
+}

@@ -10,46 +10,50 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 const CREDIT_PRICE_IDS = [
-  'price_1QV5Mr04BafnFvRo949kW8y5', // 10 credits
-  'price_1QV5Pl04BafnFvRoKHf3V4mu', // 30 credits
-  'price_1QV5Qb04BafnFvRoiLl17ZP3'  // 75 credits
+  "price_1QYAEo04BafnFvRo9f1l5Xuw", // 10 credits
+  "price_1QYAEj04BafnFvRoQuxw3lHk", // 30 credits
+  "price_1QYAEe04BafnFvRoY1Na59aK", // 75 credits
 ];
 
 const getCreditAmount = (priceId: string): number => {
   switch (priceId) {
-    case 'price_1QV5Mr04BafnFvRo949kW8y5': return 10;
-    case 'price_1QV5Pl04BafnFvRoKHf3V4mu': return 30;
-    case 'price_1QV5Qb04BafnFvRoiLl17ZP3': return 75;
-    default: return 0;
+    case "price_1QYAEo04BafnFvRo9f1l5Xuw":
+      return 10;
+    case "price_1QYAEj04BafnFvRoQuxw3lHk":
+      return 30;
+    case "price_1QYAEe04BafnFvRoY1Na59aK":
+      return 75;
+    default:
+      return 0;
   }
 };
 
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const priceId = searchParams.get('priceId');
-    const period = searchParams.get('period');
+    const priceId = searchParams.get("priceId");
+    const period = searchParams.get("period");
     const isCredit = priceId ? CREDIT_PRICE_IDS.includes(priceId) : false;
     const creditAmount = priceId ? getCreditAmount(priceId) : 0;
-    
-    console.log('Setup route params:', { 
-      priceId, 
-      period, 
+
+    console.log("Setup route params:", {
+      priceId,
+      period,
       isCredit,
       creditAmount,
-      url: req.url 
+      url: req.url,
     });
-    
+
     const { userId } = await auth();
     const user = await currentUser();
-    
+
     if (!userId || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // First check if user exists
     const existingUser = await prisma.user.findUnique({
-      where: { id: userId }
+      where: { id: userId },
     });
 
     if (!existingUser) {
@@ -58,13 +62,15 @@ export async function GET(req: Request) {
         data: {
           id: userId,
           email: user.emailAddresses[0]?.emailAddress,
-          name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || "Anonymous User",
+          name:
+            `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+            "Anonymous User",
           profile: "",
           rules: [],
           credits: 3,
           subscriptionStatus: "free",
-          lastCreditReset: new Date()
-        }
+          lastCreditReset: new Date(),
+        },
       });
       console.log("Created new user during setup");
     }
@@ -86,12 +92,12 @@ export async function GET(req: Request) {
     });
 
     // Create checkout session with the provided priceId
-    console.log('Creating checkout session with:', { 
+    console.log("Creating checkout session with:", {
       priceId: priceId || process.env.STRIPE_PRICE_ID,
       period,
       isCredit,
       creditAmount,
-      userId 
+      userId,
     });
 
     const sessionConfig: Stripe.Checkout.SessionCreateParams = {
@@ -109,7 +115,7 @@ export async function GET(req: Request) {
         userId,
         isCredit: String(isCredit),
         ...(period && !isCredit && { period }),
-        ...(isCredit && { credits: String(creditAmount) })
+        ...(isCredit && { credits: String(creditAmount) }),
       },
     };
 
@@ -139,10 +145,10 @@ export async function POST() {
       error: error as Error,
       context: "POST_SETUP",
       additionalData: {
-        path: "/api/setup"
-      }
+        path: "/api/setup",
+      },
     });
-    
+
     console.error("[SETUP_POST]", error);
     return NextResponse.json({ error: "Internal Error" }, { status: 500 });
   }

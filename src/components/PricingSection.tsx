@@ -26,17 +26,17 @@ export default function PricingSection({
     {
       credits: 10,
       price: 10,
-      priceId: "price_1QV5Mr04BafnFvRo949kW8y5",
+      priceId: "price_1QYAEo04BafnFvRo9f1l5Xuw",
     },
     {
       credits: 30,
       price: 25,
-      priceId: "price_1QV5Pl04BafnFvRoKHf3V4mu",
+      priceId: "price_1QYAEj04BafnFvRoQuxw3lHk",
     },
     {
       credits: 75,
       price: 50,
-      priceId: "price_1QV5Qb04BafnFvRoiLl17ZP3",
+      priceId: "price_1QYAEe04BafnFvRoY1Na59aK",
     },
   ];
 
