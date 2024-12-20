@@ -176,7 +176,7 @@ const translations = {
   nav: {
     settings: "Configuración",
     signOut: "Cerrar Sesión",
-    login: "Iniciar Sesión",
+    login: "Iniciar",
     signup: "Registrarse",
     language: "Idioma",
     languages: {
@@ -235,11 +235,7 @@ const translations = {
     },
     free: {
       title: "Gratis",
-      features: [
-        "3 aplicaciones por mes",
-        "Asistencia básica de IA",
-        "Soporte estándar",
-      ],
+      features: ["3 aplicaciones por mes"],
       cta: "Comenzar",
     },
     loading: "Procesando...",

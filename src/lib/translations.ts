@@ -690,7 +690,7 @@ export const translations = {
     nav: {
       settings: "Configuración",
       signOut: "Cerrar Sesión",
-      login: "Iniciar Sesión",
+      login: "Iniciar",
       signup: "Registrarse",
       language: "Language",
     },

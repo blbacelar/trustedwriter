@@ -6,11 +6,14 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ClerkProvider } from "@clerk/nextjs";
 import { LanguageProvider } from "@/contexts/LanguageContext";
-import { Toaster as SonnerToaster } from 'sonner';
+import { Toaster as SonnerToaster } from "sonner";
 import { CreditsProvider } from "@/contexts/CreditsContext";
 import { TutorialProvider } from "@/contexts/TutorialContext";
 import Tutorial from "@/components/Tutorial";
 import { OpenAIStatusProvider } from "@/contexts/OpenAIStatusContext";
+import { LanguageSelector } from "@/components/LanguageSelector";
+import { auth } from "@clerk/nextjs";
+import { AuthProvider } from "@/components/AuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -46,6 +49,7 @@ export default function RootLayout({
                     <Footer />
                     <Toaster />
                     <SonnerToaster position="top-center" />
+                    <AuthProvider />
                   </div>
                 </CreditsProvider>
               </TutorialProvider>

@@ -222,11 +222,7 @@ const translations = {
     },
     free: {
       title: "Free",
-      features: [
-        "3 applications per month",
-        "Basic AI assistance",
-        "Standard support",
-      ],
+      features: ["3 applications per month"],
       cta: "Get Started",
     },
     loading: "Processing...",
