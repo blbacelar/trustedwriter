@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTutorial } from "@/contexts/TutorialContext";
 import { Settings, MessageSquare, CheckCircle, ListChecks } from "lucide-react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
 export default function Tutorial() {
@@ -62,6 +62,7 @@ export default function Tutorial() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
+        <DialogTitle className="sr-only">{steps[step].title}</DialogTitle>
         <div className="text-center">
           <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-gray-800/10 flex items-center justify-center">
             <CurrentIcon className="h-6 w-6 text-gray-800" />
@@ -90,11 +91,9 @@ export default function Tutorial() {
           <div className="mt-4 space-y-2 text-left">
             <p className="text-sm text-gray-600 mb-2">Examples:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm text-gray-600">
-              {t("tutorial.rules.examples")
-                .split("\n")
-                .map((example, index) => (
-                  <li key={index}>{example}</li>
-                ))}
+              {t("tutorial.rules.examples").map((example, index) => (
+                <li key={index}>{example}</li>
+              ))}
             </ul>
           </div>
         )}
