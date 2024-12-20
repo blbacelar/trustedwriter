@@ -91,9 +91,11 @@ export default function Tutorial() {
           <div className="mt-4 space-y-2 text-left">
             <p className="text-sm text-gray-600 mb-2">Examples:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm text-gray-600">
-              {t("tutorial.rules.examples").map((example, index) => (
-                <li key={index}>{example}</li>
-              ))}
+              {(t("tutorial.rules.examples") as string[]).map(
+                (example, index) => (
+                  <li key={index}>{example}</li>
+                )
+              )}
             </ul>
           </div>
         )}
