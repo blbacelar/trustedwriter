@@ -175,7 +175,10 @@ const translations = {
     title: "Configurações",
     profile: {
       title: "Seu Perfil",
-      helper: "Este perfil será usado para gerar suas aplicações",
+      helper:
+        "Este perfil será usado para gerar suas aplicações. Você pode copiar e colar seu perfil do TrustedHousesitters aqui.",
+      placeholder:
+        "Conte-nos sobre você, sua experiência com animais e por que você gosta de house sitting...",
     },
     rules: {
       title: "Regras de Aplicação",
@@ -228,7 +231,7 @@ const translations = {
   hero: {
     title: "Escreva Melhores Aplicações de House Sitting com IA",
     subtitle:
-      "Aplicações potencializadas por IA que ajudam você a se destacar e ser aceito mais rápido",
+      "Aplicaç��es potencializadas por IA que ajudam você a se destacar e ser aceito mais rápido",
     cta: "Comece Gratuitamente",
   },
   features: {
@@ -265,6 +268,27 @@ const translations = {
       title: "Tudo Pronto!",
       description:
         "Você está pronto para começar a criar incríveis aplicações de house sitting.",
+    },
+    buttons: {
+      next: "Próximo",
+      prev: "Anterior",
+      skip: "Pular",
+      finish: "Entendi!",
+    },
+    rules: {
+      title: "Configure suas Regras de Aplicação",
+      description:
+        "As regras ajudam nossa IA a entender suas preferências e requisitos. Quanto mais específicas forem suas regras, melhor adaptadas estarão suas aplicações ao seu estilo.",
+      examples: [
+        "Quero 3 parágrafos em cada aplicação",
+        "Escrever em inglês britânico",
+        "Sempre mencionar minha experiência com animais",
+        "Incluir minha flexibilidade com datas",
+        "Destacar minha capacidade de trabalho remoto",
+        "Manter um tom amigável mas profissional",
+        "Mencionar minha experiência prévia em house sitting",
+        "Incluir uma conexão pessoal com a localização deles",
+      ],
     },
   },
 } as const;

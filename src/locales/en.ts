@@ -174,7 +174,10 @@ const translations = {
     title: "Settings",
     profile: {
       title: "Your Profile",
-      helper: "This profile will be used to generate your applications",
+      helper:
+        "This profile will be used to generate your applications. You can copy and paste your TrustedHousesitters profile here.",
+      placeholder:
+        "Tell us about yourself, your experience with pets, and why you love house sitting...",
     },
     rules: {
       title: "Application Rules",
@@ -251,6 +254,27 @@ const translations = {
       title: "You're All Set!",
       description:
         "You're ready to start creating amazing house sitting applications.",
+    },
+    buttons: {
+      next: "Next",
+      prev: "Previous",
+      skip: "Skip",
+      finish: "Got it!",
+    },
+    rules: {
+      title: "Set Your Application Rules",
+      description:
+        "Rules help our AI understand your preferences and requirements. The more specific your rules are, the better your applications will be tailored to your style.",
+      examples: [
+        "I want 3 paragraphs in each application",
+        "Write in British English",
+        "Always mention my experience with pets",
+        "Include my flexibility with dates",
+        "Highlight my remote work capability",
+        "Keep a friendly but professional tone",
+        "Mention my previous house sitting experience",
+        "Include a personal connection to their location",
+      ],
     },
   },
 } as const;

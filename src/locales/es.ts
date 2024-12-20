@@ -175,7 +175,10 @@ const translations = {
     title: "Configuración",
     profile: {
       title: "Tu Perfil",
-      helper: "Este perfil se utilizará para generar tus aplicaciones",
+      helper:
+        "Este perfil se utilizará para generar tus aplicaciones. Puedes copiar y pegar tu perfil de TrustedHousesitters aquí.",
+      placeholder:
+        "Cuéntanos sobre ti, tu experiencia con mascotas y por qué te gusta el cuidado de casas...",
     },
     rules: {
       title: "Reglas de Aplicación",
@@ -265,6 +268,27 @@ const translations = {
       title: "¡Todo Listo!",
       description:
         "Estás listo para comenzar a crear increíbles aplicaciones de cuidado de casas.",
+    },
+    buttons: {
+      next: "Siguiente",
+      prev: "Anterior",
+      skip: "Saltar",
+      finish: "¡Entendido!",
+    },
+    rules: {
+      title: "Configura tus Reglas de Aplicación",
+      description:
+        "Las reglas ayudan a nuestra IA a entender tus preferencias y requisitos. Cuanto más específicas sean tus reglas, mejor adaptadas estarán tus aplicaciones a tu estilo.",
+      examples: [
+        "Quiero 3 párrafos en cada aplicación",
+        "Escribir en inglés británico",
+        "Siempre mencionar mi experiencia con mascotas",
+        "Incluir mi flexibilidad con las fechas",
+        "Destacar mi capacidad de trabajo remoto",
+        "Mantener un tono amigable pero profesional",
+        "Mencionar mi experiencia previa en cuidado de casas",
+        "Incluir una conexión personal con su ubicación",
+      ],
     },
   },
 } as const;

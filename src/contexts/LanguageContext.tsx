@@ -1,12 +1,22 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback } from 'react';
-import en from '@/locales/en';
-import es from '@/locales/es';
-import pt from '@/locales/pt';
+import { createContext, useContext, useState, useCallback } from "react";
+import en from "@/locales/en";
+import es from "@/locales/es";
+import pt from "@/locales/pt";
 
-type Languages = 'en' | 'es' | 'pt';
-type Translations = typeof en;
+type Languages = "en" | "es" | "pt";
+
+// Make all properties recursively accept any string
+type TranslationShape<T> = {
+  [P in keyof T]: T[P] extends string
+    ? string
+    : T[P] extends object
+    ? TranslationShape<T[P]>
+    : T[P];
+};
+
+type Translations = TranslationShape<typeof en>;
 
 interface LanguageContextType {
   language: Languages;
@@ -20,30 +30,35 @@ const translations: Record<Languages, Translations> = {
   pt,
 };
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+const LanguageContext = createContext<LanguageContextType | undefined>(
+  undefined
+);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguage] = useState<Languages>('en');
+  const [language, setLanguage] = useState<Languages>("en");
 
-  const t = useCallback((key: string): string => {
-    try {
-      const keys = key.split('.');
-      let value: any = translations[language];
-      
-      for (const k of keys) {
-        value = value[k];
-        if (value === undefined) {
-          console.warn(`Translation missing for key: ${key}`);
-          return key;
+  const t = useCallback(
+    (key: string): string => {
+      try {
+        const keys = key.split(".");
+        let value: any = translations[language];
+
+        for (const k of keys) {
+          value = value[k];
+          if (value === undefined) {
+            console.warn(`Translation missing for key: ${key}`);
+            return key;
+          }
         }
+
+        return value as string;
+      } catch (error) {
+        console.warn(`Translation error for key: ${key}`, error);
+        return key;
       }
-      
-      return value as string;
-    } catch (error) {
-      console.warn(`Translation error for key: ${key}`, error);
-      return key;
-    }
-  }, [language]);
+    },
+    [language]
+  );
 
   return (
     <LanguageContext.Provider value={{ language, setLanguage, t }}>
@@ -55,7 +70,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 export function useLanguage() {
   const context = useContext(LanguageContext);
   if (context === undefined) {
-    throw new Error('useLanguage must be used within a LanguageProvider');
+    throw new Error("useLanguage must be used within a LanguageProvider");
   }
   return context;
 }
