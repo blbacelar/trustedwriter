@@ -15,6 +15,7 @@ import { useOpenAIStatus } from "@/contexts/OpenAIStatusContext";
 import LoadingPage from "@/components/LoadingPage";
 import { useCredits } from "@/contexts/CreditsContext";
 import ServiceUnavailable from "@/components/ServiceUnavailable";
+import { logger } from "@/utils/logger";
 
 interface Application {
   id: string;
@@ -43,42 +44,33 @@ export default function DashboardPage() {
   >(null);
 
   useEffect(() => {
-    console.log(
-      "[Dashboard] Component mounted, OpenAI status loading:",
-      openAIStatusLoading
-    );
-    console.log("[Dashboard] Initial isOperational state:", isOperational);
-    console.log("[Dashboard] Initial status:", status);
+    logger.debug("Component mounted", {
+      openAIStatusLoading,
+      isOperational,
+      status,
+    });
 
     const fetchApplications = async () => {
-      console.log("[Dashboard] Starting applications fetch");
+      logger.debug("Starting applications fetch");
       try {
         const response = await fetch("/api/applications");
-        console.log(
-          "[Dashboard] Applications API response status:",
-          response.status
-        );
+        logger.debug("Applications API response status:", response.status);
 
         if (response.ok) {
           const data = await response.json();
-          console.log(
-            "[Dashboard] Applications data received:",
-            data.length,
-            "applications"
-          );
+          logger.debug("Applications data received:", {
+            count: data.length,
+          });
           setApplications(data);
         } else {
-          console.error(
-            "[Dashboard] Failed to fetch applications. Status:",
-            response.status
-          );
-          const errorText = await response.text();
-          console.error("[Dashboard] Error details:", errorText);
+          logger.error("Failed to fetch applications", {
+            status: response.status,
+          });
         }
       } catch (error) {
-        console.error("[Dashboard] Applications fetch error:", error);
+        logger.error("Applications fetch error:", error);
       } finally {
-        console.log("[Dashboard] Setting isLoading to false");
+        logger.debug("Setting isLoading to false");
         setIsLoading(false);
       }
     };
