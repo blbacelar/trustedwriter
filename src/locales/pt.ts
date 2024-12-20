@@ -227,11 +227,12 @@ const translations = {
       ],
       cta: "Começar",
     },
+    loading: "Processando...",
   },
   hero: {
     title: "Escreva Melhores Aplicações de House Sitting com IA",
     subtitle:
-      "Aplicaç��es potencializadas por IA que ajudam você a se destacar e ser aceito mais rápido",
+      "Aplicaçes potencializadas por IA que ajudam você a se destacar e ser aceito mais rápido",
     cta: "Comece Gratuitamente",
   },
   features: {
