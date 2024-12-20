@@ -1,12 +1,33 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
-import { Language, translations } from "@/lib/translations";
+import { createContext, useContext, useState, useCallback } from "react";
+import en from "@/locales/en";
+import es from "@/locales/es";
+import pt from "@/locales/pt";
 
-type LanguageContextType = {
-  language: Language;
-  setLanguage: (lang: Language) => void;
+type Languages = "en" | "es" | "pt";
+
+// Make all properties recursively accept any string
+type TranslationShape<T> = {
+  [P in keyof T]: T[P] extends string
+    ? string
+    : T[P] extends object
+    ? TranslationShape<T[P]>
+    : T[P];
+};
+
+type Translations = TranslationShape<typeof en>;
+
+interface LanguageContextType {
+  language: Languages;
+  setLanguage: (lang: Languages) => void;
   t: (key: string) => string;
+}
+
+const translations: Record<Languages, Translations> = {
+  en,
+  es,
+  pt,
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(
@@ -14,76 +35,33 @@ const LanguageContext = createContext<LanguageContextType | undefined>(
 );
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguage] = useState<Language>("en");
+  const [language, setLanguage] = useState<Languages>("en");
 
-  useEffect(() => {
-    const detectLanguage = () => {
+  const t = useCallback(
+    (key: string): string => {
       try {
-        // First try to get from localStorage
-        const savedLanguage = localStorage.getItem("preferredLanguage") as Language;
-        console.log("🔍 Checking localStorage:", { savedLanguage });
+        const keys = key.split(".");
+        let value: any = translations[language];
 
-        if (savedLanguage && Object.keys(translations).includes(savedLanguage)) {
-          console.log("✅ Using saved language:", savedLanguage);
-          setLanguage(savedLanguage);
-          return;
+        for (const k of keys) {
+          value = value[k];
+          if (value === undefined) {
+            console.warn(`Translation missing for key: ${key}`);
+            return key;
+          }
         }
 
-        // Then try to get from browser
-        const browserLanguages = navigator.languages;
-        const browserLang = navigator.language;
-        console.log("🌐 Browser language info:", {
-          primaryLanguage: browserLang,
-          allLanguages: browserLanguages,
-          languageWithoutRegion: browserLang.split("-")[0]
-        });
-
-        const detectedLang = browserLang.split("-")[0];
-        if (detectedLang === "pt" || detectedLang === "es") {
-          console.log("✅ Setting detected language:", detectedLang);
-          setLanguage(detectedLang as Language);
-          localStorage.setItem("preferredLanguage", detectedLang);
-        } else {
-          console.log("ℹ️ Using default language: en");
-        }
+        return value as string;
       } catch (error) {
-        console.error("❌ Error detecting language:", error);
+        console.warn(`Translation error for key: ${key}`, error);
+        return key;
       }
-    };
-
-    detectLanguage();
-  }, []);
-
-  // Log whenever language changes
-  useEffect(() => {
-    console.log("🌍 Current active language:", language);
-  }, [language]);
-
-  const handleSetLanguage = (newLang: Language) => {
-    console.log("🔄 Changing language to:", newLang);
-    setLanguage(newLang);
-    localStorage.setItem("preferredLanguage", newLang);
-  };
-
-  const t = (path: string) => {
-    const keys = path.split(".");
-    let current: any = translations[language];
-
-    for (const key of keys) {
-      if (current[key] === undefined) {
-        console.warn(`Translation missing for key: ${path}`);
-        return path;
-      }
-      current = current[key];
-    }
-
-    return current;
-  };
+    },
+    [language]
+  );
 
   return (
-    <LanguageContext.Provider
-      value={{ language, setLanguage: handleSetLanguage, t }}
-    >
+    <LanguageContext.Provider value={{ language, setLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );

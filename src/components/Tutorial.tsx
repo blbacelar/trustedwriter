@@ -5,9 +5,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTutorial } from "@/contexts/TutorialContext";
-import { Settings, MessageSquare, CheckCircle } from "lucide-react";
+import { Settings, MessageSquare, CheckCircle, ListChecks } from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
-const Tutorial = () => {
+export default function Tutorial() {
   const [step, setStep] = useState(0);
   const { t } = useLanguage();
   const router = useRouter();
@@ -32,6 +34,11 @@ const Tutorial = () => {
       Icon: Settings,
     },
     {
+      title: t("tutorial.rules.title"),
+      description: t("tutorial.rules.description"),
+      Icon: ListChecks,
+    },
+    {
       title: t("tutorial.ready.title"),
       description: t("tutorial.ready.description"),
       Icon: CheckCircle,
@@ -53,8 +60,8 @@ const Tutorial = () => {
   const CurrentIcon = steps[step].Icon;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent>
         <div className="text-center">
           <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-gray-800/10 flex items-center justify-center">
             <CurrentIcon className="h-6 w-6 text-gray-800" />
@@ -62,19 +69,36 @@ const Tutorial = () => {
           <h2 className="text-xl font-semibold mb-2">{steps[step].title}</h2>
           <p className="text-gray-600 mb-6">{steps[step].description}</p>
         </div>
-        <div className="flex justify-center">
-          <button
-            onClick={handleNext}
-            className="px-6 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-lg transition-colors"
-          >
-            {step === steps.length - 1
-              ? t("tutorial.button.finish")
-              : t("tutorial.button.next")}
-          </button>
+        <div className="mt-6 flex justify-between">
+          <Button variant="outline" onClick={handleNext}>
+            {t("tutorial.buttons.skip")}
+          </Button>
+          <div className="flex gap-2">
+            {step > 0 && (
+              <Button variant="outline" onClick={() => setStep(step - 1)}>
+                {t("tutorial.buttons.prev")}
+              </Button>
+            )}
+            <Button onClick={handleNext}>
+              {step === steps.length - 1
+                ? t("tutorial.buttons.finish")
+                : t("tutorial.buttons.next")}
+            </Button>
+          </div>
         </div>
-      </div>
-    </div>
+        {step === 2 && (
+          <div className="mt-4 space-y-2 text-left">
+            <p className="text-sm text-gray-600 mb-2">Examples:</p>
+            <ul className="list-disc pl-5 space-y-1 text-sm text-gray-600">
+              {t("tutorial.rules.examples")
+                .split("\n")
+                .map((example, index) => (
+                  <li key={index}>{example}</li>
+                ))}
+            </ul>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
   );
-};
-
-export default Tutorial; 
+}

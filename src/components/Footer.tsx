@@ -2,10 +2,17 @@
 
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { SupportWidget } from "./SupportWidget";
 
 const Footer = () => {
   const { t } = useLanguage();
   const year = new Date().getFullYear();
+
+  console.log("Translation test:", {
+    faq: t("footer.quickLinks.faq"),
+    home: t("footer.quickLinks.home"),
+    settings: t("footer.quickLinks.settings"),
+  });
 
   return (
     <footer className="bg-white border-t">
@@ -36,25 +43,19 @@ const Footer = () => {
           </div>
 
           {/* Quick Links */}
-          <div>
-            <h4 className="font-semibold text-gray-900 mb-4">
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-800">
               {t("footer.quickLinks.title")}
-            </h4>
+            </h3>
             <ul className="space-y-2">
               <li>
-                <Link
-                  href="/settings"
-                  className="text-gray-600 hover:text-gray-800 transition-colors"
-                >
-                  {t("footer.quickLinks.settings")}
+                <Link href="/" className="text-gray-600 hover:text-gray-800">
+                  {t("footer.quickLinks.home")}
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/"
-                  className="text-gray-600 hover:text-gray-800 transition-colors"
-                >
-                  {t("footer.quickLinks.home")}
+                <Link href="/faq" className="text-gray-600 hover:text-gray-800">
+                  {t("footer.quickLinks.faq")}
                 </Link>
               </li>
             </ul>
@@ -99,6 +100,7 @@ const Footer = () => {
           </p>
         </div>
       </div>
+      <SupportWidget />
     </footer>
   );
 };

@@ -15,11 +15,13 @@ interface SearchbarProps {
 
 export default function Searchbar({ onApplicationData }: SearchbarProps) {
   const [url, setUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { t } = useLanguage();
   const router = useRouter();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
       const response = await fetch("/api/settings");
@@ -42,12 +44,14 @@ export default function Searchbar({ onApplicationData }: SearchbarProps) {
         error: error as Error,
         context: "SUBMIT_SEARCH_CLIENT",
         additionalData: {
-          component: "Searchbar"
-        }
+          component: "Searchbar",
+        },
       });
-      
+
       console.error("Error checking profile:", error);
       toast.error(t("dashboard.searchbar.failed"));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -60,12 +64,16 @@ export default function Searchbar({ onApplicationData }: SearchbarProps) {
           onChange={(e) => setUrl(e.target.value)}
           placeholder={t("dashboard.searchbar.placeholder")}
           className="flex-1 px-4 py-3 bg-white/90 backdrop-blur-sm rounded-lg border border-white/20 text-gray-800 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-white/40"
+          disabled={isLoading}
         />
         <button
           type="submit"
+          disabled={isLoading}
           className="px-6 py-3 bg-gray-800 hover:bg-gray-900 text-white rounded-lg transition-colors disabled:opacity-50 mx-auto sm:mx-0"
         >
-          {t("dashboard.searchbar.button")}
+          {isLoading
+            ? t("search.input.loading")
+            : t("dashboard.searchbar.button")}
         </button>
       </div>
     </form>
