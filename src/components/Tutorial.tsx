@@ -6,10 +6,7 @@ import { useRouter } from "next/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTutorial } from "@/contexts/TutorialContext";
 import { Settings, MessageSquare, CheckCircle, ListChecks } from "lucide-react";
-import {
-  Dialog,
-  DialogContent
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
 export default function Tutorial() {
@@ -73,25 +70,17 @@ export default function Tutorial() {
           <p className="text-gray-600 mb-6">{steps[step].description}</p>
         </div>
         <div className="mt-6 flex justify-between">
-          <Button
-            variant="outline"
-            onClick={handleNext}
-          >
+          <Button variant="outline" onClick={handleNext}>
             {t("tutorial.buttons.skip")}
           </Button>
           <div className="flex gap-2">
             {step > 0 && (
-              <Button
-                variant="outline"
-                onClick={() => setStep(step - 1)}
-              >
+              <Button variant="outline" onClick={() => setStep(step - 1)}>
                 {t("tutorial.buttons.prev")}
               </Button>
             )}
-            <Button
-              onClick={handleNext}
-            >
-              {step === steps.length - 1 
+            <Button onClick={handleNext}>
+              {step === steps.length - 1
                 ? t("tutorial.buttons.finish")
                 : t("tutorial.buttons.next")}
             </Button>
@@ -101,13 +90,15 @@ export default function Tutorial() {
           <div className="mt-4 space-y-2 text-left">
             <p className="text-sm text-gray-600 mb-2">Examples:</p>
             <ul className="list-disc pl-5 space-y-1 text-sm text-gray-600">
-              {t('tutorial.rules.examples').map((example, index) => (
-                <li key={index}>{example}</li>
-              ))}
+              {t("tutorial.rules.examples")
+                .split("\n")
+                .map((example, index) => (
+                  <li key={index}>{example}</li>
+                ))}
             </ul>
           </div>
         )}
       </DialogContent>
     </Dialog>
   );
-} 
+}
