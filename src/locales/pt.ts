@@ -143,6 +143,11 @@ const translations = {
       editSuccess: "Aplicação atualizada com sucesso",
       editError: "Falha ao atualizar aplicação",
     },
+    editor: {
+      loading: {
+        title: "Carregando editor...",
+      },
+    },
   },
   search: {
     input: {

@@ -54,48 +54,71 @@ async function validateRequest(request: Request) {
 export async function POST(request: Request) {
   try {
     console.log("=== Webhook Start ===");
-    console.log("Received webhook request at:", new Date().toISOString());
 
-    const headerPayload = await headers();
-    console.log("Headers:", {
-      "svix-id": headerPayload.get("svix-id"),
-      "svix-timestamp": headerPayload.get("svix-timestamp"),
-      "svix-signature": headerPayload.get("svix-signature")
-        ? "present"
-        : "missing",
-    });
-
+    // Validate webhook signature
     const payload = await validateRequest(request);
     if (!payload) {
-      console.log("❌ Invalid webhook signature");
+      console.error("❌ Webhook validation failed");
       return new NextResponse("Invalid signature", { status: 400 });
     }
 
     const event = payload as WebhookEvent;
-    console.log("✅ Webhook event type:", event.type);
-    console.log("📦 Event data:", JSON.stringify(event.data, null, 2));
+    console.log("✅ Processing event:", event.type);
 
-    if (event.type === "user.created") {
+    if (event.type === "user.created" || event.type === "user.updated") {
       const {
         id,
         email_addresses,
         first_name,
         last_name,
         primary_email_address_id,
+        external_accounts,
       } = event.data;
-      console.log("👤 Processing user with ID:", id);
 
+      console.log("🔍 Processing user data:", {
+        userId: id,
+        hasEmails: !!email_addresses?.length,
+        primaryEmailId: primary_email_address_id,
+        hasExternalAccounts: !!external_accounts?.length,
+      });
+
+      // Get primary email
       const primaryEmail = email_addresses?.find(
         (email) => email.id === primary_email_address_id
       );
+
+      // Get Google account data
+      const googleAccount = external_accounts?.find(
+        (account) => "google_id" in account
+      ) as any; // Type assertion for accessing google-specific fields
+
+      // Prepare user data
+      const firstName = first_name || googleAccount?.given_name;
+      const lastName = last_name || googleAccount?.family_name;
       const name =
-        `${first_name || ""} ${last_name || ""}`.trim() || "Anonymous User";
+        [firstName, lastName].filter(Boolean).join(" ") || "Anonymous User";
+      const email =
+        primaryEmail?.email_address || googleAccount?.email_address || "";
+
+      console.log("📝 Prepared user data:", {
+        name,
+        hasEmail: !!email,
+        source: googleAccount ? "Google" : "Direct",
+      });
 
       try {
+        // Check if user already exists
+        const existingUser = await prisma.user.findUnique({
+          where: { id },
+          select: { id: true },
+        });
+
+        console.log("🔍 User check:", existingUser ? "Exists" : "New user");
+
         const userData = {
           id,
-          email: primaryEmail?.email_address || "",
-          name: name || "Anonymous User",
+          email,
+          name,
           profile: "",
           rules: [],
           credits: 3,
@@ -103,56 +126,69 @@ export async function POST(request: Request) {
           lastCreditReset: new Date(),
         };
 
-        console.log("📝 User data to upsert:", userData);
-
-        // Use upsert with proper update data
         const upsertedUser = await prisma.user.upsert({
           where: { id },
           create: userData,
           update: {
-            email: primaryEmail?.email_address || "",
-            name: name || "Anonymous User",
-          },
-          select: {
-            id: true,
-            email: true,
-            name: true,
-            profile: true,
-            rules: true,
-            credits: true,
-            subscriptionStatus: true,
+            email,
+            name,
           },
         });
 
-        console.log("✅ User upserted successfully:", upsertedUser);
-        return NextResponse.json({ success: true, user: upsertedUser });
-      } catch (error) {
-        console.error("❌ Database error:", error);
-        // Add more detailed error logging
-        await logError({
-          error: error as Error,
-          context: "CLERK_WEBHOOK_USER_CREATED",
-          additionalData: {
-            userId: id,
-            email: primaryEmail?.email_address,
+        console.log("✅ User upserted:", {
+          id: upsertedUser.id,
+          name: upsertedUser.name,
+          hasEmail: !!upsertedUser.email,
+        });
+
+        return NextResponse.json({
+          success: true,
+          user: {
+            id: upsertedUser.id,
+            name: upsertedUser.name,
+            hasEmail: !!upsertedUser.email,
           },
         });
-        throw error;
+      } catch (error) {
+        console.error("❌ Database operation failed:", {
+          error: error instanceof Error ? error.message : "Unknown error",
+          stack: error instanceof Error ? error.stack : undefined,
+        });
+
+        await logError({
+          error: error as Error,
+          context: "CLERK_WEBHOOK_USER_OPERATION",
+          additionalData: {
+            userId: id,
+            operation: (await prisma.user.findUnique({ where: { id } }))
+              ? "update"
+              : "create",
+          },
+        });
+
+        return NextResponse.json(
+          {
+            error: "Failed to process user",
+            details: error instanceof Error ? error.message : "Unknown error",
+          },
+          { status: 500 }
+        );
       }
     }
 
     console.log("=== Webhook End ===");
-    return new NextResponse(null, { status: 200 });
+    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("❌ Webhook error:", {
-      message: error instanceof Error ? error.message : "Unknown error",
+    console.error("❌ Webhook handler failed:", {
+      error: error instanceof Error ? error.message : "Unknown error",
       stack: error instanceof Error ? error.stack : undefined,
     });
-    return new NextResponse(
-      JSON.stringify({
+
+    return NextResponse.json(
+      {
         error: "Internal server error",
         details: error instanceof Error ? error.message : "Unknown error",
-      }),
+      },
       { status: 500 }
     );
   }

@@ -1,12 +1,12 @@
 "use server";
 
-import { profile, rules } from "@/utils/rules";
 import { scrapeAndGetApplication as generateApplication } from "@/utils/gpt";
 import { scrapeWebsite } from "@/utils/scrap";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { headers } from "next/headers";
 import { logError } from "@/lib/errorLogging";
+import { encrypt, decrypt } from "../encryption";
 
 export async function scrapeAndGetApplication(houseSittingUrl: string) {
   let session;
@@ -20,25 +20,26 @@ export async function scrapeAndGetApplication(houseSittingUrl: string) {
       return {
         error: true,
         message: "Unauthorized",
-        code: "UNAUTHORIZED"
+        code: "UNAUTHORIZED",
       };
     }
 
-    // Check if user has profile set up
+    // Get user's profile and rules from DB
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
         profile: true,
+        rules: true,
         credits: true,
-        subscriptionId: true
-      }
+        subscriptionId: true,
+      },
     });
 
     if (!user?.profile) {
       return {
         error: true,
         message: "Please set up your profile first",
-        code: "PROFILE_REQUIRED"
+        code: "PROFILE_REQUIRED",
       };
     }
 
@@ -57,17 +58,22 @@ export async function scrapeAndGetApplication(houseSittingUrl: string) {
         code: "NO_CREDITS",
         meta: {
           daysUntilReset,
-          nextReset
-        }
+          nextReset,
+        },
       };
     }
 
     const houseSitting = await scrapeWebsite(houseSittingUrl);
     if (!houseSitting) return;
 
-    let prompt = `Based on our profile: ${profile} \n
+    // Use user's profile and rules from DB
+    const decryptedProfile = decrypt(user.profile);
+    const decryptedRules = user.rules.map((rule) => decrypt(rule));
+
+    let prompt = `Based on our profile: ${decryptedProfile} \n
     Now follow these rules:
-    ${rules.toString()} \n
+    - Don't add Subject line,
+    ${decryptedRules.join("\n")} \n
 
     They live in ${houseSitting.place} and their name is(are) ${
       houseSitting.parentName
@@ -87,11 +93,14 @@ export async function scrapeAndGetApplication(houseSittingUrl: string) {
       throw new Error("Failed to generate application content");
     }
 
-    // Save the application
+    // Encrypt content before saving
+    const encryptedContent = encrypt(content);
+
+    // Save the application with encrypted content
     const application = await prisma.application.create({
       data: {
         userId,
-        content,
+        content: encryptedContent,
         listingUrl: houseSittingUrl,
       },
     });
@@ -104,9 +113,9 @@ export async function scrapeAndGetApplication(houseSittingUrl: string) {
       });
     }
 
-    // Return content, id, and updated credits
+    // Return decrypted content for the response
     return {
-      content,
+      content, // Original content for immediate use
       id: application.id,
       credits: user.subscriptionId ? null : (user.credits ?? 0) - 1,
     };

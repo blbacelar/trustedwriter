@@ -4,11 +4,12 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import { logError } from "@/lib/errorLogging";
+import { encrypt, decrypt } from "@/lib/encryption";
 
 export async function POST(req: Request) {
   try {
     const session = await auth();
-    console.log('1. Auth session:', { userId: session?.userId });
+    console.log("1. Auth session:", { userId: session?.userId });
 
     if (!session?.userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -17,72 +18,94 @@ export async function POST(req: Request) {
     let body;
     try {
       body = await req.json();
-      console.log('2. Request body:', body);
+      console.log("2. Request body:", { ...body, profile: "[REDACTED]" });
     } catch (e) {
-      console.error('3. Failed to parse body:', e);
-      return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+      console.error("3. Failed to parse body:", e);
+      return NextResponse.json(
+        { error: "Invalid request body" },
+        { status: 400 }
+      );
     }
 
     const { profile, rules } = body || {};
-    console.log('4. Parsed data:', { profile, rules });
 
     try {
+      const encryptedProfile = profile ? encrypt(profile) : "";
+      const encryptedRules = rules
+        ? rules.map((rule: string) => encrypt(rule))
+        : [];
+
       const updatedUser = await prisma.user.upsert({
-        where: { 
-          id: session.userId 
+        where: {
+          id: session.userId,
         },
         create: {
           id: session.userId,
-          profile,
-          rules: rules || [],
+          profile: encryptedProfile,
+          rules: encryptedRules,
           credits: 3,
-          subscriptionStatus: 'free'
+          subscriptionStatus: "free",
         },
         update: {
-          profile,
-          rules: rules || []
-        }
+          profile: encryptedProfile,
+          rules: encryptedRules,
+        },
       });
 
-      console.log('5. Updated user:', updatedUser);
+      // Decrypt data before sending response
+      const decryptedUser = {
+        ...updatedUser,
+        profile: updatedUser.profile ? decrypt(updatedUser.profile) : "",
+        rules: updatedUser.rules.map((rule) => decrypt(rule)),
+      };
+
+      console.log("5. Updated user:", {
+        ...decryptedUser,
+        profile: "[REDACTED]",
+      });
 
       revalidatePath("/settings");
       revalidatePath("/dashboard");
 
-      return NextResponse.json({ 
-        success: true, 
-        data: updatedUser,
-        message: 'Settings saved successfully'
+      return NextResponse.json({
+        success: true,
+        data: decryptedUser,
+        message: "Settings saved successfully",
       });
-
     } catch (e) {
       const dbError = {
-        code: e instanceof Prisma.PrismaClientKnownRequestError ? e.code : 'unknown',
-        message: e instanceof Error ? e.message : 'Unknown error'
+        code:
+          e instanceof Prisma.PrismaClientKnownRequestError
+            ? e.code
+            : "unknown",
+        message: e instanceof Error ? e.message : "Unknown error",
       };
-      console.error('6. Database error:', dbError);
+      console.error("6. Database error:", dbError);
 
-      return NextResponse.json({ 
-        success: false,
-        error: "Database error",
-        message: dbError.message
-      }, { status: 500 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Database error",
+          message: dbError.message,
+        },
+        { status: 500 }
+      );
     }
   } catch (error) {
     await logError({
       error: error as Error,
       context: "POST_SETTINGS",
       additionalData: {
-        path: "/api/settings"
-      }
+        path: "/api/settings",
+      },
     });
-    
+
     const safeError = {
-      message: error instanceof Error ? error.message : 'Unknown error',
-      type: error instanceof Error ? error.constructor.name : typeof error
+      message: error instanceof Error ? error.message : "Unknown error",
+      type: error instanceof Error ? error.constructor.name : typeof error,
     };
-    
-    console.error('POST settings - error:', safeError);
+
+    console.error("POST settings - error:", safeError);
     return NextResponse.json({ error: "Internal Error" }, { status: 500 });
   }
 }
@@ -104,18 +127,22 @@ export async function GET() {
       },
     });
 
-    console.log("GET settings - found user:", user);
-
     if (!user) {
-      return NextResponse.json({ 
-        success: true, 
-        data: { profile: "", rules: [] } 
+      return NextResponse.json({
+        success: true,
+        data: { profile: "", rules: [] },
       });
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      data: user 
+    // Decrypt data before sending response
+    const decryptedUser = {
+      profile: user.profile ? decrypt(user.profile) : "",
+      rules: user.rules.map((rule) => decrypt(rule)),
+    };
+
+    return NextResponse.json({
+      success: true,
+      data: decryptedUser,
     });
   } catch (error) {
     console.error("GET settings error:", error);

@@ -142,6 +142,11 @@ const translations = {
       editSuccess: "Application updated successfully",
       editError: "Failed to update application",
     },
+    editor: {
+      loading: {
+        title: "Loading editor...",
+      },
+    },
   },
   search: {
     input: {
