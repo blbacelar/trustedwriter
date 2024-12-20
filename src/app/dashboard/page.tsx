@@ -43,32 +43,61 @@ export default function DashboardPage() {
   >(null);
 
   useEffect(() => {
+    console.log(
+      "[Dashboard] Component mounted, OpenAI status loading:",
+      openAIStatusLoading
+    );
+    console.log("[Dashboard] Initial isOperational state:", isOperational);
+    console.log("[Dashboard] Initial status:", status);
+
     const fetchApplications = async () => {
+      console.log("[Dashboard] Starting applications fetch");
       try {
         const response = await fetch("/api/applications");
+        console.log(
+          "[Dashboard] Applications API response status:",
+          response.status
+        );
+
         if (response.ok) {
           const data = await response.json();
+          console.log(
+            "[Dashboard] Applications data received:",
+            data.length,
+            "applications"
+          );
           setApplications(data);
+        } else {
+          console.error(
+            "[Dashboard] Failed to fetch applications. Status:",
+            response.status
+          );
+          const errorText = await response.text();
+          console.error("[Dashboard] Error details:", errorText);
         }
       } catch (error) {
-        console.error("Failed to fetch applications:", error);
+        console.error("[Dashboard] Applications fetch error:", error);
       } finally {
+        console.log("[Dashboard] Setting isLoading to false");
         setIsLoading(false);
       }
     };
 
     fetchApplications();
-  }, [applicationData]); // Refresh when new application is generated
+  }, [applicationData, openAIStatusLoading, isOperational, status]);
 
   const handleApplicationData = async (data: string | null) => {
+    console.log("[Dashboard] handleApplicationData called with data:", !!data);
     if (!data) return;
 
     setCurrentListingUrl(data);
 
-    // Check OpenAI status before proceeding
+    console.log("[Dashboard] Checking OpenAI status");
     const currentStatus = await checkOpenAIStatus();
+    console.log("[Dashboard] OpenAI status check result:", currentStatus);
 
     if (!currentStatus.operational) {
+      console.log("[Dashboard] OpenAI service not operational");
       toast({
         variant: "destructive",
         title: "Service Unavailable",
@@ -224,12 +253,18 @@ export default function DashboardPage() {
   };
 
   if (openAIStatusLoading) {
+    console.log(
+      "[Dashboard] Rendering LoadingPage due to OpenAI status loading"
+    );
     return <LoadingPage />;
   }
 
   if (!isOperational) {
+    console.log("[Dashboard] Rendering ServiceUnavailable. Status:", status);
     return <ServiceUnavailable status={status} />;
   }
+
+  console.log("[Dashboard] Rendering main dashboard content");
 
   return (
     <>
