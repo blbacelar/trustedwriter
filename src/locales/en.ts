@@ -214,6 +214,7 @@ const translations = {
       ],
       cta: "Get Started",
     },
+    loading: "Processing...",
   },
   hero: {
     title: "Write Better House Sitting Applications with AI",

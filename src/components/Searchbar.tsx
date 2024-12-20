@@ -68,7 +68,7 @@ export default function Searchbar({ onApplicationData }: SearchbarProps) {
         />
         <button
           type="submit"
-          disabled={isLoading}
+          disabled={isLoading || !url.trim()}
           className="px-6 py-3 bg-gray-800 hover:bg-gray-900 text-white rounded-lg transition-colors disabled:opacity-50 mx-auto sm:mx-0"
         >
           {isLoading

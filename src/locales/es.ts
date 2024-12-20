@@ -227,6 +227,7 @@ const translations = {
       ],
       cta: "Comenzar",
     },
+    loading: "Procesando...",
   },
   hero: {
     title: "Escribe Mejores Aplicaciones de House Sitting con IA",
