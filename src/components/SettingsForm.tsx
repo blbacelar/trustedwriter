@@ -28,6 +28,7 @@ export default function SettingsForm() {
       setSaving(true);
       await serverLogger.debug("Settings form submission started", {
         timestamp: new Date().toISOString(),
+        source: "SettingsForm",
       });
 
       const response = await fetch("/api/settings", {
@@ -39,6 +40,7 @@ export default function SettingsForm() {
       await serverLogger.debug("Settings API response received", {
         status: response.status,
         timestamp: new Date().toISOString(),
+        source: "SettingsForm",
       });
 
       if (!response.ok) {
@@ -46,25 +48,22 @@ export default function SettingsForm() {
       }
 
       await response.json();
-      await serverLogger.debug("Settings saved successfully");
+      await serverLogger.debug("Settings saved successfully", {
+        source: "SettingsForm",
+      });
 
       toast.success(t("settings.save.success"));
 
-      // Wait for all logs to be saved before navigation
-      await Promise.all([
-        serverLogger.debug("Preparing for navigation", {
-          destination: "/dashboard",
-          timestamp: new Date().toISOString(),
-        }),
-        new Promise((resolve) => setTimeout(resolve, 1000)),
-      ]);
+      // Wait for logs to be saved and show toast
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Use router.push instead of window.location for smoother navigation
-      router.push(`/dashboard?from=settings&t=${Date.now()}`);
+      // Use replace instead of push to force a fresh mount
+      router.replace(`/dashboard?from=settings&t=${Date.now()}`);
     } catch (error: unknown) {
       await serverLogger.error("Settings save failed", {
         error: error instanceof Error ? error.message : String(error),
         timestamp: new Date().toISOString(),
+        source: "SettingsForm",
       });
       toast.error(t("settings.save.error"));
     } finally {
