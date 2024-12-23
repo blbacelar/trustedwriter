@@ -16,6 +16,9 @@ export async function scrapeWebsite(url: string) {
               "--disable-setuid-sandbox",
               "--no-sandbox",
               "--no-zygote",
+              "--disable-dev-shm-usage",
+              "--disable-accelerated-2d-canvas",
+              "--disable-web-security",
             ],
           }
         : {
@@ -28,6 +31,7 @@ export async function scrapeWebsite(url: string) {
       userAgent:
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
       viewport: { width: 1280, height: 800 },
+      navigationTimeout: 30000,
     });
 
     const page = await context.newPage();
