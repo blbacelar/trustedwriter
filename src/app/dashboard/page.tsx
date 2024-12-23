@@ -68,71 +68,20 @@ export default function DashboardPage() {
   });
 
   useEffect(() => {
-    serverLogger.debug("Loading state changed", {
-      isLoading,
-      previousValue: !isLoading,
-      openAIStatusLoading,
-      isGenerating,
-      timestamp: new Date().toISOString(),
-    });
-  }, [isLoading, openAIStatusLoading, isGenerating]);
-
-  useEffect(() => {
-    serverLogger.debug("Application data changed", {
-      hasData: !!applicationData,
-      currentListingUrl,
-      currentApplicationId,
-      timestamp: new Date().toISOString(),
-    });
-  }, [applicationData, currentListingUrl, currentApplicationId]);
-
-  useEffect(() => {
-    serverLogger.debug("Generation state changed", {
-      isGenerating,
-      applicationData: !!applicationData,
-      currentListingUrl: !!currentListingUrl,
-      timestamp: new Date().toISOString(),
-    });
-  }, [isGenerating, applicationData, currentListingUrl]);
-
-  useEffect(() => {
-    serverLogger.debug("Dashboard component mounted", {
-      pathname: window.location.pathname,
-      search: window.location.search,
-      timestamp: new Date().toISOString(),
-    });
-
-    return () => {
-      serverLogger.debug("Dashboard component unmounting", {
-        timestamp: new Date().toISOString(),
-      });
-    };
-  }, []);
-
-  useEffect(() => {
     let mounted = true;
 
-    const initializeDashboard = async () => {
-      await serverLogger.debug("Dashboard initialization starting", {
-        fromSettings,
-        openAIStatusLoading,
-        isOperational,
-        searchParams: Object.fromEntries(searchParams.entries()),
-      });
-
+    const initialize = async () => {
       try {
-        if (!mounted) {
-          await serverLogger.debug(
-            "Dashboard initialization aborted - component unmounted"
-          );
-          return;
-        }
+        if (!mounted) return;
 
         setIsLoading(true);
-        await serverLogger.debug("Dashboard loading state set to true");
+        await serverLogger.debug("Dashboard initialization", {
+          fromSettings: true,
+          timestamp: new Date().toISOString(),
+        });
 
+        // Wait for OpenAI status to be ready
         if (!openAIStatusLoading && isOperational) {
-          await serverLogger.debug("Fetching applications");
           const response = await fetch("/api/applications", {
             headers: {
               "Cache-Control": "no-cache",
@@ -140,22 +89,10 @@ export default function DashboardPage() {
             },
           });
 
-          if (!mounted) {
-            await serverLogger.debug(
-              "Applications fetch response ignored - component unmounted"
-            );
-            return;
-          }
-
-          await serverLogger.debug("Applications API response", {
-            status: response.status,
-          });
+          if (!mounted) return;
 
           if (response.ok) {
             const data = await response.json();
-            await serverLogger.debug("Applications data received", {
-              count: data.length,
-            });
             setApplications(data);
           }
         }
@@ -163,18 +100,20 @@ export default function DashboardPage() {
         await serverLogger.error("Dashboard initialization failed", { error });
       } finally {
         if (mounted) {
-          await serverLogger.debug("Setting loading state to false");
           setIsLoading(false);
         }
       }
     };
 
-    initializeDashboard();
+    initialize();
 
     return () => {
       mounted = false;
+      serverLogger.debug("Dashboard cleanup", {
+        timestamp: new Date().toISOString(),
+      });
     };
-  }, [openAIStatusLoading, isOperational, fromSettings, searchParams]);
+  }, [openAIStatusLoading, isOperational]);
 
   const handleApplicationData = async (data: string | null) => {
     serverLogger.debug("handleApplicationData called", {
