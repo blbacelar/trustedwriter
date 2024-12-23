@@ -1,21 +1,21 @@
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useRouter } from "next/navigation";
 
 interface Profile {
   name?: string;
   bio?: string;
-  // add other profile fields as needed
 }
 
 interface Rules {
-  // add rule fields as needed
   enabled?: boolean;
   preferences?: string[];
 }
 
 export default function SettingsForm() {
   const { t } = useLanguage();
+  const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [profile, setProfile] = useState<Profile>({});
   const [rules, setRules] = useState<Rules>({});
@@ -35,8 +35,11 @@ export default function SettingsForm() {
         throw new Error("Failed to save settings");
       }
 
-      const data = await response.json();
+      await response.json();
       toast.success(t("settings.save.success"));
+
+      // Force a hard navigation to dashboard
+      window.location.href = "/dashboard";
     } catch (error) {
       console.error("Settings save error:", error);
       toast.error(t("settings.save.error"));
