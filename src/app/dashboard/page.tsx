@@ -42,6 +42,20 @@ export default function DashboardPage() {
   const [currentApplicationId, setCurrentApplicationId] = useState<
     string | null
   >(null);
+  const [shouldRefresh, setShouldRefresh] = useState(false);
+
+  useEffect(() => {
+    // Check if we came from settings page
+    const fromSettings = sessionStorage.getItem("fromSettings");
+    if (fromSettings) {
+      // Clear the flag
+      sessionStorage.removeItem("fromSettings");
+      // Trigger a refresh after a short delay
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
+    }
+  }, []);
 
   useEffect(() => {
     logger.debug("Component mounted", {

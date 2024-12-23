@@ -38,8 +38,9 @@ export default function SettingsForm() {
       await response.json();
       toast.success(t("settings.save.success"));
 
-      // Force a hard navigation to dashboard
-      window.location.href = "/dashboard";
+      // Set flag before navigation
+      sessionStorage.setItem("fromSettings", "true");
+      router.push("/dashboard");
     } catch (error) {
       console.error("Settings save error:", error);
       toast.error(t("settings.save.error"));
