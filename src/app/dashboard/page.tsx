@@ -350,6 +350,13 @@ export default function DashboardPage() {
     }
   };
 
+  serverLogger.debug("Entering DashboardPage", {
+    openAIStatusLoading,
+    isLoading,
+    isGenerating,
+    timestamp: new Date().toISOString(),
+  });
+
   if (openAIStatusLoading) {
     serverLogger.debug("Rendering LoadingPage", {
       openAIStatusLoading,
@@ -382,6 +389,13 @@ export default function DashboardPage() {
 
   return (
     <>
+      {serverLogger.debug("Generation state changed", {
+        isLoading,
+        isGenerating,
+        applicationData: !!applicationData,
+        currentListingUrl: !!currentListingUrl,
+        timestamp: new Date().toISOString(),
+      })}
       {isGenerating && <LoadingSpinner />}
       <section className="relative min-h-[600px] flex items-center">
         {/* Background Image with Gradient Overlay */}
