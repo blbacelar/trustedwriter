@@ -97,17 +97,28 @@ export default function DashboardPage() {
     let mounted = true;
 
     const initialize = async () => {
+      if (!mounted) return;
+
       try {
-        if (!mounted) return;
+        // Only proceed if OpenAI status is settled
+        if (openAIStatusLoading) return;
 
         setIsLoading(true);
-        await serverLogger.debug("Dashboard initialization", {
-          timestamp: new Date().toISOString(),
-        });
 
-        // Only fetch applications if OpenAI is operational
-        if (!openAIStatusLoading && isOperational) {
-          await fetchApplicationsClientSide();
+        if (isOperational) {
+          const response = await fetch("/api/applications", {
+            headers: {
+              "Cache-Control": "no-cache",
+              Pragma: "no-cache",
+            },
+          });
+
+          if (!mounted) return;
+
+          if (response.ok) {
+            const data = await response.json();
+            setApplications(data);
+          }
         }
       } catch (error) {
         await serverLogger.error("Dashboard initialization failed", { error });
@@ -338,7 +349,7 @@ export default function DashboardPage() {
     timestamp: new Date().toISOString(),
   });
 
-  if (openAIStatusLoading) {
+  if (openAIStatusLoading || isLoading) {
     serverLogger.debug("Rendering LoadingPage", {
       openAIStatusLoading,
       isLoading,
