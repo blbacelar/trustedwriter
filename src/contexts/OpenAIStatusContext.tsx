@@ -7,7 +7,7 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import { logger } from "@/utils/logger";
+import { serverLogger } from "@/utils/serverLogger";
 
 interface OpenAIStatusContextType {
   isOperational: boolean;
@@ -26,22 +26,24 @@ export function OpenAIStatusProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const checkStatus = async () => {
-      logger.debug("Checking OpenAI status");
+      await serverLogger.debug("Checking OpenAI status");
       try {
         const response = await fetch("/api/openai/status");
-        logger.debug("OpenAI status response:", response.status);
+        await serverLogger.debug("OpenAI status response", {
+          status: response.status,
+        });
 
         const data = await response.json();
-        logger.debug("OpenAI status data:", data);
+        await serverLogger.debug("OpenAI status data", data);
 
         setIsOperational(data.operational);
         setStatus(data.status);
       } catch (error) {
-        logger.error("OpenAI status check failed:", error);
+        await serverLogger.error("OpenAI status check failed", { error });
         setIsOperational(false);
         setStatus("Unable to check service status");
       } finally {
-        logger.debug("Setting OpenAI status loading to false");
+        await serverLogger.debug("Setting OpenAI status loading to false");
         setIsLoading(false);
       }
     };
