@@ -296,7 +296,9 @@ export default function DashboardPage() {
 
   const handleNewApplicationSave = async (content: string) => {
     if (!currentApplicationId) {
-      console.error("[DEBUG] No application ID available");
+      await serverLogger.error("No application ID available", {
+        timestamp: new Date().toISOString(),
+      });
       toast({
         variant: "destructive",
         title: t("dashboard.table.editError"),
@@ -307,6 +309,11 @@ export default function DashboardPage() {
     }
 
     try {
+      await serverLogger.debug("Starting application save", {
+        applicationId: currentApplicationId,
+        timestamp: new Date().toISOString(),
+      });
+
       const response = await fetch(
         `/api/applications/${currentApplicationId}`,
         {
@@ -321,17 +328,35 @@ export default function DashboardPage() {
         }
       );
 
+      await serverLogger.debug("Application save response received", {
+        status: response.status,
+        timestamp: new Date().toISOString(),
+      });
+
       if (!response.ok) {
-        throw new Error("Failed to update application");
+        throw new Error(`Failed to update application: ${response.status}`);
       }
 
       const { data: updatedApplication } = await response.json();
+      await serverLogger.debug("Application updated successfully", {
+        applicationId: updatedApplication.id,
+        timestamp: new Date().toISOString(),
+      });
+
       handleApplicationUpdate(updatedApplication);
 
       // Clear all related state to dismiss the editor
       setApplicationData(null);
       setCurrentApplicationId(null);
       setCurrentListingUrl("");
+
+      // Wait for logs to be saved before scrolling
+      await Promise.all([
+        serverLogger.debug("Cleaning up after save", {
+          timestamp: new Date().toISOString(),
+        }),
+        new Promise((resolve) => setTimeout(resolve, 500)),
+      ]);
 
       // Scroll back to top smoothly
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -340,8 +365,13 @@ export default function DashboardPage() {
         title: t("dashboard.table.editSuccess"),
         duration: 3000,
       });
-    } catch (error) {
-      console.error("[DEBUG] Save error:", error);
+    } catch (error: unknown) {
+      await serverLogger.error("Application save failed", {
+        error: error instanceof Error ? error.message : String(error),
+        applicationId: currentApplicationId,
+        timestamp: new Date().toISOString(),
+      });
+
       toast({
         variant: "destructive",
         title: t("dashboard.table.editError"),
