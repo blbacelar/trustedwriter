@@ -6,7 +6,7 @@
     }
   ],
   "functions": {
-    "api/applications/*.js": {
+    "/api/applications/route": {
       "memory": 1024,
       "maxDuration": 60
     }
