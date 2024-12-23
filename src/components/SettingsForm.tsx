@@ -42,21 +42,22 @@ export default function SettingsForm() {
       const data = await response.json();
       console.log("[SettingsForm] Settings saved successfully:", data);
 
-      toast.success(t("settings.save.success"), {
-        duration: 2000,
-        onClose: () => {
-          console.log("[SettingsForm] Toast closed, initiating navigation");
-          // Clear any cached data
-          localStorage.clear();
-          sessionStorage.clear();
+      toast.success(t("settings.save.success"));
 
-          // Force reload and redirect
-          console.log("[SettingsForm] Performing hard redirect to dashboard");
-          window.location.href = `${
-            window.location.origin
-          }/dashboard?t=${Date.now()}`;
-        },
-      });
+      // Wait for toast to be visible then navigate
+      console.log("[SettingsForm] Starting navigation timeout");
+      setTimeout(() => {
+        console.log("[SettingsForm] Toast closed, initiating navigation");
+        // Clear any cached data
+        localStorage.clear();
+        sessionStorage.clear();
+
+        // Force reload and redirect
+        console.log("[SettingsForm] Performing hard redirect to dashboard");
+        window.location.href = `${
+          window.location.origin
+        }/dashboard?t=${Date.now()}`;
+      }, 2000);
     } catch (error) {
       console.error("[SettingsForm] Error saving settings:", error);
       toast.error(t("settings.save.error"));
