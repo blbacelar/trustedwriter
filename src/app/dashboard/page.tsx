@@ -16,6 +16,7 @@ import LoadingPage from "@/components/LoadingPage";
 import { useCredits } from "@/contexts/CreditsContext";
 import ServiceUnavailable from "@/components/ServiceUnavailable";
 import { logger } from "@/utils/logger";
+import { serverLogger } from "@/utils/serverLogger";
 
 interface Application {
   id: string;
@@ -45,26 +46,27 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const init = async () => {
-      console.log("[Dashboard] Initializing dashboard");
+      await serverLogger.debug("Dashboard initialization started", {
+        openAIStatusLoading,
+        isOperational,
+        status,
+        isLoading,
+      });
+
       try {
         setIsLoading(true);
-
-        // Check if we need to refresh credits
         const searchParams = new URLSearchParams(window.location.search);
         const timestamp = searchParams.get("t");
 
         if (timestamp) {
-          console.log(
-            "[Dashboard] Detected redirect from settings, refreshing data"
-          );
+          await serverLogger.debug("Refreshing credits after settings update");
           await refreshCredits();
-          // Clean up URL
           window.history.replaceState({}, "", "/dashboard");
         }
 
-        console.log("[Dashboard] Initial load complete");
+        await serverLogger.debug("Dashboard initialization completed");
       } catch (error) {
-        console.error("[Dashboard] Error during initialization:", error);
+        await serverLogger.error("Dashboard initialization error", { error });
       } finally {
         setIsLoading(false);
       }
@@ -74,33 +76,34 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    logger.debug("Component mounted", {
-      openAIStatusLoading,
-      isOperational,
-      status,
-    });
-
     const fetchApplications = async () => {
-      logger.debug("Starting applications fetch");
+      await serverLogger.debug("Starting applications fetch", {
+        openAIStatusLoading,
+        isOperational,
+        status,
+      });
+
       try {
         const response = await fetch("/api/applications");
-        logger.debug("Applications API response status:", response.status);
+        await serverLogger.debug("Applications API response", {
+          status: response.status,
+        });
 
         if (response.ok) {
           const data = await response.json();
-          logger.debug("Applications data received:", {
+          await serverLogger.debug("Applications data received", {
             count: data.length,
           });
           setApplications(data);
         } else {
-          logger.error("Failed to fetch applications", {
+          await serverLogger.error("Failed to fetch applications", {
             status: response.status,
           });
         }
       } catch (error) {
-        logger.error("Applications fetch error:", error);
+        await serverLogger.error("Applications fetch error", { error });
       } finally {
-        logger.debug("Setting isLoading to false");
+        await serverLogger.debug("Setting isLoading to false");
         setIsLoading(false);
       }
     };
@@ -275,16 +278,19 @@ export default function DashboardPage() {
   };
 
   if (openAIStatusLoading) {
-    logger.debug("Rendering LoadingPage due to OpenAI status loading");
+    serverLogger.debug("Rendering LoadingPage", { openAIStatusLoading });
     return <LoadingPage />;
   }
 
   if (!isOperational) {
-    logger.debug("Rendering ServiceUnavailable. Status:", status);
+    serverLogger.debug("Rendering ServiceUnavailable", { status });
     return <ServiceUnavailable status={status} />;
   }
 
-  logger.debug("Rendering main dashboard content");
+  serverLogger.debug("Rendering main dashboard content", {
+    isLoading,
+    applicationsCount: applications.length,
+  });
 
   return (
     <>
