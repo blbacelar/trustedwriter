@@ -79,10 +79,6 @@ export default function DashboardPage() {
       if (response.ok) {
         const data = await response.json();
         setApplications(data);
-        await serverLogger.debug("Applications fetched client-side", {
-          count: data.length,
-          timestamp: new Date().toISOString(),
-        });
       } else {
         throw new Error(`Failed to fetch applications: ${response.status}`);
       }
@@ -106,7 +102,6 @@ export default function DashboardPage() {
 
         setIsLoading(true);
         await serverLogger.debug("Dashboard initialization", {
-          fromSettings: fromSettings,
           timestamp: new Date().toISOString(),
         });
 
@@ -127,11 +122,8 @@ export default function DashboardPage() {
 
     return () => {
       mounted = false;
-      serverLogger.debug("Dashboard cleanup", {
-        timestamp: new Date().toISOString(),
-      });
     };
-  }, [openAIStatusLoading, isOperational, fromSettings]);
+  }, [openAIStatusLoading, isOperational]);
 
   //Removed Unnecessary useEffect
 
