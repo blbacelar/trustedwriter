@@ -56,15 +56,14 @@ export default function SettingsForm() {
           destination: "/dashboard",
           timestamp: new Date().toISOString(),
         }),
-        // Add a delay to ensure logs are saved
         new Promise((resolve) => setTimeout(resolve, 1000)),
       ]);
 
       // Use router.push instead of window.location for smoother navigation
       router.push(`/dashboard?from=settings&t=${Date.now()}`);
-    } catch (error) {
+    } catch (error: unknown) {
       await serverLogger.error("Settings save failed", {
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
         timestamp: new Date().toISOString(),
       });
       toast.error(t("settings.save.error"));
