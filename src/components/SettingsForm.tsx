@@ -25,18 +25,21 @@ export default function SettingsForm() {
     e.preventDefault();
     setSaving(true);
 
-    await serverLogger.debug("Settings form submission started");
-
     try {
-      await serverLogger.debug("Sending settings update request");
+      // Log before any action
+      await serverLogger.debug("Settings form submission started", {
+        timestamp: new Date().toISOString(),
+      });
+
       const response = await fetch("/api/settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ profile, rules }),
       });
 
-      await serverLogger.debug("Settings API response", {
+      await serverLogger.debug("Settings API response received", {
         status: response.status,
+        timestamp: new Date().toISOString(),
       });
 
       if (!response.ok) {
@@ -44,16 +47,38 @@ export default function SettingsForm() {
       }
 
       await response.json();
+
+      // Show success toast
       toast.success(t("settings.save.success"));
 
-      await serverLogger.debug(
-        "Settings saved, initiating navigation to dashboard"
-      );
+      await serverLogger.debug("Settings saved successfully", {
+        timestamp: new Date().toISOString(),
+      });
 
-      // Add a timestamp to force a fresh load
-      router.push(`/dashboard?from=settings&t=${Date.now()}`);
+      // Wait for logs to be sent
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Log navigation intent
+      await serverLogger.debug("Initiating navigation to dashboard", {
+        timestamp: new Date().toISOString(),
+      });
+
+      // Navigate with timestamp
+      const timestamp = Date.now();
+      await serverLogger.debug("Navigation starting", {
+        destination: `/dashboard?from=settings&t=${timestamp}`,
+        timestamp: new Date().toISOString(),
+      });
+
+      // Wait again for final log
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      router.push(`/dashboard?from=settings&t=${timestamp}`);
     } catch (error) {
-      await serverLogger.error("Settings save error", { error });
+      await serverLogger.error("Settings save failed", {
+        error,
+        timestamp: new Date().toISOString(),
+      });
       toast.error(t("settings.save.error"));
     } finally {
       setSaving(false);
