@@ -38,9 +38,10 @@ export default function SettingsForm() {
       await response.json();
       toast.success(t("settings.save.success"));
 
-      // Set flag before navigation
-      sessionStorage.setItem("fromSettings", "true");
-      router.push("/dashboard");
+      // Wait for toast to be visible then do a full page reload
+      setTimeout(() => {
+        window.location.assign("/dashboard");
+      }, 1000);
     } catch (error) {
       console.error("Settings save error:", error);
       toast.error(t("settings.save.error"));
