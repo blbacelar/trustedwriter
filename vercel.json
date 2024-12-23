@@ -6,7 +6,7 @@
     }
   ],
   "functions": {
-    "api/applications/route": {
+    "src/app/api/applications/**/*.ts": {
       "memory": 1024,
       "maxDuration": 60
     }
