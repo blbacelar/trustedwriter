@@ -17,6 +17,7 @@ import { useCredits } from "@/contexts/CreditsContext";
 import ServiceUnavailable from "@/components/ServiceUnavailable";
 import { logger } from "@/utils/logger";
 import { serverLogger } from "@/utils/serverLogger";
+import { useSearchParams } from "next/navigation";
 
 interface Application {
   id: string;
@@ -29,6 +30,8 @@ export default function DashboardPage() {
   const { toast } = useToast();
   const { t } = useLanguage();
   const { refreshCredits } = useCredits();
+  const searchParams = useSearchParams();
+  const fromSettings = searchParams.get("from") === "settings";
   const [applicationData, setApplicationData] = useState<string | null>(() => {
     serverLogger.debug("Initializing applicationData state", { value: null });
     return null;
@@ -107,29 +110,49 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    const init = async () => {
-      try {
-        // Clear any stale state
-        setIsLoading(true);
-        setApplications([]);
+    let mounted = true;
 
-        // Wait for OpenAI status to be ready
+    const initializeDashboard = async () => {
+      try {
+        if (!mounted) return;
+
+        // Set initial loading state
+        setIsLoading(true);
+
+        // Wait for OpenAI status first
         if (!openAIStatusLoading && isOperational) {
-          const response = await fetch("/api/applications");
+          // Fetch applications
+          const response = await fetch("/api/applications", {
+            // Add cache control headers
+            headers: {
+              "Cache-Control": "no-cache",
+              Pragma: "no-cache",
+            },
+          });
+
+          if (!mounted) return;
+
           if (response.ok) {
             const data = await response.json();
             setApplications(data);
           }
-          setIsLoading(false);
         }
       } catch (error) {
-        serverLogger.error("Dashboard initialization error", { error });
-        setIsLoading(false);
+        serverLogger.error("Dashboard initialization failed", { error });
+      } finally {
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     };
 
-    init();
-  }, [openAIStatusLoading, isOperational]);
+    initializeDashboard();
+
+    // Cleanup function
+    return () => {
+      mounted = false;
+    };
+  }, [openAIStatusLoading, isOperational, fromSettings]);
 
   const handleApplicationData = async (data: string | null) => {
     serverLogger.debug("handleApplicationData called", {

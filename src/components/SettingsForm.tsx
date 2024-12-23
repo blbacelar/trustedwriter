@@ -35,11 +35,11 @@ export default function SettingsForm() {
         throw new Error(`Failed to save settings: ${response.status}`);
       }
 
-      const data = await response.json();
+      await response.json();
       toast.success(t("settings.save.success"));
 
-      // Force a full page reload to dashboard
-      window.location.replace("/dashboard");
+      // Navigate with a query parameter
+      router.push("/dashboard?from=settings");
     } catch (error) {
       console.error("[SettingsForm] Error saving settings:", error);
       toast.error(t("settings.save.error"));
