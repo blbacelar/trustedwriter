@@ -31,9 +31,9 @@ export default function ProfileSettings() {
       try {
         setIsLoading(true);
         const response = await fetch("/api/settings");
-        
+
         if (!mounted) return;
-        
+
         if (response.ok) {
           const data = await response.json();
           if (data.success && mounted) {
@@ -102,7 +102,7 @@ export default function ProfileSettings() {
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       handleAddRule();
     }
@@ -209,4 +209,4 @@ export default function ProfileSettings() {
       </button>
     </div>
   );
-} 
+}

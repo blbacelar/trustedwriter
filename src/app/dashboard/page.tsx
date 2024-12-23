@@ -275,18 +275,16 @@ export default function DashboardPage() {
   };
 
   if (openAIStatusLoading) {
-    console.log(
-      "[Dashboard] Rendering LoadingPage due to OpenAI status loading"
-    );
+    logger.debug("Rendering LoadingPage due to OpenAI status loading");
     return <LoadingPage />;
   }
 
   if (!isOperational) {
-    console.log("[Dashboard] Rendering ServiceUnavailable. Status:", status);
+    logger.debug("Rendering ServiceUnavailable. Status:", status);
     return <ServiceUnavailable status={status} />;
   }
 
-  console.log("[Dashboard] Rendering main dashboard content");
+  logger.debug("Rendering main dashboard content");
 
   return (
     <>
