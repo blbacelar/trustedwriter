@@ -330,6 +330,7 @@ export default function DashboardPage() {
 
   serverLogger.debug("Rendering main dashboard content", {
     isLoading,
+    isGenerating,
     applicationsCount: applications.length,
   });
 
