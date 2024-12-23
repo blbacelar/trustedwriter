@@ -29,31 +29,21 @@ export default function DashboardPage() {
   const { toast } = useToast();
   const { t } = useLanguage();
   const { refreshCredits } = useCredits();
-  const [applicationData, setApplicationData] = useState<string | null>(
-    (initialValue) => {
-      serverLogger.debug("Initializing applicationData state", {
-        value: initialValue,
-      });
-      return initialValue;
-    }
-  );
-  const [isGenerating, setIsGenerating] = useState((initialValue) => {
-    serverLogger.debug("Initializing isGenerating state", {
-      value: initialValue,
-    });
-    return initialValue;
+  const [applicationData, setApplicationData] = useState<string | null>(() => {
+    serverLogger.debug("Initializing applicationData state", { value: null });
+    return null;
   });
-  const [applications, setApplications] = useState<Application[]>(
-    (initialValue) => {
-      serverLogger.debug("Initializing applications state", {
-        value: initialValue,
-      });
-      return initialValue;
-    }
-  );
-  const [isLoading, setIsLoading] = useState((initialValue) => {
-    serverLogger.debug("Initializing isLoading state", { value: initialValue });
-    return initialValue;
+  const [isGenerating, setIsGenerating] = useState<boolean>(() => {
+    serverLogger.debug("Initializing isGenerating state", { value: false });
+    return false;
+  });
+  const [applications, setApplications] = useState<Application[]>(() => {
+    serverLogger.debug("Initializing applications state", { value: [] });
+    return [];
+  });
+  const [isLoading, setIsLoading] = useState<boolean>(() => {
+    serverLogger.debug("Initializing isLoading state", { value: true });
+    return true;
   });
   const {
     isOperational,
@@ -61,21 +51,17 @@ export default function DashboardPage() {
     isLoading: openAIStatusLoading,
   } = useOpenAIStatus();
   const applicationRef = useRef<HTMLDivElement>(null);
-  const [currentListingUrl, setCurrentListingUrl] = useState<string>(
-    (initialValue) => {
-      serverLogger.debug("Initializing currentListingUrl state", {
-        value: initialValue,
-      });
-      return initialValue;
-    }
-  );
+  const [currentListingUrl, setCurrentListingUrl] = useState<string>(() => {
+    serverLogger.debug("Initializing currentListingUrl state", { value: "" });
+    return "";
+  });
   const [currentApplicationId, setCurrentApplicationId] = useState<
     string | null
-  >((initialValue) => {
+  >(() => {
     serverLogger.debug("Initializing currentApplicationId state", {
-      value: initialValue,
+      value: null,
     });
-    return initialValue;
+    return null;
   });
 
   useEffect(() => {
