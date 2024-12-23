@@ -29,83 +29,95 @@ export default function DashboardPage() {
   const { toast } = useToast();
   const { t } = useLanguage();
   const { refreshCredits } = useCredits();
-  const [applicationData, setApplicationData] = useState<string | null>(null);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [applications, setApplications] = useState<Application[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [applicationData, setApplicationData] = useState<string | null>(
+    (initialValue) => {
+      serverLogger.debug("Initializing applicationData state", {
+        value: initialValue,
+      });
+      return initialValue;
+    }
+  );
+  const [isGenerating, setIsGenerating] = useState((initialValue) => {
+    serverLogger.debug("Initializing isGenerating state", {
+      value: initialValue,
+    });
+    return initialValue;
+  });
+  const [applications, setApplications] = useState<Application[]>(
+    (initialValue) => {
+      serverLogger.debug("Initializing applications state", {
+        value: initialValue,
+      });
+      return initialValue;
+    }
+  );
+  const [isLoading, setIsLoading] = useState((initialValue) => {
+    serverLogger.debug("Initializing isLoading state", { value: initialValue });
+    return initialValue;
+  });
   const {
     isOperational,
     status,
     isLoading: openAIStatusLoading,
   } = useOpenAIStatus();
   const applicationRef = useRef<HTMLDivElement>(null);
-  const [currentListingUrl, setCurrentListingUrl] = useState<string>("");
+  const [currentListingUrl, setCurrentListingUrl] = useState<string>(
+    (initialValue) => {
+      serverLogger.debug("Initializing currentListingUrl state", {
+        value: initialValue,
+      });
+      return initialValue;
+    }
+  );
   const [currentApplicationId, setCurrentApplicationId] = useState<
     string | null
-  >(null);
+  >((initialValue) => {
+    serverLogger.debug("Initializing currentApplicationId state", {
+      value: initialValue,
+    });
+    return initialValue;
+  });
 
   useEffect(() => {
     serverLogger.debug("Loading state changed", {
       isLoading,
       previousValue: !isLoading,
-    });
-  }, [isLoading]);
-
-  useEffect(() => {
-    serverLogger.debug("OpenAI status changed", {
       openAIStatusLoading,
-      isOperational,
-      status,
+      isGenerating,
       timestamp: new Date().toISOString(),
     });
-  }, [openAIStatusLoading, isOperational, status]);
+  }, [isLoading, openAIStatusLoading, isGenerating]);
 
   useEffect(() => {
-    serverLogger.debug("Applications state changed", {
-      count: applications.length,
-      hasData: applications.length > 0,
+    serverLogger.debug("Application data changed", {
+      hasData: !!applicationData,
+      currentListingUrl,
+      currentApplicationId,
       timestamp: new Date().toISOString(),
     });
-  }, [applications]);
+  }, [applicationData, currentListingUrl, currentApplicationId]);
 
   useEffect(() => {
-    const init = async () => {
-      await serverLogger.debug("Dashboard initialization started", {
-        openAIStatusLoading,
-        isOperational,
-        status,
-        isLoading,
-        pathname: window.location.pathname,
-        search: window.location.search,
+    serverLogger.debug("Generation state changed", {
+      isGenerating,
+      applicationData: !!applicationData,
+      currentListingUrl: !!currentListingUrl,
+      timestamp: new Date().toISOString(),
+    });
+  }, [isGenerating, applicationData, currentListingUrl]);
+
+  useEffect(() => {
+    serverLogger.debug("Dashboard component mounted", {
+      pathname: window.location.pathname,
+      search: window.location.search,
+      timestamp: new Date().toISOString(),
+    });
+
+    return () => {
+      serverLogger.debug("Dashboard component unmounting", {
         timestamp: new Date().toISOString(),
       });
-
-      try {
-        setIsLoading(true);
-        const searchParams = new URLSearchParams(window.location.search);
-        const timestamp = searchParams.get("t");
-
-        if (timestamp) {
-          await serverLogger.debug("Refreshing credits after settings update");
-          await refreshCredits();
-          window.history.replaceState({}, "", "/dashboard");
-        }
-
-        await serverLogger.debug("Dashboard initialization completed");
-      } catch (error) {
-        await serverLogger.error("Dashboard initialization error", { error });
-      } finally {
-        setIsLoading(false);
-      }
-
-      return () => {
-        serverLogger.debug("Dashboard cleanup", {
-          timestamp: new Date().toISOString(),
-        });
-      };
     };
-
-    init();
   }, []);
 
   useEffect(() => {
@@ -153,6 +165,10 @@ export default function DashboardPage() {
   }, [applicationData, openAIStatusLoading, isOperational, status]);
 
   const handleApplicationData = async (data: string | null) => {
+    serverLogger.debug("handleApplicationData called", {
+      hasData: !!data,
+      timestamp: new Date().toISOString(),
+    });
     console.log("[Dashboard] handleApplicationData called with data:", !!data);
     if (!data) return;
 
@@ -245,6 +261,10 @@ export default function DashboardPage() {
   };
 
   const handleApplicationUpdate = (updatedApplication: Application) => {
+    serverLogger.debug("handleApplicationUpdate called", {
+      applicationId: updatedApplication.id,
+      timestamp: new Date().toISOString(),
+    });
     console.log(
       "[DEBUG] handleApplicationUpdate called with:",
       updatedApplication
@@ -319,12 +339,22 @@ export default function DashboardPage() {
   };
 
   if (openAIStatusLoading) {
-    serverLogger.debug("Rendering LoadingPage", { openAIStatusLoading });
+    serverLogger.debug("Rendering LoadingPage", {
+      openAIStatusLoading,
+      isLoading,
+      isGenerating,
+      timestamp: new Date().toISOString(),
+    });
     return <LoadingPage />;
   }
 
   if (!isOperational) {
-    serverLogger.debug("Rendering ServiceUnavailable", { status });
+    serverLogger.debug("Rendering ServiceUnavailable", {
+      status,
+      isLoading,
+      isGenerating,
+      timestamp: new Date().toISOString(),
+    });
     return <ServiceUnavailable status={status} />;
   }
 
@@ -332,6 +362,10 @@ export default function DashboardPage() {
     isLoading,
     isGenerating,
     applicationsCount: applications.length,
+    hasApplicationData: !!applicationData,
+    hasCurrentListingUrl: !!currentListingUrl,
+    hasCurrentApplicationId: !!currentApplicationId,
+    timestamp: new Date().toISOString(),
   });
 
   return (
