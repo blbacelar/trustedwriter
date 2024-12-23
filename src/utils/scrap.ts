@@ -16,6 +16,9 @@ export async function scrapeWebsite(url: string) {
               "--disable-setuid-sandbox",
               "--no-sandbox",
               "--no-zygote",
+              "--disable-dev-shm-usage",
+              "--disable-accelerated-2d-canvas",
+              "--disable-web-security",
             ],
           }
         : {
@@ -31,7 +34,10 @@ export async function scrapeWebsite(url: string) {
     });
 
     const page = await context.newPage();
-    await page.goto(url, { waitUntil: "domcontentloaded" });
+    await page.goto(url, {
+      waitUntil: "domcontentloaded",
+      timeout: 30000, // 30 seconds timeout for navigation
+    });
 
     // XPaths for elements to scrape
     const xpaths = {

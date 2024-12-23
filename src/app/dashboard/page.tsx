@@ -16,6 +16,8 @@ import LoadingPage from "@/components/LoadingPage";
 import { useCredits } from "@/contexts/CreditsContext";
 import ServiceUnavailable from "@/components/ServiceUnavailable";
 import { logger } from "@/utils/logger";
+import { serverLogger } from "@/utils/serverLogger";
+import { useSearchParams } from "next/navigation";
 
 interface Application {
   id: string;
@@ -28,57 +30,119 @@ export default function DashboardPage() {
   const { toast } = useToast();
   const { t } = useLanguage();
   const { refreshCredits } = useCredits();
-  const [applicationData, setApplicationData] = useState<string | null>(null);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [applications, setApplications] = useState<Application[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const searchParams = useSearchParams();
+  const fromSettings = searchParams.get("from") === "settings";
+  const [applicationData, setApplicationData] = useState<string | null>(() => {
+    serverLogger.debug("Initializing applicationData state", { value: null });
+    return null;
+  });
+  const [isGenerating, setIsGenerating] = useState<boolean>(() => {
+    serverLogger.debug("Initializing isGenerating state", { value: false });
+    return false;
+  });
+  const [applications, setApplications] = useState<Application[]>(() => {
+    serverLogger.debug("Initializing applications state", { value: [] });
+    return [];
+  });
+  const [isLoading, setIsLoading] = useState<boolean>(() => {
+    serverLogger.debug("Initializing isLoading state", { value: true });
+    return true;
+  });
   const {
     isOperational,
     status,
     isLoading: openAIStatusLoading,
   } = useOpenAIStatus();
   const applicationRef = useRef<HTMLDivElement>(null);
-  const [currentListingUrl, setCurrentListingUrl] = useState<string>("");
+  const [currentListingUrl, setCurrentListingUrl] = useState<string>(() => {
+    serverLogger.debug("Initializing currentListingUrl state", { value: "" });
+    return "";
+  });
   const [currentApplicationId, setCurrentApplicationId] = useState<
     string | null
-  >(null);
+  >(() => {
+    serverLogger.debug("Initializing currentApplicationId state", {
+      value: null,
+    });
+    return null;
+  });
+
+  const fetchApplicationsClientSide = async () => {
+    try {
+      const response = await fetch("/api/applications", {
+        headers: {
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setApplications(data);
+      } else {
+        throw new Error(`Failed to fetch applications: ${response.status}`);
+      }
+    } catch (error) {
+      await serverLogger.error("Client-side fetch failed", { error });
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to load dashboard data. Please try again.",
+        duration: 5000,
+      });
+    }
+  };
 
   useEffect(() => {
-    logger.debug("Component mounted", {
-      openAIStatusLoading,
-      isOperational,
-      status,
-    });
+    let mounted = true;
 
-    const fetchApplications = async () => {
-      logger.debug("Starting applications fetch");
+    const initialize = async () => {
+      if (!mounted) return;
+
       try {
-        const response = await fetch("/api/applications");
-        logger.debug("Applications API response status:", response.status);
+        // Only proceed if OpenAI status is settled
+        if (openAIStatusLoading) return;
 
-        if (response.ok) {
-          const data = await response.json();
-          logger.debug("Applications data received:", {
-            count: data.length,
+        setIsLoading(true);
+
+        if (isOperational) {
+          const response = await fetch("/api/applications", {
+            headers: {
+              "Cache-Control": "no-cache",
+              Pragma: "no-cache",
+            },
           });
-          setApplications(data);
-        } else {
-          logger.error("Failed to fetch applications", {
-            status: response.status,
-          });
+
+          if (!mounted) return;
+
+          if (response.ok) {
+            const data = await response.json();
+            setApplications(data);
+          }
         }
       } catch (error) {
-        logger.error("Applications fetch error:", error);
+        await serverLogger.error("Dashboard initialization failed", { error });
       } finally {
-        logger.debug("Setting isLoading to false");
-        setIsLoading(false);
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     };
 
-    fetchApplications();
-  }, [applicationData, openAIStatusLoading, isOperational, status]);
+    initialize();
+
+    return () => {
+      mounted = false;
+    };
+  }, [openAIStatusLoading, isOperational]);
+
+  //Removed Unnecessary useEffect
 
   const handleApplicationData = async (data: string | null) => {
+    serverLogger.debug("handleApplicationData called", {
+      hasData: !!data,
+      timestamp: new Date().toISOString(),
+    });
     console.log("[Dashboard] handleApplicationData called with data:", !!data);
     if (!data) return;
 
@@ -171,6 +235,10 @@ export default function DashboardPage() {
   };
 
   const handleApplicationUpdate = (updatedApplication: Application) => {
+    serverLogger.debug("handleApplicationUpdate called", {
+      applicationId: updatedApplication.id,
+      timestamp: new Date().toISOString(),
+    });
     console.log(
       "[DEBUG] handleApplicationUpdate called with:",
       updatedApplication
@@ -190,7 +258,9 @@ export default function DashboardPage() {
 
   const handleNewApplicationSave = async (content: string) => {
     if (!currentApplicationId) {
-      console.error("[DEBUG] No application ID available");
+      await serverLogger.error("No application ID available", {
+        timestamp: new Date().toISOString(),
+      });
       toast({
         variant: "destructive",
         title: t("dashboard.table.editError"),
@@ -201,6 +271,11 @@ export default function DashboardPage() {
     }
 
     try {
+      await serverLogger.debug("Starting application save", {
+        applicationId: currentApplicationId,
+        timestamp: new Date().toISOString(),
+      });
+
       const response = await fetch(
         `/api/applications/${currentApplicationId}`,
         {
@@ -215,17 +290,35 @@ export default function DashboardPage() {
         }
       );
 
+      await serverLogger.debug("Application save response received", {
+        status: response.status,
+        timestamp: new Date().toISOString(),
+      });
+
       if (!response.ok) {
-        throw new Error("Failed to update application");
+        throw new Error(`Failed to update application: ${response.status}`);
       }
 
       const { data: updatedApplication } = await response.json();
+      await serverLogger.debug("Application updated successfully", {
+        applicationId: updatedApplication.id,
+        timestamp: new Date().toISOString(),
+      });
+
       handleApplicationUpdate(updatedApplication);
 
       // Clear all related state to dismiss the editor
       setApplicationData(null);
       setCurrentApplicationId(null);
       setCurrentListingUrl("");
+
+      // Wait for logs to be saved before scrolling
+      await Promise.all([
+        serverLogger.debug("Cleaning up after save", {
+          timestamp: new Date().toISOString(),
+        }),
+        new Promise((resolve) => setTimeout(resolve, 500)),
+      ]);
 
       // Scroll back to top smoothly
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -234,8 +327,13 @@ export default function DashboardPage() {
         title: t("dashboard.table.editSuccess"),
         duration: 3000,
       });
-    } catch (error) {
-      console.error("[DEBUG] Save error:", error);
+    } catch (error: unknown) {
+      await serverLogger.error("Application save failed", {
+        error: error instanceof Error ? error.message : String(error),
+        applicationId: currentApplicationId,
+        timestamp: new Date().toISOString(),
+      });
+
       toast({
         variant: "destructive",
         title: t("dashboard.table.editError"),
@@ -244,22 +342,52 @@ export default function DashboardPage() {
     }
   };
 
-  if (openAIStatusLoading) {
-    console.log(
-      "[Dashboard] Rendering LoadingPage due to OpenAI status loading"
-    );
+  serverLogger.debug("Entering DashboardPage", {
+    openAIStatusLoading,
+    isLoading,
+    isGenerating,
+    timestamp: new Date().toISOString(),
+  });
+
+  if (openAIStatusLoading || isLoading) {
+    serverLogger.debug("Rendering LoadingPage", {
+      openAIStatusLoading,
+      isLoading,
+      isGenerating,
+      timestamp: new Date().toISOString(),
+    });
     return <LoadingPage />;
   }
 
   if (!isOperational) {
-    console.log("[Dashboard] Rendering ServiceUnavailable. Status:", status);
+    serverLogger.debug("Rendering ServiceUnavailable", {
+      status,
+      isLoading,
+      isGenerating,
+      timestamp: new Date().toISOString(),
+    });
     return <ServiceUnavailable status={status} />;
   }
 
-  console.log("[Dashboard] Rendering main dashboard content");
+  serverLogger.debug("Rendering main dashboard content", {
+    isLoading,
+    isGenerating,
+    applicationsCount: applications.length,
+    hasApplicationData: !!applicationData,
+    hasCurrentListingUrl: !!currentListingUrl,
+    hasCurrentApplicationId: !!currentApplicationId,
+    timestamp: new Date().toISOString(),
+  });
 
   return (
     <>
+      {serverLogger.debug("Generation state changed", {
+        isLoading,
+        isGenerating,
+        applicationData: !!applicationData,
+        currentListingUrl: !!currentListingUrl,
+        timestamp: new Date().toISOString(),
+      })}
       {isGenerating && <LoadingSpinner />}
       <section className="relative min-h-[600px] flex items-center">
         {/* Background Image with Gradient Overlay */}
