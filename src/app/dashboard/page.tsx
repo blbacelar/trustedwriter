@@ -45,12 +45,39 @@ export default function DashboardPage() {
   >(null);
 
   useEffect(() => {
+    serverLogger.debug("Loading state changed", {
+      isLoading,
+      previousValue: !isLoading,
+    });
+  }, [isLoading]);
+
+  useEffect(() => {
+    serverLogger.debug("OpenAI status changed", {
+      openAIStatusLoading,
+      isOperational,
+      status,
+      timestamp: new Date().toISOString(),
+    });
+  }, [openAIStatusLoading, isOperational, status]);
+
+  useEffect(() => {
+    serverLogger.debug("Applications state changed", {
+      count: applications.length,
+      hasData: applications.length > 0,
+      timestamp: new Date().toISOString(),
+    });
+  }, [applications]);
+
+  useEffect(() => {
     const init = async () => {
       await serverLogger.debug("Dashboard initialization started", {
         openAIStatusLoading,
         isOperational,
         status,
         isLoading,
+        pathname: window.location.pathname,
+        search: window.location.search,
+        timestamp: new Date().toISOString(),
       });
 
       try {
@@ -70,12 +97,26 @@ export default function DashboardPage() {
       } finally {
         setIsLoading(false);
       }
+
+      return () => {
+        serverLogger.debug("Dashboard cleanup", {
+          timestamp: new Date().toISOString(),
+        });
+      };
     };
 
     init();
   }, []);
 
   useEffect(() => {
+    serverLogger.debug("Fetch dependencies changed", {
+      applicationData: !!applicationData,
+      openAIStatusLoading,
+      isOperational,
+      status,
+      timestamp: new Date().toISOString(),
+    });
+
     const fetchApplications = async () => {
       await serverLogger.debug("Starting applications fetch", {
         openAIStatusLoading,
