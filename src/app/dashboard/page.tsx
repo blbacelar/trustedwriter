@@ -44,6 +44,36 @@ export default function DashboardPage() {
   >(null);
 
   useEffect(() => {
+    const init = async () => {
+      console.log("[Dashboard] Initializing dashboard");
+      try {
+        setIsLoading(true);
+
+        // Check if we need to refresh credits
+        const searchParams = new URLSearchParams(window.location.search);
+        const timestamp = searchParams.get("t");
+
+        if (timestamp) {
+          console.log(
+            "[Dashboard] Detected redirect from settings, refreshing data"
+          );
+          await refreshCredits();
+          // Clean up URL
+          window.history.replaceState({}, "", "/dashboard");
+        }
+
+        console.log("[Dashboard] Initial load complete");
+      } catch (error) {
+        console.error("[Dashboard] Error during initialization:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    init();
+  }, []);
+
+  useEffect(() => {
     logger.debug("Component mounted", {
       openAIStatusLoading,
       isOperational,
