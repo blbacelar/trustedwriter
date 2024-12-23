@@ -6,7 +6,11 @@ const nextConfig = {
   },
   experimental: {
     serverActions: {
-      allowedOrigins: ["localhost:3000"],
+      allowedOrigins: [
+        "localhost:3000",
+        "trusted-writer.vercel.app",
+        process.env.NEXT_PUBLIC_APP_URL,
+      ].filter(Boolean),
     },
   },
   webpack: (config) => {
