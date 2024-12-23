@@ -113,34 +113,57 @@ export default function DashboardPage() {
     let mounted = true;
 
     const initializeDashboard = async () => {
+      await serverLogger.debug("Dashboard initialization starting", {
+        fromSettings,
+        openAIStatusLoading,
+        isOperational,
+        searchParams: Object.fromEntries(searchParams.entries()),
+      });
+
       try {
-        if (!mounted) return;
+        if (!mounted) {
+          await serverLogger.debug(
+            "Dashboard initialization aborted - component unmounted"
+          );
+          return;
+        }
 
-        // Set initial loading state
         setIsLoading(true);
+        await serverLogger.debug("Dashboard loading state set to true");
 
-        // Wait for OpenAI status first
         if (!openAIStatusLoading && isOperational) {
-          // Fetch applications
+          await serverLogger.debug("Fetching applications");
           const response = await fetch("/api/applications", {
-            // Add cache control headers
             headers: {
               "Cache-Control": "no-cache",
               Pragma: "no-cache",
             },
           });
 
-          if (!mounted) return;
+          if (!mounted) {
+            await serverLogger.debug(
+              "Applications fetch response ignored - component unmounted"
+            );
+            return;
+          }
+
+          await serverLogger.debug("Applications API response", {
+            status: response.status,
+          });
 
           if (response.ok) {
             const data = await response.json();
+            await serverLogger.debug("Applications data received", {
+              count: data.length,
+            });
             setApplications(data);
           }
         }
       } catch (error) {
-        serverLogger.error("Dashboard initialization failed", { error });
+        await serverLogger.error("Dashboard initialization failed", { error });
       } finally {
         if (mounted) {
+          await serverLogger.debug("Setting loading state to false");
           setIsLoading(false);
         }
       }
@@ -148,11 +171,10 @@ export default function DashboardPage() {
 
     initializeDashboard();
 
-    // Cleanup function
     return () => {
       mounted = false;
     };
-  }, [openAIStatusLoading, isOperational, fromSettings]);
+  }, [openAIStatusLoading, isOperational, fromSettings, searchParams]);
 
   const handleApplicationData = async (data: string | null) => {
     serverLogger.debug("handleApplicationData called", {

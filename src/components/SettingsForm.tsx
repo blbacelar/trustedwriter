@@ -2,6 +2,7 @@ import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useRouter } from "next/navigation";
+import { serverLogger } from "@/utils/serverLogger";
 
 interface Profile {
   name?: string;
@@ -24,11 +25,18 @@ export default function SettingsForm() {
     e.preventDefault();
     setSaving(true);
 
+    await serverLogger.debug("Settings form submission started");
+
     try {
+      await serverLogger.debug("Sending settings update request");
       const response = await fetch("/api/settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ profile, rules }),
+      });
+
+      await serverLogger.debug("Settings API response", {
+        status: response.status,
       });
 
       if (!response.ok) {
@@ -38,10 +46,14 @@ export default function SettingsForm() {
       await response.json();
       toast.success(t("settings.save.success"));
 
-      // Navigate with a query parameter
-      router.push("/dashboard?from=settings");
+      await serverLogger.debug(
+        "Settings saved, initiating navigation to dashboard"
+      );
+
+      // Add a timestamp to force a fresh load
+      router.push(`/dashboard?from=settings&t=${Date.now()}`);
     } catch (error) {
-      console.error("[SettingsForm] Error saving settings:", error);
+      await serverLogger.error("Settings save error", { error });
       toast.error(t("settings.save.error"));
     } finally {
       setSaving(false);
