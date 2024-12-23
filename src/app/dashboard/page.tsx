@@ -116,6 +116,10 @@ export default function DashboardPage() {
     });
 
     const fetchApplications = async () => {
+      if (openAIStatusLoading) {
+        return;
+      }
+
       await serverLogger.debug("Starting applications fetch", {
         openAIStatusLoading,
         isOperational,
@@ -142,8 +146,10 @@ export default function DashboardPage() {
       } catch (error) {
         await serverLogger.error("Applications fetch error", { error });
       } finally {
-        await serverLogger.debug("Setting isLoading to false");
-        setIsLoading(false);
+        if (!openAIStatusLoading) {
+          await serverLogger.debug("Setting isLoading to false");
+          setIsLoading(false);
+        }
       }
     };
 
