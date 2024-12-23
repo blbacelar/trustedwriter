@@ -23,10 +23,9 @@ export default function SettingsForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSaving(true);
 
     try {
-      // Log before any action
+      setSaving(true);
       await serverLogger.debug("Settings form submission started", {
         timestamp: new Date().toISOString(),
       });
@@ -47,36 +46,25 @@ export default function SettingsForm() {
       }
 
       await response.json();
+      await serverLogger.debug("Settings saved successfully");
 
-      // Show success toast
       toast.success(t("settings.save.success"));
 
-      await serverLogger.debug("Settings saved successfully", {
-        timestamp: new Date().toISOString(),
-      });
+      // Wait for all logs to be saved before navigation
+      await Promise.all([
+        serverLogger.debug("Preparing for navigation", {
+          destination: "/dashboard",
+          timestamp: new Date().toISOString(),
+        }),
+        // Add a delay to ensure logs are saved
+        new Promise((resolve) => setTimeout(resolve, 1000)),
+      ]);
 
-      // Wait for logs to be sent
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Log navigation intent
-      await serverLogger.debug("Initiating navigation to dashboard", {
-        timestamp: new Date().toISOString(),
-      });
-
-      // Navigate with timestamp
-      const timestamp = Date.now();
-      await serverLogger.debug("Navigation starting", {
-        destination: `/dashboard?from=settings&t=${timestamp}`,
-        timestamp: new Date().toISOString(),
-      });
-
-      // Wait again for final log
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      router.push(`/dashboard?from=settings&t=${timestamp}`);
+      // Use router.push instead of window.location for smoother navigation
+      router.push(`/dashboard?from=settings&t=${Date.now()}`);
     } catch (error) {
       await serverLogger.error("Settings save failed", {
-        error,
+        error: error.message,
         timestamp: new Date().toISOString(),
       });
       toast.error(t("settings.save.error"));

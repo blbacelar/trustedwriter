@@ -50,5 +50,6 @@ model Log {
   message   String
   level     String   @default("info")
   data      String?
+  source    String?
   timestamp DateTime @default(now())
 }

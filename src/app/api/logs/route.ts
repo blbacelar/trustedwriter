@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
   try {
-    const { message, level, data } = await req.json();
+    const { message, level, data, source } = await req.json();
 
     // Store log in database
     await prisma.log.create({
@@ -11,6 +11,7 @@ export async function POST(req: Request) {
         message,
         level,
         data: data ? JSON.stringify(data) : null,
+        source,
         timestamp: new Date(),
       },
     });
