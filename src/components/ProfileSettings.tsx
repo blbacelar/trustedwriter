@@ -13,6 +13,7 @@ import {
 import { logError } from "@/lib/errorLogging";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
+import { serverLogger } from "@/utils/serverLogger";
 
 export default function ProfileSettings() {
   const { t } = useLanguage();
@@ -90,12 +91,16 @@ export default function ProfileSettings() {
 
       if (response.ok) {
         toast.success(t("settings.save.success"));
-        router.push("/dashboard");
+        await serverLogger.debug("Settings saved successfully", {
+          timestamp: new Date().toISOString(),
+        });
+        router.push("/dashboard?from=settings");
       } else {
-        throw new Error();
+        throw new Error(`Failed to save settings: ${response.status}`);
       }
     } catch (error) {
       toast.error(t("settings.save.error"));
+      await serverLogger.error("Failed to save settings", { error });
     } finally {
       setIsSaving(false);
     }

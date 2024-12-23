@@ -67,6 +67,38 @@ export default function DashboardPage() {
     return null;
   });
 
+  const fetchApplicationsClientSide = async () => {
+    try {
+      const response = await fetch("/api/applications", {
+        headers: {
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setApplications(data);
+        await serverLogger.debug("Applications fetched client-side", {
+          count: data.length,
+          timestamp: new Date().toISOString(),
+        });
+      } else {
+        throw new Error(`Failed to fetch applications: ${response.status}`);
+      }
+    } catch (error) {
+      await serverLogger.error("Client-side fetch failed", { error });
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to load dashboard data. Please try again.",
+        duration: 5000,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     let mounted = true;
 
@@ -114,6 +146,12 @@ export default function DashboardPage() {
       });
     };
   }, [openAIStatusLoading, isOperational]);
+
+  useEffect(() => {
+    if (!isLoading && applications.length === 0 && isOperational) {
+      fetchApplicationsClientSide();
+    }
+  }, [isLoading, applications.length, isOperational]);
 
   const handleApplicationData = async (data: string | null) => {
     serverLogger.debug("handleApplicationData called", {
