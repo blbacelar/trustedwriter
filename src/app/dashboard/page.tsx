@@ -94,8 +94,6 @@ export default function DashboardPage() {
         description: "Failed to load dashboard data. Please try again.",
         duration: 5000,
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -108,25 +106,13 @@ export default function DashboardPage() {
 
         setIsLoading(true);
         await serverLogger.debug("Dashboard initialization", {
-          fromSettings: true,
+          fromSettings: fromSettings,
           timestamp: new Date().toISOString(),
         });
 
-        // Wait for OpenAI status to be ready
+        // Only fetch applications if OpenAI is operational
         if (!openAIStatusLoading && isOperational) {
-          const response = await fetch("/api/applications", {
-            headers: {
-              "Cache-Control": "no-cache",
-              Pragma: "no-cache",
-            },
-          });
-
-          if (!mounted) return;
-
-          if (response.ok) {
-            const data = await response.json();
-            setApplications(data);
-          }
+          await fetchApplicationsClientSide();
         }
       } catch (error) {
         await serverLogger.error("Dashboard initialization failed", { error });
@@ -145,13 +131,9 @@ export default function DashboardPage() {
         timestamp: new Date().toISOString(),
       });
     };
-  }, [openAIStatusLoading, isOperational]);
+  }, [openAIStatusLoading, isOperational, fromSettings]);
 
-  useEffect(() => {
-    if (!isLoading && applications.length === 0 && isOperational) {
-      fetchApplicationsClientSide();
-    }
-  }, [isLoading, applications.length, isOperational]);
+  //Removed Unnecessary useEffect
 
   const handleApplicationData = async (data: string | null) => {
     serverLogger.debug("handleApplicationData called", {
