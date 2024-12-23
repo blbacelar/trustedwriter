@@ -107,54 +107,29 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    serverLogger.debug("Fetch dependencies changed", {
-      applicationData: !!applicationData,
-      openAIStatusLoading,
-      isOperational,
-      status,
-      timestamp: new Date().toISOString(),
-    });
-
-    const fetchApplications = async () => {
-      if (openAIStatusLoading) {
-        return;
-      }
-
-      await serverLogger.debug("Starting applications fetch", {
-        openAIStatusLoading,
-        isOperational,
-        status,
-      });
-
+    const init = async () => {
       try {
-        const response = await fetch("/api/applications");
-        await serverLogger.debug("Applications API response", {
-          status: response.status,
-        });
+        // Clear any stale state
+        setIsLoading(true);
+        setApplications([]);
 
-        if (response.ok) {
-          const data = await response.json();
-          await serverLogger.debug("Applications data received", {
-            count: data.length,
-          });
-          setApplications(data);
-        } else {
-          await serverLogger.error("Failed to fetch applications", {
-            status: response.status,
-          });
-        }
-      } catch (error) {
-        await serverLogger.error("Applications fetch error", { error });
-      } finally {
-        if (!openAIStatusLoading) {
-          await serverLogger.debug("Setting isLoading to false");
+        // Wait for OpenAI status to be ready
+        if (!openAIStatusLoading && isOperational) {
+          const response = await fetch("/api/applications");
+          if (response.ok) {
+            const data = await response.json();
+            setApplications(data);
+          }
           setIsLoading(false);
         }
+      } catch (error) {
+        serverLogger.error("Dashboard initialization error", { error });
+        setIsLoading(false);
       }
     };
 
-    fetchApplications();
-  }, [applicationData, openAIStatusLoading, isOperational, status]);
+    init();
+  }, [openAIStatusLoading, isOperational]);
 
   const handleApplicationData = async (data: string | null) => {
     serverLogger.debug("handleApplicationData called", {

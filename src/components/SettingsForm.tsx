@@ -22,47 +22,28 @@ export default function SettingsForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("[SettingsForm] Starting form submission");
     setSaving(true);
 
     try {
-      console.log("[SettingsForm] Sending request to /api/settings");
       const response = await fetch("/api/settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ profile, rules }),
       });
 
-      console.log("[SettingsForm] Response status:", response.status);
-
       if (!response.ok) {
         throw new Error(`Failed to save settings: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log("[SettingsForm] Settings saved successfully:", data);
-
       toast.success(t("settings.save.success"));
 
-      // Wait for toast to be visible then navigate
-      console.log("[SettingsForm] Starting navigation timeout");
-      setTimeout(() => {
-        console.log("[SettingsForm] Toast closed, initiating navigation");
-        // Clear any cached data
-        localStorage.clear();
-        sessionStorage.clear();
-
-        // Force reload and redirect
-        console.log("[SettingsForm] Performing hard redirect to dashboard");
-        window.location.href = `${
-          window.location.origin
-        }/dashboard?t=${Date.now()}`;
-      }, 2000);
+      // Force a full page reload to dashboard
+      window.location.replace("/dashboard");
     } catch (error) {
       console.error("[SettingsForm] Error saving settings:", error);
       toast.error(t("settings.save.error"));
     } finally {
-      console.log("[SettingsForm] Completing submission process");
       setSaving(false);
     }
   };
