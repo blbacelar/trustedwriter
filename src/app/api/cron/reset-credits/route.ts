@@ -1,42 +1,35 @@
 import { NextResponse } from "next/server";
+import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
-import { logError } from "@/lib/errorLogging";
 
-export const runtime = 'edge';
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
-export async function POST(req: Request) {
+export async function GET() {
   try {
-    // Verify the cron secret to ensure this is a legitimate request
-    const authHeader = req.headers.get('authorization');
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const headersList = await headers();
+    const authorization = headersList.get("authorization");
+
+    if (authorization !== `Bearer ${process.env.CRON_SECRET}`) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Reset credits for all free users (those without subscriptionId)
+    // Use standard Prisma client
     const result = await prisma.user.updateMany({
       where: {
         subscriptionId: null,
       },
       data: {
-        credits: 3, // Reset to default free credits
-        lastCreditReset: new Date(),
+        credits: 3,
       },
     });
 
-    return NextResponse.json({
-      success: true,
-      usersUpdated: result.count,
-    });
+    return NextResponse.json({ success: true, updated: result });
   } catch (error) {
-    await logError({
-      error: error as Error,
-      context: "RESET_CREDITS",
-      additionalData: {
-        path: "/api/cron/reset-credits"
-      }
-    });
-    
-    console.error('[RESET_CREDITS]', error);
-    return NextResponse.json({ error: 'Internal Error' }, { status: 500 });
+    console.error("Error in reset-credits:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
-} 
+}

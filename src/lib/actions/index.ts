@@ -123,7 +123,7 @@ export async function scrapeAndGetApplication(houseSittingUrl: string) {
     // Log the error
     await logError({
       error,
-      userId: session?.userId,
+      userId: session?.userId || undefined,
       context: "scrapeAndGetApplication",
     });
 
