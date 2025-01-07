@@ -183,11 +183,11 @@ export default function DashboardPage() {
           });
         }, 100);
       } else {
-        console.error("[DEBUG] Invalid result format:", result);
+        logger.error("[DEBUG] Invalid result format:", result);
         throw new Error("Invalid response format");
       }
     } catch (error) {
-      console.error("Application generation error:", error);
+      logger.error("Application generation error:", error);
       toast({
         variant: "destructive",
         title: "Error",
