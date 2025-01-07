@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { formatDistanceToNow, format } from "date-fns";
-import { Copy, ExternalLink, Search, Edit2, X } from "lucide-react";
+import { Copy, ExternalLink, Search, Edit2, X, RefreshCcw } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 import RichTextEditor from "./RichTextEditor";
@@ -24,46 +24,38 @@ interface Application {
 
 interface ApplicationsTableProps {
   applications: Application[];
-  onCopy: (text: string) => void;
-  onUpdate: (application: Application) => void;
+  onSelect: (id: string) => void;
+  selectedId: string | null;
+  onRefresh: () => Promise<void>;
 }
 
 export default function ApplicationsTable({
   applications,
-  onCopy,
-  onUpdate,
+  onSelect,
+  selectedId,
+  onRefresh,
 }: ApplicationsTableProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { t } = useLanguage();
+
+  const stripHtml = (html: string) => {
+    const withLineBreaks = html.replace(/<\/p><p>/g, "\n\n");
+    const doc = new DOMParser().parseFromString(withLineBreaks, "text/html");
+    const textContent = doc.body.textContent || "";
+    return textContent.replace(/\n{3,}/g, "\n\n").trim();
+  };
 
   const handleEdit = (id: string) => {
     setEditingId(id);
   };
 
-  const stripHtml = (html: string) => {
-    // Replace paragraph breaks with double newlines
-    const withLineBreaks = html.replace(/<\/p><p>/g, "\n\n");
-    // Create DOM parser
-    const doc = new DOMParser().parseFromString(withLineBreaks, "text/html");
-    // Get text content
-    const textContent = doc.body.textContent || "";
-    // Clean up extra whitespace but preserve intentional line breaks
-    return textContent.replace(/\n{3,}/g, "\n\n").trim();
-  };
-
   const handleSaveEdit = async (content: string) => {
-    if (!editingId) {
-      console.log("[DEBUG] No editingId found");
-      return;
-    }
+    if (!editingId) return;
 
     try {
-      console.log("[DEBUG] Starting save edit:", {
-        editingId,
-        contentPreview: content.substring(0, 100),
-      });
-
+      setIsLoading(true);
       const response = await fetch(`/api/applications/${editingId}`, {
         method: "PATCH",
         headers: {
@@ -72,43 +64,34 @@ export default function ApplicationsTable({
         body: JSON.stringify({ content }),
       });
 
-      console.log("[DEBUG] Response received:", {
-        status: response.status,
-        statusText: response.statusText,
-        ok: response.ok,
-      });
-
-      const data = await response.json();
-      console.log("[DEBUG] Response data:", data);
-
       if (!response.ok) {
-        throw new Error(
-          data.message || data.error || "Failed to update application"
-        );
+        throw new Error("Failed to update application");
       }
 
-      if (data.success && data.data) {
-        console.log(
-          "[DEBUG] Update successful, calling onUpdate with:",
-          data.data
-        );
+      toast.success(t("dashboard.table.editSuccess"));
+      setEditingId(null);
 
-        const updatedApplication = {
-          ...data.data,
-          createdAt: data.data.createdAt,
-        };
+      // First wait for the save operation to complete
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
-        onUpdate(updatedApplication);
-        toast.success(t("dashboard.table.editSuccess"));
-        setEditingId(null);
-      } else {
-        console.log("[DEBUG] Invalid response format:", data);
-        throw new Error("Invalid response format");
-      }
+      // Then refresh the table
+      await onRefresh();
     } catch (error) {
-      console.error("[DEBUG] Save edit error:", error);
       toast.error(t("dashboard.table.editError"));
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+  };
+
+  const handleCopy = async (text: string) => {
+    // Strip HTML tags but preserve line breaks
+    const cleanText = stripHtml(text);
+    await navigator.clipboard.writeText(cleanText);
+    toast.success(t("dashboard.table.copySuccess"));
   };
 
   const filteredApplications = applications.filter(
@@ -118,7 +101,20 @@ export default function ApplicationsTable({
   );
 
   return (
-    <div>
+    <div className="mt-8">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold">
+          {t("dashboard.applications.title")}
+        </h2>
+        <button
+          onClick={onRefresh}
+          className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+          aria-label={t("dashboard.applications.refresh")}
+        >
+          <RefreshCcw className="w-4 h-4" />
+        </button>
+      </div>
+
       {editingId && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -127,7 +123,7 @@ export default function ApplicationsTable({
                 {t("dashboard.table.editTitle")}
               </h2>
               <button
-                onClick={() => setEditingId(null)}
+                onClick={handleCancelEdit}
                 className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                 aria-label="Close"
               >
@@ -139,8 +135,8 @@ export default function ApplicationsTable({
                 applications.find((app) => app.id === editingId)?.content || ""
               }
               onSave={handleSaveEdit}
-              onCancel={() => setEditingId(null)}
-              onCopy={onCopy}
+              onCancel={handleCancelEdit}
+              onCopy={handleCopy}
             />
           </div>
         </div>
@@ -161,7 +157,9 @@ export default function ApplicationsTable({
           <div key={app.id} className="bg-white rounded-lg shadow-md p-4">
             <div className="flex items-center justify-between mb-3">
               <span className="text-sm text-gray-500">
-                {formatDistanceToNow(new Date(app.createdAt), { addSuffix: true })}
+                {formatDistanceToNow(new Date(app.createdAt), {
+                  addSuffix: true,
+                })}
               </span>
               <div className="flex gap-2">
                 <button
@@ -171,7 +169,7 @@ export default function ApplicationsTable({
                   <Edit2 className="h-4 w-4 text-gray-600" />
                 </button>
                 <button
-                  onClick={() => onCopy(app.content)}
+                  onClick={() => handleCopy(app.content)}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                 >
                   <Copy className="h-4 w-4 text-gray-600" />
@@ -230,7 +228,7 @@ export default function ApplicationsTable({
                       <Edit2 className="h-4 w-4" />
                     </button>
                     <button
-                      onClick={() => onCopy(application.content)}
+                      onClick={() => handleCopy(application.content)}
                       className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                       title={t("dashboard.table.copy")}
                     >

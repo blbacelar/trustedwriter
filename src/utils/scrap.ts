@@ -45,7 +45,7 @@ export async function scrapeWebsite(url: string) {
       responsibilities: "//div[contains(@class, 'article')]//section[5]/p",
       place: "//div[contains(@class, 'article')]//div[1]/div",
       parentName:
-        "//div[contains(@class, 'article')]//div[3]/div[1]/div/div[2]/div/div/div[1]",
+        '//*[@id="app"]/main/div/article/div[2]/div/div[3]/div[1]/div/div[2]/div/div/div[1]',
       readMore1: "//div[contains(@class, 'article')]//section[2]/p/button",
       readMore2: "//div[contains(@class, 'article')]//section[5]/p/button",
     };
@@ -55,9 +55,10 @@ export async function scrapeWebsite(url: string) {
       try {
         await page.waitForSelector(`xpath=${buttonXPath}`, { timeout: 5000 });
         await page.click(`xpath=${buttonXPath}`);
-        await page.waitForTimeout(1000); // Wait for content to load
-      } catch (err) {
-        logger.debug(`Button not found or not clickable: ${buttonXPath}`);
+        await page.waitForTimeout(1000);
+      } catch {
+        // Silently ignore missing buttons
+        continue;
       }
     }
 
@@ -82,11 +83,14 @@ export async function scrapeWebsite(url: string) {
 
     return results;
   } catch (error) {
-    logger.error("Error scraping website:", error);
+    // Only log actual scraping errors in production
+    if (process.env.NODE_ENV === "production") {
+      logger.error("Error scraping website:", error);
+    }
     return null;
   } finally {
     if (browser) {
-      await browser.close();
+      await browser.close().catch(() => {}); // Silently catch close errors
     }
   }
 }

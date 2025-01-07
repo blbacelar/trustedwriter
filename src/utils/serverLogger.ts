@@ -2,32 +2,40 @@ const isClient = typeof window !== "undefined";
 
 export const serverLogger = {
   async log(message: string, level: string = "info", data?: any) {
-    console.log(`[${level.toUpperCase()}] ${message}`, data || ""); // Always log to console
+    // Only console log in development with DEBUG enabled
+    if (
+      process.env.NODE_ENV === "development" &&
+      process.env.DEBUG === "true"
+    ) {
+      console.log(`[${level.toUpperCase()}] ${message}`, data || "");
+    }
 
-    try {
-      const response = await fetch("/api/logs", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message,
-          level,
-          data,
-          timestamp: new Date().toISOString(),
-        }),
-      });
-
-      if (!response.ok) {
-        console.error("Failed to send log to server:", response.status);
+    // Only log errors to API in production
+    if (process.env.NODE_ENV === "production") {
+      if (level === "error") {
+        try {
+          await fetch("/api/logs", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              message,
+              level,
+              data,
+              timestamp: new Date().toISOString(),
+            }),
+          });
+        } catch (error) {
+          // Silently catch fetch errors to prevent loops
+          console.error("Failed to send log:", error);
+        }
       }
-    } catch (error) {
-      console.error("Failed to send log:", error);
     }
   },
 
   debug: (message: string, data?: any) =>
-    serverLogger.log(message, "debug", data),
+    process.env.DEBUG === "true" && serverLogger.log(message, "debug", data),
   error: (message: string, data?: any) =>
     serverLogger.log(message, "error", data),
   info: (message: string, data?: any) =>
-    serverLogger.log(message, "info", data),
+    process.env.DEBUG === "true" && serverLogger.log(message, "info", data),
 };

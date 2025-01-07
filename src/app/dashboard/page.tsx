@@ -143,30 +143,15 @@ export default function DashboardPage() {
       hasData: !!data,
       timestamp: new Date().toISOString(),
     });
-    console.log("[Dashboard] handleApplicationData called with data:", !!data);
+
     if (!data) return;
 
     setCurrentListingUrl(data);
-
-    console.log("[Dashboard] Checking OpenAI status");
-    const currentStatus = await checkOpenAIStatus();
-    console.log("[Dashboard] OpenAI status check result:", currentStatus);
-
-    if (!currentStatus.operational) {
-      console.log("[Dashboard] OpenAI service not operational");
-      toast({
-        variant: "destructive",
-        title: "Service Unavailable",
-        description: currentStatus.status || "OpenAI service is currently down",
-        duration: 5000,
-      });
-      return;
-    }
-
     setIsGenerating(true);
+
     try {
       const result = await scrapeAndGetApplication(data);
-      console.log("[DEBUG] Scrape result:", result); // Add debug log
+      console.log("[DEBUG] Scrape result:", result);
 
       if (result && "error" in result) {
         toast({
@@ -187,6 +172,9 @@ export default function DashboardPage() {
         setApplicationData(result.content as string);
         setCurrentApplicationId(result.id as string);
         await refreshCredits();
+
+        // Refresh the applications list after creating a new one
+        await refreshApplications();
 
         setTimeout(() => {
           applicationRef.current?.scrollIntoView({
@@ -342,6 +330,58 @@ export default function DashboardPage() {
     }
   };
 
+  const refreshApplications = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch("/api/applications");
+      if (!response.ok) throw new Error("Failed to fetch applications");
+      const data = await response.json();
+      setApplications(data);
+    } catch (error) {
+      toast({
+        title: t("dashboard.errors.fetchFailed"),
+        description: t("dashboard.errors.tryAgain"),
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSave = async (content: string) => {
+    if (!currentApplicationId) return;
+
+    try {
+      setIsLoading(true);
+      const response = await fetch(
+        `/api/applications/${currentApplicationId}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to save application");
+
+      toast({
+        title: t("dashboard.success.saved"),
+        description: t("dashboard.success.savedDescription"),
+      });
+
+      // Refresh the applications list after saving
+      await refreshApplications();
+    } catch (error) {
+      toast({
+        title: t("dashboard.errors.saveFailed"),
+        description: t("dashboard.errors.tryAgain"),
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   serverLogger.debug("Entering DashboardPage", {
     openAIStatusLoading,
     isLoading,
@@ -448,8 +488,9 @@ export default function DashboardPage() {
           ) : (
             <ApplicationsTable
               applications={applications}
-              onCopy={handleCopy}
-              onUpdate={handleApplicationUpdate}
+              onSelect={setCurrentApplicationId}
+              selectedId={currentApplicationId}
+              onRefresh={refreshApplications}
             />
           )}
         </div>

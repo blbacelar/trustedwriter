@@ -147,6 +147,10 @@ const translations = {
         title: "Loading editor...",
       },
     },
+    applications: {
+      title: "Your Applications",
+      refresh: "Refresh applications",
+    },
   },
   search: {
     input: {
