@@ -5,10 +5,12 @@ export async function logError({
   error,
   context,
   additionalData,
+  userId,
 }: {
   error: Error;
   context: string;
   additionalData?: Record<string, any>;
+  userId?: string;
 }) {
   try {
     await prisma.errorLog.create({
@@ -17,6 +19,7 @@ export async function logError({
         stack: error.stack,
         context,
         additionalData: additionalData ? JSON.stringify(additionalData) : null,
+        userId,
       },
     });
   } catch (loggingError) {

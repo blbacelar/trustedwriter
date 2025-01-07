@@ -62,10 +62,11 @@ export async function PATCH(
     console.error("[DEBUG] Error in PATCH handler:", error);
     await logError({
       error: error as Error,
-      userId: userId,
+      userId,
       context: "APPLICATION_UPDATE",
       additionalData: {
         applicationId: id,
+        content,
       },
     });
     return NextResponse.json(
