@@ -1,36 +1,34 @@
-import { chromium } from "@playwright/test";
+import { chromium } from "playwright-core";
 import { logger } from "@/utils/logger";
+
+const CHROME_PATH =
+  process.env.NODE_ENV === "production" ? "/opt/chromium/chrome" : undefined;
 
 export async function scrapeWebsite(url: string) {
   let browser;
 
   try {
-    // Different launch options for production vs development
-    const launchOptions =
-      process.env.NODE_ENV === "production"
-        ? {
-            headless: true,
-            chromiumSandbox: false,
-            args: [
-              "--disable-gpu",
-              "--disable-setuid-sandbox",
-              "--no-sandbox",
-              "--no-zygote",
-              "--disable-dev-shm-usage",
-              "--disable-accelerated-2d-canvas",
-              "--disable-web-security",
-            ],
-          }
-        : {
-            headless: true,
-          };
+    const launchOptions = {
+      headless: true,
+      executablePath: CHROME_PATH,
+      args: [
+        "--disable-gpu",
+        "--disable-dev-shm-usage",
+        "--disable-setuid-sandbox",
+        "--no-first-run",
+        "--no-sandbox",
+        "--no-zygote",
+        "--single-process",
+        "--deterministic-fetch",
+      ],
+    };
 
     browser = await chromium.launch(launchOptions);
 
     const context = await browser.newContext({
       userAgent:
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
-      viewport: { width: 1280, height: 800 },
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+      viewport: { width: 1920, height: 1080 },
     });
 
     const page = await context.newPage();
