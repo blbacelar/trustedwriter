@@ -1,34 +1,25 @@
-import { PrismaClient } from "@prisma/client";
-
-// Create a new instance of PrismaClient for error logging
-const prismaError = new PrismaClient();
+import { prisma } from "./prisma";
+import { logger } from "@/utils/logger";
 
 export async function logError({
   error,
-  userId,
   context,
   additionalData,
 }: {
-  error: Error | unknown;
-  userId?: string | null;
+  error: Error;
   context: string;
   additionalData?: Record<string, any>;
 }) {
   try {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    const errorStack = error instanceof Error ? error.stack : undefined;
-
-    await prismaError.errorLog.create({
+    await prisma.errorLog.create({
       data: {
-        userId,
-        message: errorMessage,
-        stack: errorStack,
+        message: error.message,
+        stack: error.stack,
         context,
         additionalData: additionalData ? JSON.stringify(additionalData) : null,
-        timestamp: new Date(),
       },
     });
   } catch (loggingError) {
-    console.error("Failed to log error:", loggingError);
+    logger.error("Failed to log error:", loggingError);
   }
-} 
+}

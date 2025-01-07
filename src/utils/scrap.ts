@@ -6,54 +6,56 @@ export async function scrapeWebsite(url: string) {
   let browser;
 
   try {
-    browser = await puppeteer.launch({
-      args: [...chromium.args, "--no-sandbox", "--disable-setuid-sandbox"],
-      defaultViewport: chromium.defaultViewport,
-      executablePath:
-        process.env.NODE_ENV === "production"
-          ? await chromium.executablePath
-          : process.platform === "darwin"
-          ? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-          : process.platform === "win32"
-          ? "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-          : "/usr/bin/google-chrome",
-      headless: true,
-      ignoreDefaultArgs: false,
-    });
+    logger.debug("Starting scraping process for:", url);
+
+    const options = process.env.AWS_LAMBDA_FUNCTION_VERSION
+      ? {
+          args: chromium.args,
+          defaultViewport: chromium.defaultViewport,
+          executablePath: await chromium.executablePath,
+          headless: chromium.headless,
+          ignoreHTTPSErrors: true,
+        }
+      : {
+          args: [],
+          executablePath:
+            process.platform === "darwin" && process.arch === "arm64"
+              ? process.env.CHROME_PATH ||
+                "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+              : process.platform === "win32"
+              ? "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"
+              : "/usr/bin/google-chrome",
+          headless: true,
+        };
+
+    logger.debug("Launching browser with options:", options);
+    browser = await puppeteer.launch(options);
 
     const page = await browser.newPage();
+    await page.setViewport({ width: 1280, height: 800 });
     await page.setUserAgent(
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
     );
 
+    logger.debug("Navigating to URL:", url);
     await page.goto(url, {
       waitUntil: "networkidle0",
       timeout: 30000,
     });
 
-    // Click "Read More" buttons first
     const clickReadMore = async (buttonXPath: string) => {
       try {
-        const text = await page.evaluate((xpath) => {
-          const button = document.evaluate(
-            xpath,
-            document,
-            null,
-            XPathResult.FIRST_ORDERED_NODE_TYPE,
-            null
-          ).singleNodeValue as HTMLButtonElement;
-          if (button) button.click();
-          return true;
-        }, buttonXPath);
-        await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait for content to expand
-        return text;
+        await page.waitForXPath(buttonXPath, { timeout: 5000 });
+        const [button] = await page.$x(buttonXPath);
+        if (button) {
+          await button.click();
+          await page.waitForTimeout(1000);
+        }
       } catch (error) {
-        logger.error(`Error clicking button ${buttonXPath}:`, error);
-        return null;
+        logger.debug(`Button not found or not clickable: ${buttonXPath}`);
       }
     };
 
-    // Click both "Read More" buttons
     await clickReadMore(
       '//*[@id="app"]/main/div/article/div[2]/div/div[4]/section[2]/p/button'
     );
@@ -61,25 +63,17 @@ export async function scrapeWebsite(url: string) {
       '//*[@id="app"]/main/div/article/div[2]/div/div[4]/section[5]/p/button'
     );
 
-    // Extract text content directly without waiting for specific elements
     const getTextContent = async (xpath: string) => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        const text = await page.evaluate((xpath) => {
-          const element = document.evaluate(
-            xpath,
-            document,
-            null,
-            XPathResult.FIRST_ORDERED_NODE_TYPE,
-            null
-          ).singleNodeValue;
-          return element?.textContent?.trim() || null;
-        }, xpath);
-
-        logger.debug(`Found text for ${xpath}: ${text?.substring(0, 100)}...`);
-        return text;
+        await page.waitForXPath(xpath, { timeout: 5000 });
+        const [element] = await page.$x(xpath);
+        if (element) {
+          const text = await page.evaluate((el) => el.textContent, element);
+          return text?.trim() || null;
+        }
+        return null;
       } catch (error) {
-        logger.error(`Error getting text content for ${xpath}:`, error);
+        logger.debug(`Element not found: ${xpath}`);
         return null;
       }
     };
@@ -99,13 +93,23 @@ export async function scrapeWebsite(url: string) {
       ),
     };
 
+    logger.debug("Scraping completed successfully:", results);
     return results;
-  } catch (error) {
-    logger.error("Error scraping website:", error);
-    return null;
+  } catch (error: unknown) {
+    logger.error("Error during scraping:", error);
+    throw new Error(
+      `Failed to scrape website: ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    );
   } finally {
     if (browser) {
-      await browser.close().catch(() => {});
+      try {
+        await browser.close();
+        logger.debug("Browser closed successfully");
+      } catch (error: unknown) {
+        logger.error("Error closing browser:", error);
+      }
     }
   }
 }
