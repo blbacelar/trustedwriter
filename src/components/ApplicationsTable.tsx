@@ -26,7 +26,7 @@ interface Application {
 interface ApplicationsTableProps {
   applications: Application[];
   onSelect?: (id: string) => void;
-  selectedId?: string;
+  selectedId?: string | null;
   onRefresh?: () => void;
 }
 
