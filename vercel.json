@@ -3,7 +3,7 @@
   "builds": [
     {
       "src": "src/app/api/**/*.ts",
-      "use": "@vercel/node@18"
+      "use": "@vercel/node"
     }
   ],
   "crons": [
