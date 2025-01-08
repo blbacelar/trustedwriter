@@ -11,6 +11,7 @@ export async function PATCH(
   console.log("[DEBUG] PATCH request received for application:", id);
 
   let userId: string | null | undefined;
+  let content: string | undefined;
 
   try {
     const session = await auth();
@@ -24,7 +25,7 @@ export async function PATCH(
     }
 
     const body = await request.json();
-    const { content } = body;
+    content = body.content;
 
     // Get the application
     const application = await prisma.application.findUnique({
@@ -62,10 +63,11 @@ export async function PATCH(
     console.error("[DEBUG] Error in PATCH handler:", error);
     await logError({
       error: error as Error,
-      userId: userId,
+      userId: userId || undefined,
       context: "APPLICATION_UPDATE",
       additionalData: {
         applicationId: id,
+        content: content || undefined,
       },
     });
     return NextResponse.json(

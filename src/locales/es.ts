@@ -148,6 +148,10 @@ const translations = {
         title: "Cargando editor...",
       },
     },
+    applications: {
+      title: "Tus Aplicaciones",
+      refresh: "Actualizar aplicaciones",
+    },
   },
   search: {
     input: {

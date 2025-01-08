@@ -1,4 +1,8 @@
 {
+  "version": 2,
+  "buildCommand": "npm run build",
+  "installCommand": "npm install --include=dev",
+  "framework": "nextjs",
   "crons": [
     {
       "path": "/api/cron/reset-credits",
@@ -6,9 +10,8 @@
     }
   ],
   "functions": {
-    "api/applications/*.js": {
-      "memory": 3008,
-      "maxDuration": 300
+    "api/**/*": {
+      "memory": 3008
     }
   }
 }

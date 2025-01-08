@@ -44,3 +44,12 @@ model ErrorLog {
   additionalData String?
   timestamp      DateTime @default(now())
 }
+
+model Log {
+  id        String   @id @default(cuid())
+  message   String
+  level     String   @default("info")
+  data      String?
+  source    String?
+  timestamp DateTime @default(now())
+}

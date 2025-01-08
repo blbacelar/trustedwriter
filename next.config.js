@@ -13,7 +13,7 @@ const nextConfig = {
       ].filter(Boolean),
     },
   },
-  webpack: (config) => {
+  webpack: (config, { isServer }) => {
     config.module.rules.push({
       test: /\.map$/,
       use: "ignore-loader",
@@ -27,6 +27,11 @@ const nextConfig = {
       net: false,
       tls: false,
     };
+
+    config.module.rules.push({
+      test: /chrome-aws-lambda/,
+      use: "ignore-loader",
+    });
 
     return config;
   },
