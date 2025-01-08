@@ -382,6 +382,16 @@ export default function DashboardPage() {
     }
   };
 
+  const handleEdit = (id: string) => {
+    setCurrentApplicationId(id);
+    // Find the application content
+    const application = applications.find((app) => app.id === id);
+    if (application) {
+      setApplicationData(application.content);
+      setCurrentListingUrl(application.listingUrl);
+    }
+  };
+
   serverLogger.debug("Entering DashboardPage", {
     openAIStatusLoading,
     isLoading,
@@ -488,7 +498,7 @@ export default function DashboardPage() {
           ) : (
             <ApplicationsTable
               applications={applications}
-              onSelect={setCurrentApplicationId}
+              onSelect={handleEdit}
               selectedId={currentApplicationId}
               onRefresh={refreshApplications}
             />
