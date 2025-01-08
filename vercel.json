@@ -6,12 +6,6 @@
       "use": "@vercel/node@18"
     }
   ],
-  "functions": {
-    "src/app/api/**/*.ts": {
-      "memory": 1024,
-      "maxDuration": 60
-    }
-  },
   "crons": [
     {
       "path": "/api/cron/reset-credits",
